@@ -45,8 +45,9 @@ trait Tracing {
     * @param name the name of the created span
     * @param successStatus function defining the status with which the Span will be ended in case of success
     * @param failureStatus function defining the status with which the Span will be ended in case of failure
-    * @return an unary function which parameter is the action which should be traced. The newly created span is given
+    * @param f an unary function which parameter is the action which should be traced. The newly created span is given
     *         as a parameter in case it is needed as parent reference for further spans.
+    * @return the return value of f
     */
   def trace[T](name: String,
                successStatus: T => Status = ok,
@@ -64,8 +65,9 @@ trait Tracing {
     * @param parentSpan the parent span
     * @param successStatus function defining the status with which the Span will be ended in case of success
     * @param failureStatus function defining the status with which the Span will be ended in case of failure
-    * @return an unary function which parameter is the action which should be traced. The newly created span is given
+    * @param f an unary function which parameter is the action which should be traced. The newly created span is given
     *         as a parameter in case it is needed as parent reference for further spans.
+    * @return the return value of f
     */
   def traceChild[T](name: String,
                     parentSpan: Span,
