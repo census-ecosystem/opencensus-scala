@@ -21,17 +21,35 @@ object Tracing extends LazyLogging {
     Stackdriver.init(config.stackdriver)
   }
 
-  private val tracer = OpencensusTracing.getTracer
-
+  private val tracer       = OpencensusTracing.getTracer
   private val unknownError = (_: Throwable) => Status.UNKNOWN
+  private def ok[T]        = (_: T) => Status.OK
 
   def traceChild[T](name: String,
                     parentSpan: Span,
-                    successStatus: T => Status = (_: T) => Status.OK,
+                    successStatus: T => Status = ok,
                     failureStatus: Throwable => Status = unknownError)(
-      implicit ec: ExecutionContext): (Span => Future[T]) => Future[T] = { f =>
-    val span = startChildSpan(name, parentSpan)
+      implicit ec: ExecutionContext): (Span => Future[T]) => Future[T] =
+    traceSpan(startChildSpan(name, parentSpan), successStatus, failureStatus)
 
+  def trace[T](name: String,
+               successStatus: T => Status = ok,
+               failureStatus: Throwable => Status = unknownError)(
+      implicit ec: ExecutionContext): (Span => Future[T]) => Future[T] =
+    traceSpan(startSpan(name), successStatus, failureStatus)
+
+  def startSpan(name: String): Span = buildSpan(tracer.spanBuilder(name))
+
+  def startChildSpan(name: String, parent: Span): Span =
+    buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+
+  def endSpan(span: Span, status: Status): Unit =
+    span.end(EndSpanOptions.builder().setStatus(status).build())
+
+  private def traceSpan[T](span: Span,
+                           successStatus: T => Status,
+                           failureStatus: Throwable => Status)(
+      implicit ec: ExecutionContext): (Span => Future[T]) => Future[T] = { f =>
     val result = f(span)
 
     result.onComplete {
@@ -42,17 +60,9 @@ object Tracing extends LazyLogging {
     result
   }
 
-  def startSpan(name: String): Span = buildSpan(tracer.spanBuilder(name))
-
-  def startChildSpan(name: String, parent: Span): Span =
-    buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
-
   private def buildSpan(builder: SpanBuilder): Span = {
     builder
       .setSampler(Samplers.alwaysSample())
       .startSpan()
   }
-
-  def endSpan(span: Span, status: Status): Unit =
-    span.end(EndSpanOptions.builder().setStatus(status).build())
 }
