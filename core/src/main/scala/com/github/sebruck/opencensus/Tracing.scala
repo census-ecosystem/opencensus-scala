@@ -17,7 +17,6 @@ import scala.util.{Failure, Success}
 trait Tracing {
   private val tracer       = OpencensusTracing.getTracer
   private val unknownError = (_: Throwable) => Status.UNKNOWN
-  private def ok[T]        = (_: T) => Status.OK
   protected def config: Config
 
   /**
@@ -44,17 +43,14 @@ trait Tracing {
     * with the status returned by `successStatus` otherwise with the status returned by `failureStatus`.
     *
     * @param name the name of the created span
-    * @param successStatus function defining the status with which the Span will be ended in case of success
     * @param failureStatus function defining the status with which the Span will be ended in case of failure
     * @param f an unary function which parameter is the action which should be traced. The newly created span is given
     *         as a parameter in case it is needed as parent reference for further spans.
     * @return the return value of f
     */
-  def trace[T](name: String,
-               successStatus: T => Status = ok,
-               failureStatus: Throwable => Status = unknownError)(
+  def trace[T](name: String, failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
-    traceSpan(startSpan(name), successStatus, failureStatus)(f)
+    traceSpan(startSpan(name), failureStatus)(f)
 
   /**
     * Starts a new child span of the given parent span before executing the given function.
@@ -64,7 +60,6 @@ trait Tracing {
     *
     * @param name the name of the created span
     * @param parentSpan the parent span
-    * @param successStatus function defining the status with which the Span will be ended in case of success
     * @param failureStatus function defining the status with which the Span will be ended in case of failure
     * @param f an unary function which parameter is the action which should be traced. The newly created span is given
     *         as a parameter in case it is needed as parent reference for further spans.
@@ -72,20 +67,17 @@ trait Tracing {
     */
   def traceChild[T](name: String,
                     parentSpan: Span,
-                    successStatus: T => Status = ok,
                     failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
-    traceSpan(startChildSpan(name, parentSpan), successStatus, failureStatus)(f)
+    traceSpan(startChildSpan(name, parentSpan), failureStatus)(f)
 
-  private def traceSpan[T](span: Span,
-                           successStatus: T => Status,
-                           failureStatus: Throwable => Status)(
+  private def traceSpan[T](span: Span, failureStatus: Throwable => Status)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = {
     val result = f(span)
 
     result.onComplete {
-      case Success(value) => endSpan(span, successStatus(value))
-      case Failure(e)     => endSpan(span, failureStatus(e))
+      case Success(_) => endSpan(span, Status.OK)
+      case Failure(e) => endSpan(span, failureStatus(e))
     }
 
     result

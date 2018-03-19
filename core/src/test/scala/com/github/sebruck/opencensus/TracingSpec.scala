@@ -1,7 +1,6 @@
 package com.github.sebruck.opencensus
 
 import io.opencensus.trace.Status
-import org.scalatest.compatible.Assertion
 import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
@@ -43,21 +42,9 @@ class TracingSpec extends AsyncFlatSpec with Tracing with Matchers {
   behavior of "trace"
 
   it should "call the given function with a valid span" in {
-    trace[Assertion]("span") { span =>
+    trace("span") { span =>
       Future.successful(span.getContext.isValid shouldBe true)
     }
-  }
-
-  it should "call the successStatus function with the value in case of success" in {
-    var calledWith = 0
-
-    val successStatus = (value: Int) => {
-      calledWith = value
-      Status.ALREADY_EXISTS
-    }
-
-    trace("span", successStatus = successStatus)(_ => Future.successful(42))
-      .map(_ => calledWith shouldBe 42)
   }
 
   it should "call the failureStatus function with the exception in case of failure" in {
@@ -77,22 +64,9 @@ class TracingSpec extends AsyncFlatSpec with Tracing with Matchers {
 
   val parent = startSpan("parent")
   it should "call the given function with a valid span" in {
-    traceChild[Assertion]("span", parent) { span =>
+    traceChild("span", parent) { span =>
       Future.successful(span.getContext.isValid shouldBe true)
     }
-  }
-
-  it should "call the successStatus function with the value in case of success" in {
-    var calledWith = 0
-
-    val successStatus = (value: Int) => {
-      calledWith = value
-      Status.ALREADY_EXISTS
-    }
-
-    traceChild("span", parent, successStatus = successStatus)(_ =>
-      Future.successful(42))
-      .map(_ => calledWith shouldBe 42)
   }
 
   it should "call the failureStatus function with the exception in case of failure" in {
