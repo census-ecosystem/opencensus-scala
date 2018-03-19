@@ -8,8 +8,25 @@ import scala.concurrent.Future
 
 class TracingSpec extends AsyncFlatSpec with Tracing with Matchers {
 
+  override protected def config: Config =
+    Config(StackdriverConfig(enabled = false, "project-id", None),
+           samplingProbability = 0.25)
+
   "startSpan" should "start a span" in {
     startSpan("mySpan").getContext.isValid shouldBe true
+  }
+
+  it should "take the configured sampling rate into account" in {
+
+    val areSampled = (1 to 1000).map(i => {
+      val span = startSpan(i.toString)
+      span.getContext.getTraceOptions.isSampled
+    })
+
+    val sampled = areSampled.count(identity)
+
+    sampled shouldBe >=(200)
+    sampled shouldBe <=(300)
   }
 
   "startChildSpan" should "start a span with a parent" in {
@@ -89,5 +106,10 @@ class TracingSpec extends AsyncFlatSpec with Tracing with Matchers {
     traceChild("span", parent, failureStatus = failureStatus)(_ =>
       Future.failed(new Exception("42"))).failed
       .map(_ => calledWithMessage shouldBe "42")
+  }
+
+  "Tracing object" should "successfully initialize with the default reference.conf" in {
+    Tracing
+    succeed
   }
 }
