@@ -18,6 +18,7 @@ trait Tracing {
   private val tracer       = OpencensusTracing.getTracer
   private val unknownError = (_: Throwable) => Status.UNKNOWN
   private def ok[T]        = (_: T) => Status.OK
+  protected def config: Config
 
   /**
     * Starts a root span
@@ -92,13 +93,13 @@ trait Tracing {
 
   private def buildSpan(builder: SpanBuilder): Span = {
     builder
-      .setSampler(Samplers.alwaysSample()) // TODO make this configurable
+      .setSampler(Samplers.probabilitySampler(config.samplingProbability))
       .startSpan()
   }
 }
 
 object Tracing extends Tracing with LazyLogging {
-  private val config = loadConfigOrThrow[Config]("opencensus-scala")
+  override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
   if (config.stackdriver.enabled) {
     Stackdriver.init(config.stackdriver)

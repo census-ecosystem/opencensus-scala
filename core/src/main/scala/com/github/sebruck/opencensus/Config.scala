@@ -5,4 +5,5 @@ private[opencensus] case class StackdriverConfig(
     projectId: String,
     credentialsFile: Option[String])
 
-private[opencensus] case class Config(stackdriver: StackdriverConfig)
+private[opencensus] case class Config(stackdriver: StackdriverConfig,
+                                      samplingProbability: Double)
