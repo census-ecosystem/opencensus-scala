@@ -97,7 +97,7 @@ trait Tracing {
   }
 }
 
-object Tracing extends LazyLogging {
+object Tracing extends Tracing with LazyLogging {
   private val config = loadConfigOrThrow[Config]("opencensus-scala")
 
   if (config.stackdriver.enabled) {
