@@ -15,26 +15,21 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 
 trait Tracing {
-  private val tracer       = OpencensusTracing.getTracer
-  private val unknownError = (_: Throwable) => Status.UNKNOWN
-  protected def config: Config
 
   /**
     * Starts a root span
     */
-  def startSpan(name: String): Span = buildSpan(tracer.spanBuilder(name))
+  def startSpan(name: String): Span
 
   /**
     * Starts a child span of the given parent
     */
-  def startChildSpan(name: String, parent: Span): Span =
-    buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+  def startChildSpan(name: String, parent: Span): Span
 
   /**
     * Ends the span with the given status
     */
-  def endSpan(span: Span, status: Status): Unit =
-    span.end(EndSpanOptions.builder().setStatus(status).build())
+  def endSpan(span: Span, status: Status): Unit
 
   /**
     * Starts a new root span before executing the given function.
@@ -48,9 +43,8 @@ trait Tracing {
     *         as a parameter in case it is needed as parent reference for further spans.
     * @return the return value of f
     */
-  def trace[T](name: String, failureStatus: Throwable => Status = unknownError)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
-    traceSpan(startSpan(name), failureStatus)(f)
+  def trace[T](name: String, failureStatus: Throwable => Status)(
+      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 
   /**
     * Starts a new child span of the given parent span before executing the given function.
@@ -67,7 +61,37 @@ trait Tracing {
     */
   def traceChild[T](name: String,
                     parentSpan: Span,
-                    failureStatus: Throwable => Status = unknownError)(
+                    failureStatus: Throwable => Status)(f: Span => Future[T])(
+      implicit ec: ExecutionContext): Future[T]
+}
+
+trait TracingImpl extends Tracing {
+  private val tracer       = OpencensusTracing.getTracer
+  private val unknownError = (_: Throwable) => Status.UNKNOWN
+  protected def config: Config
+
+  /** @inheritdoc */
+  override def startSpan(name: String): Span =
+    buildSpan(tracer.spanBuilder(name))
+
+  /** @inheritdoc */
+  override def startChildSpan(name: String, parent: Span): Span =
+    buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+
+  /** @inheritdoc */
+  override def endSpan(span: Span, status: Status): Unit =
+    span.end(EndSpanOptions.builder().setStatus(status).build())
+
+  /** @inheritdoc */
+  override def trace[T](name: String,
+                        failureStatus: Throwable => Status = unknownError)(
+      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
+    traceSpan(startSpan(name), failureStatus)(f)
+
+  /** @inheritdoc */
+  override def traceChild[T](name: String,
+                             parentSpan: Span,
+                             failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
     traceSpan(startChildSpan(name, parentSpan), failureStatus)(f)
 
@@ -90,7 +114,7 @@ trait Tracing {
   }
 }
 
-object Tracing extends Tracing with LazyLogging {
+object Tracing extends TracingImpl with LazyLogging {
   override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
   if (config.stackdriver.enabled) {

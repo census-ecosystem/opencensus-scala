@@ -5,7 +5,7 @@ import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
 
-class TracingSpec extends AsyncFlatSpec with Tracing with Matchers {
+class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
   override protected def config: Config =
     Config(StackdriverConfig(enabled = false, "project-id", None),

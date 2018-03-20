@@ -12,3 +12,9 @@ lazy val core = (project in file("core")).
     name := "opencensus-scala-core",
     libraryDependencies := coreDependencies,
   )
+
+lazy val akkaHttp = (project in file("akka-http")).
+  settings(
+    name := "opencensus-scala-akka-http",
+    libraryDependencies := akkaHttpDependencies,
+  ).dependsOn(core)
