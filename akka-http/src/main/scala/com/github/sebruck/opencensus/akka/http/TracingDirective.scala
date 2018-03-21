@@ -18,7 +18,7 @@ trait TracingDirective {
     }
 
   private def recordSuccess(span: Span) = mapResponse { response =>
-    tracing.endSpan(span, Status.OK)
+    tracing.endSpan(span, StatusTranslator.translate(response.status))
     response
   }
 

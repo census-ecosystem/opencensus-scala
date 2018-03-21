@@ -1,5 +1,6 @@
 package com.github.sebruck.opencensus.akka.http
 
+import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.sebruck.opencensus.Tracing
@@ -22,12 +23,22 @@ class TracingDirectiveSpec
     }
   }
 
-  it should "end a span with status OK when the route is successfully" in {
+  it should "end a span with status OK when the route is successfull" in {
     val (directive, mockTracing) = directiveWithMock()
 
     val path = "/my/fancy/path"
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
       mockTracing.endedSpansStatuses should contain(Status.OK)
+    }
+  }
+
+  it should "end a span with status INTERNAL_ERROR when the route completes with an errornous status code" in {
+    val (directive, mockTracing) = directiveWithMock()
+
+    val path = "/my/fancy/path"
+    Get(path) ~> directive.traceRequest(_ =>
+      Directives.complete(StatusCodes.InternalServerError)) ~> check {
+      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
     }
   }
 
