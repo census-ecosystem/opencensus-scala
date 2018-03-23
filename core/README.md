@@ -13,7 +13,7 @@ In your build.sbt add the following dependency:
 "com.github.sebruck" %% "opencensus-scala-core" % "" 
 ```
 
-To enable the stackdriver trace exporter add to your typesafe config file:
+To enable the Stackdriver trace exporter add the following to your typesafe config file:
 ```
 opencensus-scala {
     // Be carefull, this will sample 100% of your traces

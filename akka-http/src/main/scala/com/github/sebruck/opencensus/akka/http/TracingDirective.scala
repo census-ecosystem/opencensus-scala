@@ -15,6 +15,11 @@ trait TracingDirective extends LazyLogging {
   protected def tracing: Tracing
   protected def propagation: Propagation
 
+  /**
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request compeltes or fails with a status code which is suitable
+    * to the http response code
+    */
   val traceRequest: Directive1[Span] =
     extractRequest.flatMap { req =>
       val span = buildSpan(req)
