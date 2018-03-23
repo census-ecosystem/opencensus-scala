@@ -7,6 +7,7 @@ import io.opencensus.trace.{
   EndSpanOptions,
   Span,
   SpanBuilder,
+  SpanContext,
   Status,
   Tracing => OpencensusTracing
 }
@@ -24,7 +25,12 @@ trait Tracing {
   /**
     * Starts a child span of the given parent
     */
-  def startChildSpan(name: String, parent: Span): Span
+  def startSpanWithParent(name: String, parent: Span): Span
+
+  /**
+    * Starts a child span of the remote span
+    */
+  def startSpanWithRemoteParent(name: String, parentContext: SpanContext): Span
 
   /**
     * Ends the span with the given status
@@ -75,8 +81,13 @@ trait TracingImpl extends Tracing {
     buildSpan(tracer.spanBuilder(name))
 
   /** @inheritdoc */
-  override def startChildSpan(name: String, parent: Span): Span =
+  override def startSpanWithParent(name: String, parent: Span): Span =
     buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+
+  /** @inheritdoc */
+  override def startSpanWithRemoteParent(name: String,
+                                         parentContext: SpanContext): Span =
+    buildSpan(tracer.spanBuilderWithRemoteParent(name, parentContext))
 
   /** @inheritdoc */
   override def endSpan(span: Span, status: Status): Unit =
@@ -93,7 +104,7 @@ trait TracingImpl extends Tracing {
                              parentSpan: Span,
                              failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
-    traceSpan(startChildSpan(name, parentSpan), failureStatus)(f)
+    traceSpan(startSpanWithParent(name, parentSpan), failureStatus)(f)
 
   private def traceSpan[T](span: Span, failureStatus: Throwable => Status)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = {

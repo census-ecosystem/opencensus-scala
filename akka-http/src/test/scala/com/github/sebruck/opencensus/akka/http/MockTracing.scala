@@ -1,21 +1,23 @@
 package com.github.sebruck.opencensus.akka.http
 
 import com.github.sebruck.opencensus.Tracing
-import io.opencensus.trace.{BlankSpan, Span, Status}
+import io.opencensus.trace.{BlankSpan, Span, SpanContext, Status}
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContext, Future}
 class MockTracing extends Tracing {
 
-  val startedSpans: ArrayBuffer[String]       = ArrayBuffer[String]()
+  type ParentSpanContext = Option[SpanContext]
+  val startedSpans: ArrayBuffer[(String, ParentSpanContext)] =
+    ArrayBuffer[(String, ParentSpanContext)]()
   val endedSpansStatuses: ArrayBuffer[Status] = ArrayBuffer[Status]()
 
   override def startSpan(name: String): Span = {
-    startedSpans += name
+    startedSpans += ((name, None))
     BlankSpan.INSTANCE
   }
 
-  override def startChildSpan(name: String, parent: Span): Span = ???
+  override def startSpanWithParent(name: String, parent: Span): Span = ???
 
   override def endSpan(span: Span, status: Status): Unit = {
     endedSpansStatuses += status
@@ -30,4 +32,9 @@ class MockTracing extends Tracing {
                              failureStatus: Throwable => Status)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
 
+  override def startSpanWithRemoteParent(name: String,
+                                         parentContext: SpanContext): Span = {
+    startedSpans += ((name, Some(parentContext)))
+    BlankSpan.INSTANCE
+  }
 }

@@ -28,9 +28,14 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
     sampled shouldBe <=(300)
   }
 
-  "startChildSpan" should "start a span with a parent" in {
+  "startSpanWithParent" should "start a span with a parent" in {
     val parent = startSpan("parent")
-    startChildSpan("mySpan", parent).getContext.isValid shouldBe true
+    startSpanWithParent("mySpan", parent).getContext.isValid shouldBe true
+  }
+
+  "startSpanWithRemoteParent" should "start a span with a remote parent" in {
+    val parent = startSpan("parent")
+    startSpanWithRemoteParent("mySpan", parent.getContext).getContext.isValid shouldBe true
   }
 
   "endSpan" should "end a span without throwing an error" in {
