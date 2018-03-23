@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/Sebruck/opencensus-scala.svg?branch=master)](https://travis-ci.org/Sebruck/opencensus-scala)
 # opencensus-scala
 This project is a lightweight scala wrapper for the 
 [opencensus-java](https://github.com/census-instrumentation/opencensus-java) library 
