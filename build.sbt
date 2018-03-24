@@ -12,6 +12,10 @@ publishTo in ThisBuild := Some(
     Opts.resolver.sonatypeStaging
 )
 
+lazy val root = (project in file("."))
+    .settings(publishArtifact := false)
+    .aggregate(core, akkaHttp)
+
 lazy val core = (project in file("core")).
   settings(
     name := "opencensus-scala-core",
