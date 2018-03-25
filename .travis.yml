@@ -3,3 +3,6 @@ scala:
 - 2.12.4
 jdk:
 - oraclejdk8
+after_success:
+  - >
+      sbt 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASS"))' publish
