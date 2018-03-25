@@ -9,13 +9,11 @@ and provides instrumentation for scala based frameworks, currently only Akka HTT
 Add the following dependencies to your sbt project.
 
 ```scala
-// TODO: Add version once the first version is published
-
 // If you want to use only the core module
-"com.github.sebruck" %% "opencensus-scala-core" % "" 
+"com.github.sebruck" %% "opencensus-scala-core" % "0.1.1" 
 
 // If you want to use opencensus-scala inside an Akka HTTP project 
-"com.github.sebruck" %% "opencensus-scala-akka-http" % "" 
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.1.1" 
 ```
 
 ### Configuration
