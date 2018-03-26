@@ -17,6 +17,8 @@ import scala.util.{Failure, Success}
 
 trait Tracing {
 
+  protected val unknownError = (_: Throwable) => Status.UNKNOWN
+
   /**
     * Starts a root span
     */
@@ -49,7 +51,7 @@ trait Tracing {
     *         as a parameter in case it is needed as parent reference for further spans.
     * @return the return value of f
     */
-  def trace[T](name: String, failureStatus: Throwable => Status)(
+  def trace[T](name: String, failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 
   /**
@@ -67,13 +69,12 @@ trait Tracing {
     */
   def traceChild[T](name: String,
                     parentSpan: Span,
-                    failureStatus: Throwable => Status)(f: Span => Future[T])(
-      implicit ec: ExecutionContext): Future[T]
+                    failureStatus: Throwable => Status = unknownError)(
+      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
 trait TracingImpl extends Tracing {
-  private val tracer       = OpencensusTracing.getTracer
-  private val unknownError = (_: Throwable) => Status.UNKNOWN
+  private val tracer = OpencensusTracing.getTracer
   protected def config: Config
 
   /** @inheritdoc */
