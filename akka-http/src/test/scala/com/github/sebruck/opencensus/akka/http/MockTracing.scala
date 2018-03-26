@@ -17,7 +17,10 @@ class MockTracing extends Tracing {
     BlankSpan.INSTANCE
   }
 
-  override def startSpanWithParent(name: String, parent: Span): Span = ???
+  override def startSpanWithParent(name: String, parent: Span): Span = {
+    startedSpans += ((name, Some(parent.getContext)))
+    BlankSpan.INSTANCE
+  }
 
   override def endSpan(span: Span, status: Status): Unit = {
     endedSpansStatuses += status

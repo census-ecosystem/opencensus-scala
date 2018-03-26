@@ -20,6 +20,7 @@ opencensus-scala {
 }
 ```
 
+### Server
 ```scala
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
@@ -41,15 +42,24 @@ object TracingService extends App {
 
   Http().bindAndHandle(route, "0.0.0.0", port = 8080)
 }
-
 ```
 
 The `traceRequest` directive starts a new span and sets the span context which got propagated in 
 the [B3 Format](https://github.com/openzipkin/b3-propagation#overall-process). If no or invalid B3 headers
 are present it will start a new root span. 
 
-When the request completes or fails the span is ended with a proper status which fit****s to the http response code.
+When the request completes or fails the span is ended with a proper status which fits to the http response code.
 
+### Client
+```scala
+val response: Future[HttpResponse] = TracingClient.traceRequest(Http().singleRequest(_), parentSpan)(HttpRequest())
+```
+
+The `traceRequest` function enriches the given function with type `HttpRequest => Future[HttpResponse]` and wraps the
+call in a span. Additionally the `HttpRequest` gets enriched with headers in the 
+[B3 Format](https://github.com/openzipkin/b3-propagation#overall-process).
+
+When the call completes or fails the span is ended with a proper status which fits to the http response code.
 
 ## Configuration
 Have a look at the [default configuration](src/main/resources/reference.conf)
