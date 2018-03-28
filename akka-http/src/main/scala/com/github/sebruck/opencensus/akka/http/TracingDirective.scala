@@ -33,7 +33,7 @@ trait TracingDirective extends LazyLogging {
       .extractContext(req)
       .fold(
         { error =>
-          logger.warn("Extracting of parent context failed", error)
+          logger.debug("Extracting of parent context failed", error)
           tracing.startSpan(name)
         },
         tracing.startSpanWithRemoteParent(name, _)
