@@ -1,12 +1,14 @@
 package com.github.sebruck.opencensus.akka.http
 
 import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.headers.`User-Agent`
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.{Span, Status}
+import com.github.sebruck.opencensus.trace.AttributeValueOps._
 
 import scala.util.control.NonFatal
 
@@ -29,7 +31,7 @@ trait TracingDirective extends LazyLogging {
   private def buildSpan(req: HttpRequest): Span = {
     val name = req.uri.path.toString()
 
-    propagation
+    val span = propagation
       .extractContext(req)
       .fold(
         { error =>
@@ -38,9 +40,13 @@ trait TracingDirective extends LazyLogging {
         },
         tracing.startSpanWithRemoteParent(name, _)
       )
+
+    setHttpRequestAttributes(span, req)
+    span
   }
 
   private def recordSuccess(span: Span) = mapResponse { response =>
+    span.putAttribute("http.status_code", response.status.intValue().toLong)
     tracing.endSpan(span, StatusTranslator.translate(response.status))
     response
   }
@@ -51,6 +57,17 @@ trait TracingDirective extends LazyLogging {
         tracing.endSpan(span, Status.INTERNAL)
         throw ex
     })
+
+  private def setHttpRequestAttributes(span: Span, req: HttpRequest): Unit = {
+    req
+      .header[`User-Agent`]
+      .map(_.value())
+      .foreach(span.putAttribute("http.user_agent", _))
+
+    span.putAttribute("http.host", req.uri.authority.host.address())
+    span.putAttribute("http.method", req.method.value)
+    span.putAttribute("http.path", req.uri.path.toString())
+  }
 }
 
 object TracingDirective extends TracingDirective {
