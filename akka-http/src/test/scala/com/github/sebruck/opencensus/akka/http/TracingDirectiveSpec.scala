@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.sebruck.opencensus.Tracing
-import io.opencensus.trace.Status
+import io.opencensus.trace.{AttributeValue, Status}
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 import MockPropagation._
 
@@ -22,7 +22,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      mockTracing.startedSpans.map(_._1) should contain(path)
+      mockTracing.startedSpans.map(_._2) should contain(path)
     }
   }
 
@@ -31,7 +31,7 @@ class TracingDirectiveSpec
 
     Get(requestPathWithoutParent) ~> directive.traceRequest(_ =>
       Directives.complete("")) ~> check {
-      val parentSpanContext = mockTracing.startedSpans.headOption.value._2
+      val parentSpanContext = mockTracing.startedSpans.headOption.value._3
 
       parentSpanContext shouldBe empty
     }
@@ -41,7 +41,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      val parentSpanContext = mockTracing.startedSpans.headOption.value._2.value
+      val parentSpanContext = mockTracing.startedSpans.headOption.value._3.value
 
       parentSpanContext.getTraceId.toLowerBase16 shouldBe fakeTraceId
       parentSpanContext.getSpanId.toLowerBase16 shouldBe fakeSpanId
@@ -72,6 +72,24 @@ class TracingDirectiveSpec
     Get(path) ~> directive.traceRequest(_ =>
       throw new Exception("test exception")) ~> check {
       mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+    }
+  }
+
+  it should "set the http attributes" in {
+    import AttributeValue._
+    val (directive, mockTracing) = directiveWithMock()
+
+    Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
+      val startedSpan = mockTracing.startedSpans.headOption.value._1
+
+      val attributes = startedSpan.attributes
+
+      attributes.get("http.host").value shouldBe stringAttributeValue(
+        "example.com")
+      attributes.get("http.path").value shouldBe stringAttributeValue(
+        "/my/fancy/path")
+      attributes.get("http.method").value shouldBe stringAttributeValue("GET")
+      attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
     }
   }
 

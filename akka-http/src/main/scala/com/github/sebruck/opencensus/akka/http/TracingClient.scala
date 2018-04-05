@@ -3,6 +3,7 @@ package com.github.sebruck.opencensus.akka.http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
+import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
 import io.opencensus.trace.{Span, Status}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -25,12 +26,14 @@ trait TracingClient {
     request =>
       import tracing._
 
-      val span            = startSpanWithParent(request.uri.path.toString, parentSpan)
+      val span = startSpanWithParent(request.uri.path.toString, parentSpan)
+      HttpAttributes.setAttributesForRequest(span, request)
       val enrichedRequest = requestWithTraceContext(request, span)
       val result          = doRequest(enrichedRequest)
 
       result.onComplete {
         case Success(response) =>
+          HttpAttributes.setAttributesForResponse(span, response)
           endSpan(span, StatusTranslator.translate(response.status))
         case Failure(_) =>
           endSpan(span, Status.INTERNAL)

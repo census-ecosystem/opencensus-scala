@@ -3,14 +3,18 @@ package com.github.sebruck.opencensus.akka.http
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
 import akka.http.scaladsl.model.headers.RawHeader
 import com.github.sebruck.opencensus.Tracing
-import io.opencensus.trace.{BlankSpan, Status}
+import io.opencensus.trace.{BlankSpan, SpanContext, Status}
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.{FlatSpec, Matchers, OptionValues}
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class TracingClientSpec extends FlatSpec with Matchers with ScalaFutures {
+class TracingClientSpec
+    extends FlatSpec
+    with Matchers
+    with ScalaFutures
+    with OptionValues {
 
   behavior of "traceRequest"
 
@@ -50,8 +54,10 @@ class TracingClientSpec extends FlatSpec with Matchers with ScalaFutures {
         HttpRequest(uri = "/test"))
       .futureValue
 
-    mockTracing.startedSpans should contain(
-      ("/test", Some(BlankSpan.INSTANCE.getContext)))
+    val startedSpan = mockTracing.startedSpans.headOption.value
+
+    startedSpan._2 shouldBe "/test"
+    startedSpan._3.value shouldBe SpanContext.INVALID
     mockTracing.endedSpansStatuses should contain(Status.OK)
   }
 
@@ -89,6 +95,27 @@ class TracingClientSpec extends FlatSpec with Matchers with ScalaFutures {
       .futureValue
 
     result.getMessage shouldBe "Test error"
+  }
+
+  it should "set the http attributes" in {
+    import io.opencensus.trace.AttributeValue._
+
+    val (client, mock) = clientWithMock()
+    val request        = HttpRequest(uri = "http://example.com/my/fancy/path")
+
+    client
+      .traceRequest(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
+        request)
+      .futureValue
+
+    val attributes = mock.startedSpans.headOption.value._1.attributes
+
+    attributes.get("http.host").value shouldBe stringAttributeValue(
+      "example.com")
+    attributes.get("http.path").value shouldBe stringAttributeValue(
+      "/my/fancy/path")
+    attributes.get("http.method").value shouldBe stringAttributeValue("GET")
+    attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
   }
 
   def clientWithMock() = {
