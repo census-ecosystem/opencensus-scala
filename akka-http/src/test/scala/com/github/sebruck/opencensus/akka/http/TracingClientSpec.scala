@@ -56,8 +56,8 @@ class TracingClientSpec
 
     val startedSpan = mockTracing.startedSpans.headOption.value
 
-    startedSpan._2 shouldBe "/test"
-    startedSpan._3.value shouldBe SpanContext.INVALID
+    startedSpan.name shouldBe "/test"
+    startedSpan.parentContext.value shouldBe SpanContext.INVALID
     mockTracing.endedSpansStatuses should contain(Status.OK)
   }
 
@@ -108,7 +108,7 @@ class TracingClientSpec
         request)
       .futureValue
 
-    val attributes = mock.startedSpans.headOption.value._1.attributes
+    val attributes = mock.startedSpans.headOption.value.attributes
 
     attributes.get("http.host").value shouldBe stringAttributeValue(
       "example.com")

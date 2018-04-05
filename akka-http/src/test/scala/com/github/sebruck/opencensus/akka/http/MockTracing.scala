@@ -10,19 +10,18 @@ import scala.concurrent.{ExecutionContext, Future}
 class MockTracing extends Tracing {
 
   type ParentSpanContext = Option[SpanContext]
-  val startedSpans: ArrayBuffer[(MockSpan, String, ParentSpanContext)] =
-    ArrayBuffer[(MockSpan, String, ParentSpanContext)]()
+  val startedSpans: ArrayBuffer[MockSpan]     = ArrayBuffer[MockSpan]()
   val endedSpansStatuses: ArrayBuffer[Status] = ArrayBuffer[Status]()
 
   override def startSpan(name: String): Span = {
-    val span = new MockSpan
-    startedSpans += ((span, name, None))
+    val span = new MockSpan(name, None)
+    startedSpans += span
     span
   }
 
   override def startSpanWithParent(name: String, parent: Span): Span = {
-    val span = new MockSpan
-    startedSpans += ((span, name, Some(parent.getContext)))
+    val span = new MockSpan(name, Some(parent.getContext))
+    startedSpans += span
     span
   }
 
@@ -41,16 +40,17 @@ class MockTracing extends Tracing {
 
   override def startSpanWithRemoteParent(name: String,
                                          parentContext: SpanContext): Span = {
-    val span = new MockSpan
-    startedSpans += ((span, name, Some(parentContext)))
+    val span = new MockSpan(name, Some(parentContext))
+    startedSpans += span
     span
   }
 }
 
-class MockSpan extends Span(SpanContext.INVALID, null) {
+class MockSpan(val name: String, val parentContext: Option[SpanContext])
+    extends Span(SpanContext.INVALID, null) {
   import scala.collection.JavaConverters._
 
-  var attributes = Map[String, AttributeValue]()
+  @volatile var attributes = Map[String, AttributeValue]()
 
   override def putAttributes(attr: util.Map[String, AttributeValue]): Unit = {
     attributes = attributes ++ attr.asScala

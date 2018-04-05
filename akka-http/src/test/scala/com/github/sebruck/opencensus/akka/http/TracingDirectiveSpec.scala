@@ -22,7 +22,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      mockTracing.startedSpans.map(_._2) should contain(path)
+      mockTracing.startedSpans.map(_.name) should contain(path)
     }
   }
 
@@ -31,8 +31,8 @@ class TracingDirectiveSpec
 
     Get(requestPathWithoutParent) ~> directive.traceRequest(_ =>
       Directives.complete("")) ~> check {
-      val parentSpanContext = mockTracing.startedSpans.headOption.value._3
-
+      val parentSpanContext =
+        mockTracing.startedSpans.headOption.value.parentContext
       parentSpanContext shouldBe empty
     }
   }
@@ -41,7 +41,8 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      val parentSpanContext = mockTracing.startedSpans.headOption.value._3.value
+      val parentSpanContext =
+        mockTracing.startedSpans.headOption.value.parentContext.value
 
       parentSpanContext.getTraceId.toLowerBase16 shouldBe fakeTraceId
       parentSpanContext.getSpanId.toLowerBase16 shouldBe fakeSpanId
@@ -80,7 +81,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      val startedSpan = mockTracing.startedSpans.headOption.value._1
+      val startedSpan = mockTracing.startedSpans.headOption.value
 
       val attributes = startedSpan.attributes
 
