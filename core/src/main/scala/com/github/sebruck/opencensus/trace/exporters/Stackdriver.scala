@@ -1,5 +1,6 @@
-package com.github.sebruck.opencensus
+package com.github.sebruck.opencensus.trace.exporters
 
+import com.github.sebruck.opencensus.StackdriverConfig
 import com.google.auth.oauth2.GoogleCredentials
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.exporter.trace.stackdriver.{

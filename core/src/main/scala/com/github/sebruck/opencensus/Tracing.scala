@@ -1,5 +1,6 @@
 package com.github.sebruck.opencensus
 
+import com.github.sebruck.opencensus.trace.exporters.Stackdriver
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.samplers.Samplers
 import pureconfig.loadConfigOrThrow
