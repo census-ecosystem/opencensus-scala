@@ -1,6 +1,6 @@
 package com.github.sebruck.opencensus
 
-import com.github.sebruck.opencensus.trace.exporters.Stackdriver
+import com.github.sebruck.opencensus.trace.exporters.{Logging, Stackdriver}
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.samplers.Samplers
 import pureconfig.loadConfigOrThrow
@@ -130,7 +130,9 @@ trait TracingImpl extends Tracing {
 object Tracing extends TracingImpl with LazyLogging {
   override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
-  if (config.trace.exporters.stackdriver.enabled) {
+  if (config.trace.exporters.stackdriver.enabled)
     Stackdriver.init(config.trace.exporters.stackdriver)
-  }
+
+  if (config.trace.exporters.logging.enabled)
+    Logging.init()
 }

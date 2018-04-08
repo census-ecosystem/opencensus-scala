@@ -1,6 +1,6 @@
 package com.github.sebruck.opencensus.trace.exporters
 
-import com.github.sebruck.opencensus.StackdriverConfig
+import com.github.sebruck.opencensus.StackdriverTraceExporterConfig
 import com.google.auth.oauth2.GoogleCredentials
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.exporter.trace.stackdriver.{
@@ -12,13 +12,13 @@ import scala.collection.JavaConverters._
 
 private[opencensus] object Stackdriver extends LazyLogging {
 
-  def init(config: StackdriverConfig): Unit = {
+  def init(config: StackdriverTraceExporterConfig): Unit = {
     log(config)
     StackdriverTraceExporter.createAndRegister(buildConfig(config))
   }
 
   private def buildConfig(
-      config: StackdriverConfig): StackdriverTraceConfiguration = {
+      config: StackdriverTraceExporterConfig): StackdriverTraceConfiguration = {
     import config._
 
     val stackdriverConfig = StackdriverTraceConfiguration
@@ -38,7 +38,7 @@ private[opencensus] object Stackdriver extends LazyLogging {
     stackdriverConfig.build()
   }
 
-  private def log(config: StackdriverConfig): Unit = {
+  private def log(config: StackdriverTraceExporterConfig): Unit = {
     import config._
 
     val credentialsLogInfo = credentialsFile

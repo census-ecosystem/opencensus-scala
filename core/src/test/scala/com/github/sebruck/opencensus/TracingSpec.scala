@@ -11,8 +11,11 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
     Config(
       TraceConfig(
         exporters = TraceExportersConfig(
-          stackdriver = StackdriverConfig(enabled = false, "project-id", None)),
-        samplingProbability = 0.25))
+          stackdriver =
+            StackdriverTraceExporterConfig(enabled = false, "project-id", None),
+          logging = LoggingTraceExporterConfig(enabled = false)),
+        samplingProbability = 0.25
+      ))
 
   "startSpan" should "start a span" in {
     startSpan("mySpan").getContext.isValid shouldBe true
