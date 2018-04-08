@@ -2,7 +2,29 @@
 # opencensus-scala
 This project is a lightweight scala wrapper for the 
 [opencensus-java](https://github.com/census-instrumentation/opencensus-java) library 
-and provides instrumentation for scala based frameworks, currently only Akka HTTP.
+and provides instrumentation for scala based frameworks.
+
+## Implementation status
+
+### Tracing
+|Exporter    |Status   |
+|------------|---------|
+|Instana     |planned  |
+|Jaeger      |planned  |
+|Logging     |planned  |
+|Stackdriver |supported|
+|Zipkin      |planned  |
+
+### Stats
+Not supported yet.
+
+### Instrumentations
+|Framework|Tracing  |Stats    |
+|---------|---------|---------|
+|Akka HTTP|supported|planned  |
+|Play     |planned  |planned  |
+|Http4s   |planned  |planned  |
+
 
 ## Quickstart
 ### Dependencies
