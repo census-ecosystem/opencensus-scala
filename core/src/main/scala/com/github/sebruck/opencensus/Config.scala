@@ -5,5 +5,8 @@ private[opencensus] case class StackdriverConfig(
     projectId: String,
     credentialsFile: Option[String])
 
-private[opencensus] case class Config(stackdriver: StackdriverConfig,
-                                      samplingProbability: Double)
+private[opencensus] case class TraceExportersConfig(
+    stackdriver: StackdriverConfig)
+private[opencensus] case class TraceConfig(samplingProbability: Double,
+                                           exporters: TraceExportersConfig)
+private[opencensus] case class Config(trace: TraceConfig)

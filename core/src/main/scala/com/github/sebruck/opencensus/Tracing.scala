@@ -121,7 +121,7 @@ trait TracingImpl extends Tracing {
 
   private def buildSpan(builder: SpanBuilder): Span = {
     builder
-      .setSampler(Samplers.probabilitySampler(config.samplingProbability))
+      .setSampler(Samplers.probabilitySampler(config.trace.samplingProbability))
       .startSpan()
   }
 }
@@ -129,7 +129,7 @@ trait TracingImpl extends Tracing {
 object Tracing extends TracingImpl with LazyLogging {
   override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
-  if (config.stackdriver.enabled) {
-    Stackdriver.init(config.stackdriver)
+  if (config.trace.exporters.stackdriver.enabled) {
+    Stackdriver.init(config.trace.exporters.stackdriver)
   }
 }

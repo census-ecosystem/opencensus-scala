@@ -8,8 +8,11 @@ import scala.concurrent.Future
 class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
   override protected def config: Config =
-    Config(StackdriverConfig(enabled = false, "project-id", None),
-           samplingProbability = 0.25)
+    Config(
+      TraceConfig(
+        exporters = TraceExportersConfig(
+          stackdriver = StackdriverConfig(enabled = false, "project-id", None)),
+        samplingProbability = 0.25))
 
   "startSpan" should "start a span" in {
     startSpan("mySpan").getContext.isValid shouldBe true

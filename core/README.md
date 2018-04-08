@@ -20,13 +20,17 @@ In your build.sbt add the following dependency:
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
 ```
-opencensus-scala {
+opencensus-scala {
+  trace {
     // Be carefull, this will sample 100% of your traces
     sampling-probability = 1,
-    stackdriver {
-        enabled = true
+    exporters {
+      stackdriver {
+        enabled = true 
         project-id = "MY-GC-Project"
+      }
     }
+  }
 }
 ```
 

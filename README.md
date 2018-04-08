@@ -51,11 +51,15 @@ sampling rates and many more. For a full reference have a look at
 To activate the Stackdriver trace exporter with the default sampling rate of 1/10000 add the following 
 to your application.conf.
 ```
-opencensus-scala {
-    stackdriver {
-        enabled = true
+opencensus-scala {
+  trace {
+    exporters {
+      stackdriver {
+        enabled = true 
         project-id = "MY-GC-Project"
+      }
     }
+  }
 }
 ```
 
