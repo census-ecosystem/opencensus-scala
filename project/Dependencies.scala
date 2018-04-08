@@ -10,10 +10,13 @@ object Dependencies {
   val AkkaVersion         = "2.5.11"
 
   lazy val opencensus = Seq(
-    "opencensus-api",
-    "opencensus-exporter-trace-stackdriver",
-    "opencensus-impl"
-  ).map(art => "io.opencensus" % art % OpencensusVersion)
+    "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
+    "io.opencensus" % "opencensus-impl"                       % OpencensusVersion,
+    "io.opencensus" % "opencensus-exporter-trace-stackdriver" % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
+  )
 
   lazy val scalaTest = Seq(
     "org.scalatest" %% "scalatest" % ScalaTestVersion % Test

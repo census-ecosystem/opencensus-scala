@@ -5,7 +5,13 @@ This modules contains utilities to use opencensus in Akka HTTP applications.
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.1.1" 
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.1.2" 
+
+// Dependent on the trace exporters you want to use add one or more of the following
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.12.2"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.12.2"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.12.2"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.12.2"
 ```
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
