@@ -108,6 +108,8 @@ class TracingClientSpec
         request)
       .futureValue
 
+    // Wait some time to ensure the "onComplete" which writes the status_code attribute has run
+    Thread.sleep(100)
     val attributes = mock.startedSpans.headOption.value.attributes
 
     attributes.get("http.host").value shouldBe stringAttributeValue(
