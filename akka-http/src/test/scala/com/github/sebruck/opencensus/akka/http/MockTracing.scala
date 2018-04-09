@@ -33,9 +33,9 @@ class MockTracing extends Tracing {
   override def trace[T](name: String, failureStatus: Throwable => Status)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
 
-  override def traceChild[T](name: String,
-                             parentSpan: Span,
-                             failureStatus: Throwable => Status)(
+  override def traceWithParent[T](name: String,
+                                  parentSpan: Span,
+                                  failureStatus: Throwable => Status)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
 
   override def startSpanWithRemoteParent(name: String,

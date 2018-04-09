@@ -78,7 +78,7 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
   val parent = startSpan("parent")
   it should "call the given function with a valid span" in {
-    traceChild("span", parent) { span =>
+    traceWithParent("span", parent) { span =>
       Future.successful(span.getContext.isValid shouldBe true)
     }
   }
@@ -91,7 +91,7 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    traceChild("span", parent, failureStatus = failureStatus)(_ =>
+    traceWithParent("span", parent, failureStatus = failureStatus)(_ =>
       Future.failed(new Exception("42"))).failed
       .map(_ => calledWithMessage shouldBe "42")
   }

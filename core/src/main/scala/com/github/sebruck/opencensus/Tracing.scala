@@ -73,9 +73,9 @@ trait Tracing {
     *         as a parameter in case it is needed as parent reference for further spans.
     * @return the return value of f
     */
-  def traceChild[T](name: String,
-                    parentSpan: Span,
-                    failureStatus: Throwable => Status = unknownError)(
+  def traceWithParent[T](name: String,
+                         parentSpan: Span,
+                         failureStatus: Throwable => Status = unknownError)(
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
@@ -107,10 +107,11 @@ trait TracingImpl extends Tracing {
     traceSpan(startSpan(name), failureStatus)(f)
 
   /** @inheritdoc */
-  override def traceChild[T](name: String,
-                             parentSpan: Span,
-                             failureStatus: Throwable => Status = unknownError)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
+  override def traceWithParent[T](name: String,
+                                  parentSpan: Span,
+                                  failureStatus: Throwable => Status =
+                                    unknownError)(f: Span => Future[T])(
+      implicit ec: ExecutionContext): Future[T] =
     traceSpan(startSpanWithParent(name, parentSpan), failureStatus)(f)
 
   private def traceSpan[T](span: Span, failureStatus: Throwable => Status)(
