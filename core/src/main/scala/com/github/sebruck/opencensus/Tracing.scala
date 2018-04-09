@@ -135,15 +135,8 @@ trait TracingImpl extends Tracing {
 object Tracing extends TracingImpl with LazyLogging {
   override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
-  if (config.trace.exporters.stackdriver.enabled)
-    Stackdriver.init(config.trace.exporters.stackdriver)
-
-  if (config.trace.exporters.logging.enabled)
-    Logging.init()
-
-  if (config.trace.exporters.zipkin.enabled)
-    Zipkin.init(config.trace.exporters.zipkin)
-
-  if (config.trace.exporters.instana.enabled)
-    Instana.init(config.trace.exporters.instana)
+  Stackdriver.init(config.trace.exporters.stackdriver)
+  Logging.init(config.trace.exporters.logging)
+  Zipkin.init(config.trace.exporters.zipkin)
+  Instana.init(config.trace.exporters.instana)
 }
