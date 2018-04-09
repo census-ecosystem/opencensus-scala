@@ -14,7 +14,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
           stackdriver =
             StackdriverTraceExporterConfig(enabled = false, "project-id", None),
           logging = LoggingTraceExporterConfig(enabled = false),
-          zipkin = ZipkinTraceExporterConfig(enabled = false, "", "")
+          zipkin = ZipkinTraceExporterConfig(enabled = false, "", ""),
+          instana = InstanaTraceExporterConfig(enabled = false, "")
         ),
         samplingProbability = 0.25
       ))

@@ -15,10 +15,16 @@ private[opencensus] case class ZipkinTraceExporterConfig(
     serviceName: String
 )
 
+private[opencensus] case class InstanaTraceExporterConfig(
+    enabled: Boolean,
+    agentEndpoint: String
+)
+
 private[opencensus] case class TraceExportersConfig(
     stackdriver: StackdriverTraceExporterConfig,
     logging: LoggingTraceExporterConfig,
-    zipkin: ZipkinTraceExporterConfig)
+    zipkin: ZipkinTraceExporterConfig,
+    instana: InstanaTraceExporterConfig)
 
 private[opencensus] case class TraceConfig(samplingProbability: Double,
                                            exporters: TraceExportersConfig)

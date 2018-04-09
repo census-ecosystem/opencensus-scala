@@ -9,7 +9,7 @@ and provides instrumentation for scala based frameworks.
 ### Tracing
 |Exporter    |Status   |
 |------------|---------|
-|Instana     |planned  |
+|Instana     |supported|
 |Logging     |supported|
 |Stackdriver |supported|
 |Zipkin      |supported|

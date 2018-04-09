@@ -1,6 +1,7 @@
 package com.github.sebruck.opencensus
 
 import com.github.sebruck.opencensus.trace.exporters.{
+  Instana,
   Logging,
   Stackdriver,
   Zipkin
@@ -142,4 +143,7 @@ object Tracing extends TracingImpl with LazyLogging {
 
   if (config.trace.exporters.zipkin.enabled)
     Zipkin.init(config.trace.exporters.zipkin)
+
+  if (config.trace.exporters.instana.enabled)
+    Instana.init(config.trace.exporters.instana)
 }
