@@ -12,7 +12,7 @@ and provides instrumentation for scala based frameworks.
 |Instana     |planned  |
 |Logging     |supported|
 |Stackdriver |supported|
-|Zipkin      |planned  |
+|Zipkin      |supported|
 
 ### Stats
 Not supported yet.

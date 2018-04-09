@@ -1,6 +1,10 @@
 package com.github.sebruck.opencensus
 
-import com.github.sebruck.opencensus.trace.exporters.{Logging, Stackdriver}
+import com.github.sebruck.opencensus.trace.exporters.{
+  Logging,
+  Stackdriver,
+  Zipkin
+}
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.samplers.Samplers
 import pureconfig.loadConfigOrThrow
@@ -135,4 +139,7 @@ object Tracing extends TracingImpl with LazyLogging {
 
   if (config.trace.exporters.logging.enabled)
     Logging.init()
+
+  if (config.trace.exporters.zipkin.enabled)
+    Zipkin.init(config.trace.exporters.zipkin)
 }
