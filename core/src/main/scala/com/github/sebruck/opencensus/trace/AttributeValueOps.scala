@@ -2,7 +2,7 @@ package com.github.sebruck.opencensus.trace
 
 import io.opencensus.trace.AttributeValue
 
-object AttributeValueOps {
+private[opencensus] object AttributeValueOps {
 
   implicit def toStringValue(s: String): AttributeValue =
     AttributeValue.stringAttributeValue(s)

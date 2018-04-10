@@ -79,7 +79,7 @@ trait Tracing {
       f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
-trait TracingImpl extends Tracing {
+private[opencensus] trait TracingImpl extends Tracing {
   private val tracer = OpencensusTracing.getTracer
   protected def config: Config
 
