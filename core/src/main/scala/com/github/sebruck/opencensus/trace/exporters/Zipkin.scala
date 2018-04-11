@@ -4,7 +4,7 @@ import com.github.sebruck.opencensus.ZipkinTraceExporterConfig
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.exporter.trace.zipkin.ZipkinTraceExporter
 
-object Zipkin extends LazyLogging {
+private[opencensus] object Zipkin extends LazyLogging {
 
   def init(config: ZipkinTraceExporterConfig): Unit =
     if (config.enabled) {

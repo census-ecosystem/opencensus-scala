@@ -4,7 +4,7 @@ import com.github.sebruck.opencensus.InstanaTraceExporterConfig
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.exporter.trace.instana.InstanaTraceExporter
 
-object Instana extends LazyLogging {
+private[opencensus] object Instana extends LazyLogging {
 
   def init(config: InstanaTraceExporterConfig): Unit =
     if (config.enabled) {
