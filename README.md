@@ -4,6 +4,8 @@ This project is a lightweight scala wrapper for the
 [opencensus-java](https://github.com/census-instrumentation/opencensus-java) library 
 and provides instrumentation for scala based frameworks.
 
+The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
+
 ## Implementation status
 
 ### Tracing

@@ -1,10 +1,12 @@
 # opencensus-scala core
 This module provides utilities to use opencensus in a scala idiomatic way.
 
+The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
+
 ## Quickstart
 
-The [Tracing](src/main/scala/com/github/sebruck/opencensus/Tracing.scala) type is the entry point
-of the library. (TODO: Add link to scala doc once it gets generated)
+The [Tracing](https://sebruck.github.io/opencensus-scala/api/com/github/sebruck/opencensus/Tracing$.html) type 
+is the entry point of the library.
 
 In your build.sbt add the following dependency:
 
