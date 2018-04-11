@@ -13,8 +13,14 @@ publishTo in ThisBuild := Some(
 )
 
 lazy val root = (project in file("."))
-    .settings(publishArtifact := false)
-    .aggregate(core, akkaHttp)
+    .settings(
+      publishArtifact := false,
+      siteSubdirName in ScalaUnidoc := "api",
+      addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+    )
+  .enablePlugins(ScalaUnidocPlugin)
+  .enablePlugins(SiteScaladocPlugin)
+  .aggregate(core, akkaHttp)
 
 lazy val core = (project in file("core")).
   settings(

@@ -22,7 +22,7 @@ object Dependencies {
     "org.scalatest" %% "scalatest" % ScalaTestVersion % Test
   )
 
-  lazy val config = Seq(
+  lazy val pureConfig = Seq(
     "com.github.pureconfig" %% "pureconfig" % PureConfigVersion
   )
 
@@ -30,7 +30,7 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLoggingVersion
   )
 
-  lazy val coreDependencies = opencensus ++ config ++ logging ++ scalaTest
+  lazy val coreDependencies = opencensus ++ pureConfig ++ logging ++ scalaTest
   lazy val akkaHttpDependencies = Seq(
     "com.typesafe.akka" %% "akka-http"         % AkkaHttpVersion,
     "com.typesafe.akka" %% "akka-stream"       % AkkaVersion,
