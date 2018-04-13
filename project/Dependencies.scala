@@ -8,6 +8,7 @@ object Dependencies {
   val ScalaLoggingVersion = "3.8.0"
   val AkkaHttpVersion     = "10.1.0"
   val AkkaVersion         = "2.5.11"
+  val Http4sVersion       = "0.18.8"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -36,4 +37,7 @@ object Dependencies {
     "com.typesafe.akka" %% "akka-stream"       % AkkaVersion,
     "com.typesafe.akka" %% "akka-http-testkit" % AkkaHttpVersion % Test
   ) ++ scalaTest
+
+  lazy val http4sDependencies = Seq(
+    "org.http4s" %% "http4s-dsl" % Http4sVersion) ++ scalaTest
 }

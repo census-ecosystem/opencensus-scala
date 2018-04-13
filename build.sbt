@@ -34,3 +34,9 @@ lazy val akkaHttp = (project in file("akka-http")).
     name := "opencensus-scala-akka-http",
     libraryDependencies := akkaHttpDependencies,
   ).dependsOn(core)
+
+lazy val http4s = (project in file("http4s")).
+  settings(
+    name := "opencensus-scala-http4s",
+    libraryDependencies := http4sDependencies,
+  ).dependsOn(core)
