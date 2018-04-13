@@ -31,17 +31,22 @@ trait B3FormatPropagation extends Propagation {
     override def put(carrier: HttpHeaderBuilder,
                      key: String,
                      value: String): Unit = {
-      carrier += RawHeader(key, value)
+      carrier += RawHeader(fixAscii(key), value)
     }
   }
 
   private object AkkaHttpGetter extends Getter[HttpRequest] {
     override def get(carrier: HttpRequest, key: String): String =
       carrier.headers
-        .find(_.lowercaseName() == key.toLowerCase)
+        .find(_.lowercaseName() == fixAscii(key).toLowerCase)
         .map(_.value())
         .orNull // orNull hurts my hear, but the Getter interface wants it that way
   }
+
+  // Since this fix is not released yet, we have to replace it ourselfes
+  // https://github.com/census-instrumentation/opencensus-java/commit/3683e6263dbbada41a9f8f72845c19222d05b4fc#diff-4d643fa125329a19427eaf90e317a27b
+  private def fixAscii(key: String): String =
+    key.replace('─', '-')
 
   private def newHeadersBuilder: HttpHeaderBuilder =
     new mutable.Builder[HttpHeader, immutable.Seq[HttpHeader]] {
