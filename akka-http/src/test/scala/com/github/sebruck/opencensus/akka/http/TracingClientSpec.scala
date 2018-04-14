@@ -5,12 +5,13 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import com.github.sebruck.opencensus.Tracing
+import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.Span
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success, Try}
 import scala.util.control.NonFatal
+import scala.util.{Failure, Success, Try}
 
 class TracingClientSpec extends ClientSpec {
 

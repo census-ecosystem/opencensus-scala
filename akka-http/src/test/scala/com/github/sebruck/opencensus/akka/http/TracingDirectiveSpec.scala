@@ -7,6 +7,7 @@ import com.github.sebruck.opencensus.Tracing
 import io.opencensus.trace.{AttributeValue, Status}
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 import MockPropagation._
+import com.github.sebruck.opencensus.http.testSuite.MockTracing
 
 class TracingDirectiveSpec
     extends FlatSpec

@@ -6,6 +6,7 @@ import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
+import com.github.sebruck.opencensus.http.StatusTranslator
 import io.opencensus.trace.{Span, Status}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -146,7 +147,7 @@ trait TracingClient {
 
   private def endSpanSuccess(response: HttpResponse, span: Span): Unit = {
     HttpAttributes.setAttributesForResponse(span, response)
-    endSpan(span, StatusTranslator.translate(response.status))
+    endSpan(span, StatusTranslator.translate(response.status.intValue()))
   }
 
   private def endSpanError(span: Span): Unit = endSpan(span, Status.INTERNAL)

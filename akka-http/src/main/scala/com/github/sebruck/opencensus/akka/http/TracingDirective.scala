@@ -6,6 +6,7 @@ import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
+import com.github.sebruck.opencensus.http.StatusTranslator
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.{Span, Status}
 
@@ -18,7 +19,7 @@ trait TracingDirective extends LazyLogging {
 
   /**
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
-    * The span is ended when the request compeltes or fails with a status code which is suitable
+    * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code
     */
   val traceRequest: Directive1[Span] =
@@ -46,7 +47,7 @@ trait TracingDirective extends LazyLogging {
 
   private def recordSuccess(span: Span) = mapResponse { response =>
     HttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span, StatusTranslator.translate(response.status))
+    tracing.endSpan(span, StatusTranslator.translate(response.status.intValue()))
     response
   }
 
