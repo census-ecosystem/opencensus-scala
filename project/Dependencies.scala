@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.12.2"
+  val OpencensusVersion   = "0.12.3"
   val ScalaTestVersion    = "3.0.4"
   val PureConfigVersion   = "0.9.0"
   val ScalaLoggingVersion = "3.8.0"
