@@ -1,8 +1,7 @@
 package com.github.sebruck.opencensus.akka.http
 
-import akka.NotUsed
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
-import akka.stream.scaladsl.{Flow, GraphDSL, UnzipWith, Zip}
+import akka.stream.scaladsl.{Flow, GraphDSL, Keep, UnzipWith, Zip}
 import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
@@ -50,11 +49,9 @@ trait TracingClient {
     * @param parentSpan the current span which will act as parent of the new span
     * @return the enriched flow
     */
-  def traceRequestForConnection(connection: Flow[HttpRequest, HttpResponse, _],
-                                parentSpan: Span): Flow[
-    HttpRequest,
-    HttpResponse,
-    NotUsed] = { // Todo: How can i preserve the mat value?
+  def traceRequestForConnection[Mat](
+      connection: Flow[HttpRequest, HttpResponse, Mat],
+      parentSpan: Span): Flow[HttpRequest, HttpResponse, Mat] = {
 
     val startSpan = Flow[HttpRequest]
       .map(startSpanAndEnrichRequest(_, parentSpan))
@@ -76,8 +73,8 @@ trait TracingClient {
       })
 
     startSpan
-      .via(doRequest)
-      .via(endSpan)
+      .viaMat(doRequest)(Keep.right)
+      .viaMat(endSpan)(Keep.left)
   }
 
   /**
@@ -88,10 +85,9 @@ trait TracingClient {
     * @param parentSpan the current span which will act as parent of the new span
     * @return the enriched flow
     */
-  def traceRequestForPool[T](
-      connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), _],
-      parentSpan: Span)
-    : Flow[(HttpRequest, T), (Try[HttpResponse], T), NotUsed] = {
+  def traceRequestForPool[T, Mat](
+      connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat],
+      parentSpan: Span): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
 
     val startSpan = Flow[(HttpRequest, T)]
       .map({
@@ -114,12 +110,12 @@ trait TracingClient {
       })
 
     startSpan
-      .via(doRequest)
-      .via(endSpan)
+      .viaMat(doRequest)(Keep.right)
+      .viaMat(endSpan)(Keep.left)
   }
 
-  private def spanForwardingFlow[In, Out](underlying: Flow[In, Out, _]) =
-    Flow.fromGraph(GraphDSL.create() { implicit b =>
+  private def spanForwardingFlow[In, Out, Mat](underlying: Flow[In, Out, Mat]) =
+    Flow.fromGraph(GraphDSL.create(underlying) { implicit b => under =>
       import GraphDSL.Implicits._
 
       val bcast =
@@ -131,7 +127,7 @@ trait TracingClient {
       val bufferForZip = Flow[Span].buffer(1000, OverflowStrategy.backpressure)
 
       // format: off
-      bcast.out0 ~> underlying   ~> zip.in0
+      bcast.out0 ~> under        ~> zip.in0
       bcast.out1 ~> bufferForZip ~> zip.in1
       // format: on
 
