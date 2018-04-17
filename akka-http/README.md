@@ -69,9 +69,15 @@ When the request completes or fails the span is ended with a proper status which
 val response: Future[HttpResponse] = TracingClient.traceRequest(Http().singleRequest(_), parentSpan)(HttpRequest())
 ```
 
+#### Host-Level client
+```scala
+  val flow: Flow[(HttpRequest, Context), (Try[HttpResponse], Context), NotUsed] = 
+      TracingClient.traceRequestForPool(Http().cachedHostConnectionPool[Context]("host"), parentSpan)
+```
+
 #### Connection-Level client
 ```scala
-  val flow: Flow[HttpRequest, HttpResponse, NotUsed] = TracingClient.traceRequest(Http().outgoingConnection("host"), parentSpan)
+  val flow: Flow[HttpRequest, HttpResponse, NotUsed] = TracingClient.traceRequestForConnection(Http().outgoingConnection("host"), parentSpan)
 ```
 
 The `traceRequest` function enriches the given function with type `HttpRequest => Future[HttpResponse]` and wraps the

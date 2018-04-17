@@ -43,16 +43,18 @@ trait TracingClient {
   }
 
   /**
-    * Enriches a `Flow[HttpRequest, HttpResponse, _]` by tracing and propagation of the SpanContext via
-    * http headers.
+    * Enriches a `Flow[HttpRequest, HttpResponse, _]`, which is usually returned by `Http().outgoingConnection`,
+    * with tracing and propagation of the SpanContext via http headers.
     *
-    * @param connection the flow, usually this is the return value of Http().outgoingConnection()
+    * @param connection the flow, usually this is the return value of `Http().outgoingConnection`
     * @param parentSpan the current span which will act as parent of the new span
     * @return the enriched flow
     */
-  def traceRequest(connection: Flow[HttpRequest, HttpResponse, _],
-                   parentSpan: Span)
-    : Flow[HttpRequest, HttpResponse, NotUsed] = { // Todo: How can i preserve the mat value?
+  def traceRequestForConnection(connection: Flow[HttpRequest, HttpResponse, _],
+                                parentSpan: Span): Flow[
+    HttpRequest,
+    HttpResponse,
+    NotUsed] = { // Todo: How can i preserve the mat value?
 
     val startSpan = Flow[HttpRequest]
       .map(startSpanAndEnrichRequest(_, parentSpan))
@@ -61,24 +63,7 @@ trait TracingClient {
       .map(Success(_))
       .recover { case NonFatal(e) => Failure(e) }
 
-    val doRequest = Flow.fromGraph(GraphDSL.create() { implicit b =>
-      import GraphDSL.Implicits._
-
-      val bcast =
-        b.add(UnzipWith[(HttpRequest, Span), HttpRequest, Span](identity))
-      val zip = b.add(Zip[Try[HttpResponse], Span])
-
-      // This buffer is needed because otherwise the zip will backpressure. This backpressure prevents grouping,
-      // which leads to a state where every downstream consumer can just group by a maximum of one.
-      val bufferForZip = Flow[Span].buffer(1000, OverflowStrategy.backpressure)
-
-      // format: off
-      bcast.out0 ~> connection   ~> errorToTry ~> zip.in0
-      bcast.out1 ~> bufferForZip               ~> zip.in1
-      // format: on
-
-      FlowShape(bcast.in, zip.out)
-    })
+    val doRequest = spanForwardingFlow(connection.via(errorToTry))
 
     val endSpan = Flow[(Try[HttpResponse], Span)]
       .map({
@@ -94,6 +79,64 @@ trait TracingClient {
       .via(doRequest)
       .via(endSpan)
   }
+
+  /**
+    * Enriches a `Flow[(HttpRequest, T), (Try[HttpResponse], T), _]`, which is usually returned by
+    * `Http().cachedHostConnectionPool` with tracing and propagation of the SpanContext via http headers.
+    *
+    * @param connectionPool the flow, usually this is the return value of  `Http().cachedHostConnectionPool`
+    * @param parentSpan the current span which will act as parent of the new span
+    * @return the enriched flow
+    */
+  def traceRequestForPool[T](
+      connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), _],
+      parentSpan: Span)
+    : Flow[(HttpRequest, T), (Try[HttpResponse], T), NotUsed] = {
+
+    val startSpan = Flow[(HttpRequest, T)]
+      .map({
+        case (request, context) =>
+          val (enrichedRequest, span) =
+            startSpanAndEnrichRequest(request, parentSpan)
+          ((enrichedRequest, context), span)
+      })
+
+    val doRequest = spanForwardingFlow(connectionPool)
+
+    val endSpan = Flow[((Try[HttpResponse], T), Span)]
+      .map({
+        case ((Success(response), context), span) =>
+          endSpanSuccess(response, span)
+          (Success(response), context)
+        case ((Failure(error), context), span) =>
+          endSpanError(span)
+          (Failure(error), context)
+      })
+
+    startSpan
+      .via(doRequest)
+      .via(endSpan)
+  }
+
+  private def spanForwardingFlow[In, Out](underlying: Flow[In, Out, _]) =
+    Flow.fromGraph(GraphDSL.create() { implicit b =>
+      import GraphDSL.Implicits._
+
+      val bcast =
+        b.add(UnzipWith[(In, Span), In, Span](identity))
+      val zip = b.add(Zip[Out, Span])
+
+      // This buffer is needed because otherwise the zip will backpressure. This backpressure prevents grouping,
+      // which leads to a state where every downstream consumer can just group by a maximum of one.
+      val bufferForZip = Flow[Span].buffer(1000, OverflowStrategy.backpressure)
+
+      // format: off
+      bcast.out0 ~> underlying   ~> zip.in0
+      bcast.out1 ~> bufferForZip ~> zip.in1
+      // format: on
+
+      FlowShape(bcast.in, zip.out)
+    })
 
   private def startSpanAndEnrichRequest(
       request: HttpRequest,
