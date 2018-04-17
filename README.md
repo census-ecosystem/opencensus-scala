@@ -9,22 +9,17 @@ The API documentation can be found [here](https://sebruck.github.io/opencensus-s
 ## Implementation status
 
 ### Tracing
-|Exporter    |Status   |
-|------------|---------|
-|Instana     |supported|
-|Logging     |supported|
-|Stackdriver |supported|
-|Zipkin      |supported|
+The exporters Instana, Logging, Stackdriver and Zipkin are supported.
 
 ### Stats
 Not supported yet.
 
 ### Instrumentations
-|Framework|Tracing  |Stats    |
-|---------|---------|---------|
-|Akka HTTP|supported|planned  |
-|Play     |planned  |planned  |
-|Http4s   |planned  |planned  |
+|Framework|Tracing    |Stats    |
+|---------|-----------|---------|
+|Akka HTTP|supported  |planned  |
+|Play     |planned    |planned  |
+|Http4s   |[in progress](https://github.com/Sebruck/opencensus-scala/issues/15)|planned |
 
 
 ## Quickstart
