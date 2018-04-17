@@ -63,8 +63,21 @@ are present it will start a new root span.
 When the request completes or fails the span is ended with a proper status which fits to the http response code.
 
 ### Client
+
+#### Request-Level client
 ```scala
 val response: Future[HttpResponse] = TracingClient.traceRequest(Http().singleRequest(_), parentSpan)(HttpRequest())
+```
+
+#### Host-Level client
+```scala
+  val flow: Flow[(HttpRequest, Context), (Try[HttpResponse], Context), NotUsed] = 
+      TracingClient.traceRequestForPool(Http().cachedHostConnectionPool[Context]("host"), parentSpan)
+```
+
+#### Connection-Level client
+```scala
+  val flow: Flow[HttpRequest, HttpResponse, NotUsed] = TracingClient.traceRequestForConnection(Http().outgoingConnection("host"), parentSpan)
 ```
 
 The `traceRequest` function enriches the given function with type `HttpRequest => Future[HttpResponse]` and wraps the
