@@ -6,7 +6,7 @@ import io.opencensus.trace.{Span, SpanContext}
 import scala.collection.immutable
 import scala.util.Try
 
-trait Propagation {
+private[http] trait Propagation {
 
   /**
     * Builds the http headers for the B3 format to propagate the span context

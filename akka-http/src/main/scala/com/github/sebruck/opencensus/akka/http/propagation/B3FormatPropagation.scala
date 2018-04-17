@@ -9,7 +9,7 @@ import io.opencensus.trace.{Span, SpanContext, Tracing => OpencensusTracing}
 import scala.collection.{immutable, mutable}
 import scala.util.Try
 
-trait B3FormatPropagation extends Propagation {
+private[http] trait B3FormatPropagation extends Propagation {
   private val b3Format = OpencensusTracing.getPropagationComponent.getB3Format
 
   /** @inheritdoc */
@@ -57,4 +57,4 @@ trait B3FormatPropagation extends Propagation {
     }
 }
 
-object B3FormatPropagation extends B3FormatPropagation
+private[http] object B3FormatPropagation extends B3FormatPropagation
