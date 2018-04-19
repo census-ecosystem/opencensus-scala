@@ -7,7 +7,10 @@ import cats.implicits._
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
-import com.github.sebruck.opencensus.http4s.TracingService.{SpanRequest, TracingService}
+import com.github.sebruck.opencensus.http4s.TracingService.{
+  SpanRequest,
+  TracingService
+}
 import com.github.sebruck.opencensus.http4s.propagation.B3FormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.{Header, HttpService, Request, Response}
@@ -16,6 +19,13 @@ trait TracingMiddleware {
   protected def tracing: Tracing
   protected def propagation[F[_]]: Propagation[Header, Request[F]]
 
+  /**
+    * Transforms a `TracingService` to a `HttpService` to be ready to run by a server.
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request completes or fails with a status code which is suitable
+    * to the http response code.
+    * @return HttpService[F]
+    */
   def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
     Kleisli { req =>
       val span = buildSpan(req)
@@ -30,6 +40,14 @@ trait TracingMiddleware {
           })
     }
 
+  /**
+    * Adds tracing to a `HttpService[F]`, does not pass the `span` to the service itself.
+    * Use `TracingMiddleware.apply` for that.
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request completes or fails with a status code which is suitable
+    * to the http response code.
+    * @return HttpService[F]
+    */
   def withoutSpan[F[_]: Effect](service: HttpService[F]): HttpService[F] =
     apply(service.local[SpanRequest[F]](spanReq => spanReq.req))
 
@@ -68,6 +86,15 @@ object TracingService {
   type TracingService[F[_]] =
     Kleisli[OptionT[F, ?], SpanRequest[F], Response[F]]
 
+  /**
+    * Creates a `TracingService` from a partial function over `SpanRequest[F] => F[Response[F]]`
+    * works similar to `org.http4s.HttpService`, but needs to extract the `span` from the
+    * `SpanRequest` e.g.:
+    * `TracingService[IO] {
+    *  case GET -> Root / "path" withSpan span => Ok()
+    * }`
+    * @return TracingService[F]
+    */
   def apply[F[_]](pf: PartialFunction[SpanRequest[F], F[Response[F]]])(
       implicit F: Applicative[F]): TracingService[F] =
     Kleisli(
@@ -75,6 +102,10 @@ object TracingService {
         pf.andThen(OptionT.liftF(_))
           .applyOrElse(req, (_: SpanRequest[F]) => OptionT.none))
 
+  /**
+    * Used to extract the `span` from the `SpanRequest` e.g.:
+    * `case GET -> Root / "path" withSpan span => Ok()`
+    */
   object withSpan {
     def unapply[F[_], A](sr: SpanRequest[F]): Option[(Request[F], Span)] =
       Some(sr.req -> sr.span)
