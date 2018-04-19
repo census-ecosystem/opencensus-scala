@@ -91,10 +91,10 @@ class TracingClientSpec extends ClientSpec {
             .single((request, ()))
             .via(enrichedFlow)
             .runWith(Sink.head)
-            .map({
+            .map {
               case (Success(response), _) => response
               case (Failure(error), _)    => throw error
-            })
+            }
       }
 
     (clientFunction, mockTracing)

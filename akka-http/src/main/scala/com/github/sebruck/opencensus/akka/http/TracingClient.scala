@@ -63,14 +63,14 @@ trait TracingClient {
     val doRequest = spanForwardingFlow(connection.via(errorToTry))
 
     val endSpan = Flow[(Try[HttpResponse], Span)]
-      .map({
+      .map {
         case (Success(response), span) =>
           endSpanSuccess(response, span)
           response
         case (Failure(e), span) =>
           endSpanError(span)
           throw e
-      })
+      }
 
     startSpan
       .viaMat(doRequest)(Keep.right)
@@ -90,24 +90,24 @@ trait TracingClient {
       parentSpan: Span): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
 
     val startSpan = Flow[(HttpRequest, T)]
-      .map({
+      .map {
         case (request, context) =>
           val (enrichedRequest, span) =
             startSpanAndEnrichRequest(request, parentSpan)
           ((enrichedRequest, context), span)
-      })
+      }
 
     val doRequest = spanForwardingFlow(connectionPool)
 
     val endSpan = Flow[((Try[HttpResponse], T), Span)]
-      .map({
+      .map {
         case ((Success(response), context), span) =>
           endSpanSuccess(response, span)
           (Success(response), context)
         case ((Failure(error), context), span) =>
           endSpanError(span)
           (Failure(error), context)
-      })
+      }
 
     startSpan
       .viaMat(doRequest)(Keep.right)
