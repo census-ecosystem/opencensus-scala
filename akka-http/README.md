@@ -71,8 +71,8 @@ val response: Future[HttpResponse] = TracingClient.traceRequest(Http().singleReq
 
 #### Host-Level client
 ```scala
-  val flow: Flow[(HttpRequest, Context), (Try[HttpResponse], Context), NotUsed] = 
-      TracingClient.traceRequestForPool(Http().cachedHostConnectionPool[Context]("host"), parentSpan)
+  val flow: Flow[(HttpRequest, T), (Try[HttpResponse], T), NotUsed] = 
+      TracingClient.traceRequestForPool(Http().cachedHostConnectionPool[T]("host"), parentSpan)
 ```
 
 #### Connection-Level client
