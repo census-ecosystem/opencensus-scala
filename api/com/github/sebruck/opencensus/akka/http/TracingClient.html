@@ -165,27 +165,7 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="com.github.sebruck.opencensus.akka">akka</a></dd></dl></div>
-    </li><li name="com.github.sebruck.opencensus.akka.http.propagation" visbl="pub" class="indented7 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="propagation"></a><a id="propagation:propagation"></a>
-      <span class="permalink">
-      <a href="../../../../../../com/github/sebruck/opencensus/akka/http/index.html#propagation" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="propagation/index.html"><span class="name">propagation</span></a>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="com.github.sebruck.opencensus.akka.http">http</a></dd></dl></div>
     </li><li class="current-entities indented6">
-                        <span class="separator"></span>
-                        <a class="trait" href="Propagation.html" title=""></a>
-                        <a href="Propagation.html" title="">Propagation</a>
-                      </li><li class="current-entities indented6">
                         <a class="object" href="TracingClient$.html" title=""></a>
                         <a class="trait" href="" title=""></a>
                         <a href="" title="">TracingClient</a>
@@ -310,7 +290,7 @@
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">propagation</span><span class="result">: <a href="Propagation.html" class="extype" name="com.github.sebruck.opencensus.akka.http.Propagation">Propagation</a></span>
+        <span class="name">propagation</span><span class="result">: <span class="extype" name="com.github.sebruck.opencensus.akka.http.Propagation">Propagation</span></span>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
@@ -635,6 +615,44 @@
       
       <p class="shortcomment cmt">Enriches the doRequest function by tracing and propagation of the SpanContext via http headers.</p><div class="fullcomment"><div class="comment cmt"><p>Enriches the doRequest function by tracing and propagation of the SpanContext via http headers.
 </p></div><dl class="paramcmts block"><dt class="param">doRequest</dt><dd class="cmt"><p>the function which executes the HttpRequest, usually Http.singleRequest</p></dd><dt class="param">parentSpan</dt><dd class="cmt"><p>the current span which will act as parent of the new span</p></dd><dt>returns</dt><dd class="cmt"><p>the enriched function</p></dd></dl></div>
+    </li><li name="com.github.sebruck.opencensus.akka.http.TracingClient#traceRequestForConnection" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="traceRequestForConnection[Mat](connection:akka.stream.scaladsl.Flow[akka.http.scaladsl.model.HttpRequest,akka.http.scaladsl.model.HttpResponse,Mat],parentSpan:io.opencensus.trace.Span):akka.stream.scaladsl.Flow[akka.http.scaladsl.model.HttpRequest,akka.http.scaladsl.model.HttpResponse,Mat]"></a><a id="traceRequestForConnection[Mat](Flow[HttpRequest,HttpResponse,Mat],Span):Flow[HttpRequest,HttpResponse,Mat]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/sebruck/opencensus/akka/http/TracingClient.html#traceRequestForConnection[Mat](connection:akka.stream.scaladsl.Flow[akka.http.scaladsl.model.HttpRequest,akka.http.scaladsl.model.HttpResponse,Mat],parentSpan:io.opencensus.trace.Span):akka.stream.scaladsl.Flow[akka.http.scaladsl.model.HttpRequest,akka.http.scaladsl.model.HttpResponse,Mat]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">traceRequestForConnection</span><span class="tparams">[<span name="Mat">Mat</span>]</span><span class="params">(<span name="connection">connection: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="akka.http.scaladsl.model.HttpRequest">HttpRequest</span>, <span class="extype" name="akka.http.scaladsl.model.HttpResponse">HttpResponse</span>, <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForConnection.Mat">Mat</span>]</span>, <span name="parentSpan">parentSpan: <span class="extype" name="io.opencensus.trace.Span">Span</span></span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[<span class="extype" name="akka.http.scaladsl.model.HttpRequest">HttpRequest</span>, <span class="extype" name="akka.http.scaladsl.model.HttpResponse">HttpResponse</span>, <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForConnection.Mat">Mat</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Enriches a <code>Flow[HttpRequest, HttpResponse, _]</code>, which is usually returned by <code>Http().outgoingConnection</code>,
+with tracing and propagation of the SpanContext via http headers.</p><div class="fullcomment"><div class="comment cmt"><p>Enriches a <code>Flow[HttpRequest, HttpResponse, _]</code>, which is usually returned by <code>Http().outgoingConnection</code>,
+with tracing and propagation of the SpanContext via http headers.
+</p></div><dl class="paramcmts block"><dt class="param">connection</dt><dd class="cmt"><p>the flow, usually this is the return value of <code>Http().outgoingConnection</code></p></dd><dt class="param">parentSpan</dt><dd class="cmt"><p>the current span which will act as parent of the new span</p></dd><dt>returns</dt><dd class="cmt"><p>the enriched flow</p></dd></dl></div>
+    </li><li name="com.github.sebruck.opencensus.akka.http.TracingClient#traceRequestForPool" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="traceRequestForPool[T,Mat](connectionPool:akka.stream.scaladsl.Flow[(akka.http.scaladsl.model.HttpRequest,T),(scala.util.Try[akka.http.scaladsl.model.HttpResponse],T),Mat],parentSpan:io.opencensus.trace.Span):akka.stream.scaladsl.Flow[(akka.http.scaladsl.model.HttpRequest,T),(scala.util.Try[akka.http.scaladsl.model.HttpResponse],T),Mat]"></a><a id="traceRequestForPool[T,Mat](Flow[(HttpRequest,T),(Try[HttpResponse],T),Mat],Span):Flow[(HttpRequest,T),(Try[HttpResponse],T),Mat]"></a>
+      <span class="permalink">
+      <a href="../../../../../../com/github/sebruck/opencensus/akka/http/TracingClient.html#traceRequestForPool[T,Mat](connectionPool:akka.stream.scaladsl.Flow[(akka.http.scaladsl.model.HttpRequest,T),(scala.util.Try[akka.http.scaladsl.model.HttpResponse],T),Mat],parentSpan:io.opencensus.trace.Span):akka.stream.scaladsl.Flow[(akka.http.scaladsl.model.HttpRequest,T),(scala.util.Try[akka.http.scaladsl.model.HttpResponse],T),Mat]" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">traceRequestForPool</span><span class="tparams">[<span name="T">T</span>, <span name="Mat">Mat</span>]</span><span class="params">(<span name="connectionPool">connectionPool: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[(<span class="extype" name="akka.http.scaladsl.model.HttpRequest">HttpRequest</span>, <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.T">T</span>), (<span class="extype" name="scala.util.Try">Try</span>[<span class="extype" name="akka.http.scaladsl.model.HttpResponse">HttpResponse</span>], <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.T">T</span>), <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.Mat">Mat</span>]</span>, <span name="parentSpan">parentSpan: <span class="extype" name="io.opencensus.trace.Span">Span</span></span>)</span><span class="result">: <span class="extype" name="akka.stream.scaladsl.Flow">Flow</span>[(<span class="extype" name="akka.http.scaladsl.model.HttpRequest">HttpRequest</span>, <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.T">T</span>), (<span class="extype" name="scala.util.Try">Try</span>[<span class="extype" name="akka.http.scaladsl.model.HttpResponse">HttpResponse</span>], <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.T">T</span>), <span class="extype" name="com.github.sebruck.opencensus.akka.http.TracingClient.traceRequestForPool.Mat">Mat</span>]</span>
+      </span>
+      
+      <p class="shortcomment cmt">Enriches a <code>Flow[(HttpRequest, T), (Try[HttpResponse], T), _]</code>, which is usually returned by
+<code>Http().cachedHostConnectionPool</code> with tracing and propagation of the SpanContext via http headers.</p><div class="fullcomment"><div class="comment cmt"><p>Enriches a <code>Flow[(HttpRequest, T), (Try[HttpResponse], T), _]</code>, which is usually returned by
+<code>Http().cachedHostConnectionPool</code> with tracing and propagation of the SpanContext via http headers.
+</p></div><dl class="paramcmts block"><dt class="param">connectionPool</dt><dd class="cmt"><p>the flow, usually this is the return value of  <code>Http().cachedHostConnectionPool</code></p></dd><dt class="param">parentSpan</dt><dd class="cmt"><p>the current span which will act as parent of the new span</p></dd><dt>returns</dt><dd class="cmt"><p>the enriched flow</p></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
