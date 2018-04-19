@@ -1,6 +1,6 @@
 package com.github.sebruck.opencensus.http.testSuite
 
-import com.github.sebruck.opencensus.http.Propagation
+import com.github.sebruck.opencensus.http.propagation.Propagation
 import io.opencensus.trace._
 
 import scala.collection.immutable

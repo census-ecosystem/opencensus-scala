@@ -6,12 +6,15 @@ import cats.effect.Effect
 import cats.implicits._
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.http.StatusTranslator
+import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.github.sebruck.opencensus.http4s.TracingService.{SpanRequest, TracingService}
+import com.github.sebruck.opencensus.http4s.propagation.B3FormatPropagation
 import io.opencensus.trace.{Span, Status}
-import org.http4s.{HttpService, Request, Response}
+import org.http4s.{Header, HttpService, Request, Response}
 
 trait TracingMiddleware {
   protected def tracing: Tracing
+  protected def propagation[F[_]]: Propagation[Header, Request[F]]
 
   def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
     Kleisli { req =>
@@ -31,7 +34,13 @@ trait TracingMiddleware {
     apply(service.local[SpanRequest[F]](spanReq => spanReq.req))
 
   private def buildSpan[F[_]](req: Request[F]): Span = {
-    val span = tracing.startSpan(req.uri.path.toString)
+    val name = req.uri.path.toString
+    val span = propagation[F]
+      .extractContext(req)
+      .fold(
+        _ => tracing.startSpan(name),
+        tracing.startSpanWithRemoteParent(name, _)
+      )
     HttpAttributes.setAttributesForRequest(span, req)
     span
   }
@@ -49,6 +58,8 @@ trait TracingMiddleware {
 
 object TracingMiddleware extends TracingMiddleware {
   override protected def tracing: Tracing = Tracing
+  override protected def propagation[F[_]]: Propagation[Header, Request[F]] =
+    new B3FormatPropagation[F] {}
 }
 
 object TracingService {

@@ -2,7 +2,7 @@ package com.github.sebruck.opencensus.akka.http.propagation
 
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
-import com.github.sebruck.opencensus.http.Propagation
+import com.github.sebruck.opencensus.http.propagation.Propagation
 import io.opencensus.trace.propagation.TextFormat.{Getter, Setter}
 import io.opencensus.trace.{Span, SpanContext}
 

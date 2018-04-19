@@ -1,4 +1,4 @@
-package com.github.sebruck.opencensus.http
+package com.github.sebruck.opencensus.http.propagation
 
 import io.opencensus.trace.propagation.TextFormat
 import io.opencensus.trace.{Span, SpanContext, Tracing}

@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.http.Propagation
+import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.Span
 

@@ -2,10 +2,11 @@ package com.github.sebruck.opencensus.http4s
 
 import cats.effect.IO
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.http.testSuite.MockTracing
+import com.github.sebruck.opencensus.http.propagation.Propagation
+import com.github.sebruck.opencensus.http.testSuite.{MockPropagation, MockTracing}
 import io.opencensus.trace.Status
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{HttpService, Method, Request, Uri}
+import org.http4s.{Header, HttpService, Method, Request, Uri}
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 
 import scala.util.Try
@@ -39,8 +40,10 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
+        .orNotFound(
+          Request[IO](Method.GET, Uri.unsafeFromString("/no/parent/context")))
         .unsafeRunSync()
+      mockTracing.startedSpans.headOption.value.name shouldBe "/no/parent/context"
       mockTracing.startedSpans.headOption.value.parentContext shouldBe empty
     }
 
@@ -83,7 +86,6 @@ trait ServiceRequirementsSpec
       mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INVALID_ARGUMENT
     }
 
-
     it should "set the http attributes" in {
       import io.opencensus.trace.AttributeValue._
       val (middleware, mockTracing) = middlewareWithMock()
@@ -103,8 +105,7 @@ trait ServiceRequirementsSpec
       attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
     }
 
-    // todo implement propagation
-    ignore should "start a span with the propagated context as parent when a span context was propagated" in {
+    it should "start a span with the propagated context as parent when a span context was propagated" in {
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
@@ -119,6 +120,14 @@ trait ServiceRequirementsSpec
     val mockTracing = new MockTracing
     val middleware = new TracingMiddleware {
       override protected def tracing: Tracing = mockTracing
+      override protected def propagation[F[_]]
+        : Propagation[Header, Request[F]] =
+        new MockPropagation[Header, Request[F]] {
+          override def rawHeader(key: String, value: String): Header =
+            Header(key, value)
+          override def path(request: Request[F]): String =
+            request.uri.path.toString
+        }
     }
     (middleware, mockTracing)
   }
