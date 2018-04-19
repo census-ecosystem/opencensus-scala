@@ -2,7 +2,7 @@ package com.github.sebruck.opencensus.akka.http.propagation
 
 import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.model.headers.RawHeader
-import com.github.sebruck.opencensus.akka.http.MockPropagation._
+import com.github.sebruck.opencensus.akka.http.AkkaMockPropagation._
 import io.opencensus.trace.BlankSpan
 import org.scalatest.{FlatSpec, Matchers, TryValues}
 

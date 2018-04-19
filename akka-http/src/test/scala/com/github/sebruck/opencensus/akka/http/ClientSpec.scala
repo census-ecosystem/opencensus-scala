@@ -2,6 +2,7 @@ package com.github.sebruck.opencensus.akka.http
 
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
+import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.{BlankSpan, Span, SpanContext, Status}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers, OptionValues}

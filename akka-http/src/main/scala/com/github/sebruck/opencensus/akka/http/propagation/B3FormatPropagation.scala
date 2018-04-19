@@ -1,16 +1,15 @@
 package com.github.sebruck.opencensus.akka.http.propagation
 
-import com.github.sebruck.opencensus.akka.http.Propagation
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
+import com.github.sebruck.opencensus.http.Propagation
 import io.opencensus.trace.propagation.TextFormat.{Getter, Setter}
-import io.opencensus.trace.{Span, SpanContext, Tracing => OpencensusTracing}
+import io.opencensus.trace.{Span, SpanContext}
 
 import scala.collection.{immutable, mutable}
 import scala.util.Try
 
-private[http] trait B3FormatPropagation extends Propagation {
-  private val b3Format = OpencensusTracing.getPropagationComponent.getB3Format
+  private[http] trait B3FormatPropagation extends Propagation[HttpHeader, HttpRequest] {
 
   /** @inheritdoc */
   override def headersWithTracingContext(

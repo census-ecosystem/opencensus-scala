@@ -1,12 +1,12 @@
 package com.github.sebruck.opencensus.akka.http
 
-import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
-import com.github.sebruck.opencensus.http.StatusTranslator
+import com.github.sebruck.opencensus.http.{Propagation, StatusTranslator}
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.{Span, Status}
 
@@ -15,7 +15,7 @@ import scala.util.control.NonFatal
 trait TracingDirective extends LazyLogging {
 
   protected def tracing: Tracing
-  protected def propagation: Propagation
+  protected def propagation: Propagation[HttpHeader, HttpRequest]
 
   /**
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
@@ -47,7 +47,8 @@ trait TracingDirective extends LazyLogging {
 
   private def recordSuccess(span: Span) = mapResponse { response =>
     HttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span, StatusTranslator.translate(response.status.intValue()))
+    tracing.endSpan(span,
+                    StatusTranslator.translate(response.status.intValue()))
     response
   }
 
@@ -60,6 +61,7 @@ trait TracingDirective extends LazyLogging {
 }
 
 object TracingDirective extends TracingDirective {
-  override protected def tracing: Tracing         = Tracing
-  override protected def propagation: Propagation = B3FormatPropagation
+  override protected def tracing: Tracing = Tracing
+  override protected def propagation: Propagation[HttpHeader, HttpRequest] =
+    B3FormatPropagation
 }

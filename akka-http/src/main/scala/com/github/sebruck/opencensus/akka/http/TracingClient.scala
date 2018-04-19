@@ -1,12 +1,12 @@
 package com.github.sebruck.opencensus.akka.http
 
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
 import akka.stream.scaladsl.{Flow, GraphDSL, Keep, UnzipWith, Zip}
 import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
-import com.github.sebruck.opencensus.http.StatusTranslator
+import com.github.sebruck.opencensus.http.{Propagation, StatusTranslator}
 import io.opencensus.trace.{Span, Status}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -15,7 +15,7 @@ import scala.util.{Failure, Success, Try}
 
 trait TracingClient {
   protected val tracing: Tracing
-  protected val propagation: Propagation
+  protected val propagation: Propagation[HttpHeader, HttpRequest]
   implicit protected val ec: ExecutionContext
 
   import tracing._
@@ -161,7 +161,8 @@ trait TracingClient {
 
 object TracingClient extends TracingClient {
   import scala.concurrent.ExecutionContext.Implicits.global
-  override protected val tracing: Tracing              = Tracing
-  override protected val propagation: Propagation      = B3FormatPropagation
+  override protected val tracing: Tracing = Tracing
+  override protected val propagation: Propagation[HttpHeader, HttpRequest] =
+    B3FormatPropagation
   override implicit protected val ec: ExecutionContext = global
 }

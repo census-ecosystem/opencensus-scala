@@ -1,12 +1,15 @@
-package com.github.sebruck.opencensus.akka.http
-import akka.http.scaladsl.model.headers.RawHeader
-import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
+package com.github.sebruck.opencensus.http.testSuite
+
+import com.github.sebruck.opencensus.http.Propagation
 import io.opencensus.trace._
 
 import scala.collection.immutable
 import scala.util.{Failure, Success, Try}
 
-object MockPropagation extends Propagation {
+trait MockPropagation[Header, Request] extends Propagation[Header, Request] {
+
+  def rawHeader(key: String, value: String): Header
+  def path(request: Request): String
 
   val requestPathWithoutParent = "/no/parent/context"
   val fakeTraceId              = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
@@ -17,12 +20,11 @@ object MockPropagation extends Propagation {
     TraceOptions.builder().setIsSampled(true).build()
   )
 
-  override def headersWithTracingContext(
-      span: Span): immutable.Seq[HttpHeader] =
-    List(RawHeader("X-Mock-Trace", "12345"))
+  override def headersWithTracingContext(span: Span): immutable.Seq[Header] =
+    List(rawHeader("X-Mock-Trace", "12345"))
 
-  override def extractContext(request: HttpRequest): Try[SpanContext] =
-    if (request.uri.path.toString == requestPathWithoutParent)
+  override def extractContext(request: Request): Try[SpanContext] =
+    if (path(request) == requestPathWithoutParent)
       Failure(new Exception("test error"))
     else
       Success(sampledSpanContext)

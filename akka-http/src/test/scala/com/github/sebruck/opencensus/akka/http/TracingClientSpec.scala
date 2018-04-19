@@ -1,10 +1,11 @@
 package com.github.sebruck.opencensus.akka.http
 
 import akka.actor.ActorSystem
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import com.github.sebruck.opencensus.Tracing
+import com.github.sebruck.opencensus.http.Propagation
 import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.Span
 
@@ -30,8 +31,9 @@ class TracingClientSpec extends ClientSpec {
   def clientWithMockFunction() = {
     val mockTracing = new MockTracing
     val client = new TracingClient {
-      override protected val tracing: Tracing              = mockTracing
-      override protected val propagation: Propagation      = MockPropagation
+      override protected val tracing: Tracing = mockTracing
+      override protected val propagation: Propagation[HttpHeader, HttpRequest] =
+        AkkaMockPropagation
       override implicit protected val ec: ExecutionContext = global
     }
 
@@ -42,8 +44,9 @@ class TracingClientSpec extends ClientSpec {
   def clientWithMockConnectionFlow() = {
     val mockTracing = new MockTracing
     val client = new TracingClient {
-      override protected val tracing: Tracing              = mockTracing
-      override protected val propagation: Propagation      = MockPropagation
+      override protected val tracing: Tracing = mockTracing
+      override protected val propagation: Propagation[HttpHeader, HttpRequest] =
+        AkkaMockPropagation
       override implicit protected val ec: ExecutionContext = global
     }
 
@@ -67,8 +70,9 @@ class TracingClientSpec extends ClientSpec {
   def clientWithMockHostFlow() = {
     val mockTracing = new MockTracing
     val client = new TracingClient {
-      override protected val tracing: Tracing              = mockTracing
-      override protected val propagation: Propagation      = MockPropagation
+      override protected val tracing: Tracing = mockTracing
+      override protected val propagation: Propagation[HttpHeader, HttpRequest] =
+        AkkaMockPropagation
       override implicit protected val ec: ExecutionContext = global
     }
 
