@@ -3,7 +3,10 @@ package com.github.sebruck.opencensus.http4s
 import cats.effect.IO
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.http.propagation.Propagation
-import com.github.sebruck.opencensus.http.testSuite.{MockPropagation, MockTracing}
+import com.github.sebruck.opencensus.http.testSuite.{
+  MockPropagation,
+  MockTracing
+}
 import io.opencensus.trace.Status
 import org.http4s.dsl.Http4sDsl
 import org.http4s.{Header, HttpService, Method, Request, Uri}
@@ -22,10 +25,10 @@ trait ServiceRequirementsSpec
   val request  = Request[IO](Method.GET, uri)
 
   def testService(
-      successServiceFromMiddleware: TracingMiddleware => HttpService[IO],
-      failingServiceFromMiddleware: TracingMiddleware => HttpService[IO],
-      badRequestServiceFromMiddleware: TracingMiddleware => HttpService[IO],
-      errorServiceFromMiddleware: TracingMiddleware => HttpService[IO]) = {
+      successServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
+      failingServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
+      badRequestServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
+      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO]) = {
 
     it should "start a span with the path of the request" in {
       val (middleware, mockTracing) = middlewareWithMock()
@@ -118,14 +121,13 @@ trait ServiceRequirementsSpec
 
   def middlewareWithMock() = {
     val mockTracing = new MockTracing
-    val middleware = new TracingMiddleware {
-      override protected def tracing: Tracing = mockTracing
-      override protected def propagation[F[_]]
-        : Propagation[Header, Request[F]] =
-        new MockPropagation[Header, Request[F]] {
+    val middleware = new TracingMiddleware[IO] {
+      override protected val tracing: Tracing = mockTracing
+      override protected val propagation: Propagation[Header, Request[IO]] =
+        new MockPropagation[Header, Request[IO]] {
           override def rawHeader(key: String, value: String): Header =
             Header(key, value)
-          override def path(request: Request[F]): String =
+          override def path(request: Request[IO]): String =
             request.uri.path.toString
         }
     }

@@ -15,9 +15,9 @@ import com.github.sebruck.opencensus.http4s.propagation.B3FormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.{Header, HttpService, Request, Response}
 
-trait TracingMiddleware {
+abstract class TracingMiddleware[F[_]: Effect] {
   protected def tracing: Tracing
-  protected def propagation[F[_]]: Propagation[Header, Request[F]]
+  protected def propagation: Propagation[Header, Request[F]]
 
   /**
     * Transforms a `TracingService` to a `HttpService` to be ready to run by a server.
@@ -26,7 +26,7 @@ trait TracingMiddleware {
     * to the http response code.
     * @return HttpService[F]
     */
-  def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
+  def fromTracingService(tracingService: TracingService[F]): HttpService[F] =
     Kleisli { req =>
       val span = buildSpan(req)
       OptionT(
@@ -48,12 +48,12 @@ trait TracingMiddleware {
     * to the http response code.
     * @return HttpService[F]
     */
-  def withoutSpan[F[_]: Effect](service: HttpService[F]): HttpService[F] =
-    apply(service.local[SpanRequest[F]](spanReq => spanReq.req))
+  def withoutSpan(service: HttpService[F]): HttpService[F] =
+    fromTracingService(service.local[SpanRequest[F]](spanReq => spanReq.req))
 
-  private def buildSpan[F[_]](req: Request[F]): Span = {
+  private def buildSpan(req: Request[F]): Span = {
     val name = req.uri.path.toString
-    val span = propagation[F]
+    val span = propagation
       .extractContext(req)
       .fold(
         _ => tracing.startSpan(name),
@@ -63,8 +63,7 @@ trait TracingMiddleware {
     span
   }
 
-  private def recordSuccess[F[_]](span: Span)(
-      response: Response[F]): Response[F] = {
+  private def recordSuccess(span: Span)(response: Response[F]): Response[F] = {
     HttpAttributes.setAttributesForResponse(span, response)
     tracing.endSpan(span, StatusTranslator.translate(response.status.code))
     response
@@ -74,10 +73,36 @@ trait TracingMiddleware {
     tracing.endSpan(span, Status.INTERNAL)
 }
 
-object TracingMiddleware extends TracingMiddleware {
-  override protected def tracing: Tracing = Tracing
-  override protected def propagation[F[_]]: Propagation[Header, Request[F]] =
-    new B3FormatPropagation[F] {}
+object TracingMiddleware {
+
+  /**
+    * Transforms a `TracingService` to a `HttpService` to be ready to run by a server.
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request completes or fails with a status code which is suitable
+    * to the http response code.
+    * @return HttpService[F]
+    */
+  def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
+    createMiddleware[F].fromTracingService(tracingService)
+
+  /**
+    * Adds tracing to a `HttpService[F]`, does not pass the `span` to the service itself.
+    * Use `TracingMiddleware.apply` for that.
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request completes or fails with a status code which is suitable
+    * to the http response code.
+    * @return HttpService[F]
+    */
+  def withoutSpan[F[_]: Effect](service: HttpService[F]): HttpService[F] =
+    createMiddleware[F].withoutSpan(service)
+
+  private def createMiddleware[F[_]: Effect] = {
+    new TracingMiddleware[F] {
+      override protected val tracing: Tracing = Tracing
+      override protected val propagation: Propagation[Header, Request[F]] =
+        new B3FormatPropagation[F] {}
+    }
+  }
 }
 
 object TracingService {
