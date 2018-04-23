@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
 import akka.stream.scaladsl.{Flow, GraphDSL, Keep, UnzipWith, Zip}
 import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
+import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
 import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
@@ -164,6 +164,6 @@ object TracingClient extends TracingClient {
   import scala.concurrent.ExecutionContext.Implicits.global
   override protected val tracing: Tracing = Tracing
   override protected val propagation: Propagation[HttpHeader, HttpRequest] =
-    B3FormatPropagation
+    AkkaB3FormatPropagation
   override implicit protected val ec: ExecutionContext = global
 }

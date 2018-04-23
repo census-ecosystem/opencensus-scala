@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest}
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.akka.http.propagation.B3FormatPropagation
+import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
 import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
@@ -64,5 +64,5 @@ trait TracingDirective extends LazyLogging {
 object TracingDirective extends TracingDirective {
   override protected def tracing: Tracing = Tracing
   override protected def propagation: Propagation[HttpHeader, HttpRequest] =
-    B3FormatPropagation
+    AkkaB3FormatPropagation
 }

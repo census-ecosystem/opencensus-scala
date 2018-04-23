@@ -6,7 +6,7 @@ import cats.implicits._
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
-import com.github.sebruck.opencensus.http4s.propagation.B3FormatPropagation
+import com.github.sebruck.opencensus.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.client.{Client, DisposableResponse}
 import org.http4s.{Header, Request}
@@ -68,6 +68,6 @@ object TracingClient {
   def apply[F[_]: Effect]: TracingClient[F] = new TracingClient[F] {
     override protected val tracing: Tracing = Tracing
     override protected val propagation: Propagation[Header, Request[F]] =
-      new B3FormatPropagation[F] {}
+      new Http4sFormatPropagation[F] {}
   }
 }

@@ -42,7 +42,8 @@ class TracingMiddlewareSpec
   it should "pass the span to the service" in {
     val (middleware, _) = middlewareWithMock()
 
-    val responseBody = middleware.fromTracingService(tracingService())
+    val responseBody = middleware
+      .fromTracingService(tracingService())
       .orNotFound(request)
       .flatMap(_.as[String])
       .unsafeRunSync()

@@ -11,7 +11,7 @@ import com.github.sebruck.opencensus.http4s.TracingService.{
   SpanRequest,
   TracingService
 }
-import com.github.sebruck.opencensus.http4s.propagation.B3FormatPropagation
+import com.github.sebruck.opencensus.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.{Header, HttpService, Request, Response}
 
@@ -100,7 +100,7 @@ object TracingMiddleware {
     new TracingMiddleware[F] {
       override protected val tracing: Tracing = Tracing
       override protected val propagation: Propagation[Header, Request[F]] =
-        new B3FormatPropagation[F] {}
+        new Http4sFormatPropagation[F] {}
     }
   }
 }
