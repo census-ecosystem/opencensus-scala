@@ -39,5 +39,7 @@ object Dependencies {
   ) ++ scalaTest
 
   lazy val http4sDependencies = Seq(
-    "org.http4s" %% "http4s-dsl" % Http4sVersion) ++ scalaTest
+    "org.http4s" %% "http4s-dsl"          % Http4sVersion,
+    "org.http4s" %% "http4s-client"       % Http4sVersion
+  ) ++ scalaTest
 }

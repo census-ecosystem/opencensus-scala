@@ -83,5 +83,30 @@ object TracingService extends Http4sDsl[IO] {
 
 ```
 
+### Client
+
+```scala
+  import cats.effect.IO
+  import org.http4s.client.Client
+  import com.github.sebruck.opencensus.http4s.implicits._
+
+  val client: Client[IO] = ???
+
+  // trace request response
+  val tracedClient: Client[IO] = client.traced
+  // trace starting from another parentSpan
+  val tracedClientWithParentSpan: Client[IO] = client.traced(parentSpan)
+
+  // tracedClient is just a regular `Client[IO]`, so all of http4s methods are available
+  val result: IO[String] =
+    tracedClient.expect[String]("http://example.com/test")
+```
+
+The `traced` function enriches the `Client[F]`,
+ it starts a new span, sets the HttpAttributes to the `Response[F]` and adds headers in the 
+ [B3 Format](https://github.com/openzipkin/b3-propagation#overall-process) to the `Request`.
+
+When the call completes or fails the span is ended with a proper status which fits to the http response code.
+
 ## Configuration
 Have a look at the [default configuration](src/main/resources/reference.conf)
