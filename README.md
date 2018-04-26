@@ -18,8 +18,8 @@ Not supported yet.
 |Framework|Tracing    |Stats    |
 |---------|-----------|---------|
 |Akka HTTP|supported  |planned  |
+|Http4s   |supported  |planned  |
 |Play     |planned    |planned  |
-|Http4s   |[in progress](https://github.com/Sebruck/opencensus-scala/issues/15)|planned |
 
 
 ## Quickstart
@@ -73,6 +73,11 @@ Learn more at the [documentation](core/README.md).
 Utilities to use opencensus in Akka HTTP applications. 
 
 Learn more at the [documentation](akka-http/README.md).
+
+### http4s 
+Utilities to use opencensus in [http4s](https://github.com/http4s/http4s) applications. 
+
+Learn more at the [documentation](http4s/README.md).
 
 ## Contributing
 Contributions are very welcome! As a starting point, have a look at the open issues. 
