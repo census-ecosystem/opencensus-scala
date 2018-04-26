@@ -70,7 +70,7 @@ Utilities to use opencensus in a scala idiomatic way.
 Learn more at the [documentation](core/README.md).
 
 ### Akka HTTP
-Utilities to use opencensus in Akka HTTP applications. 
+Utilities to use opencensus in [Akka HTTP](https://github.com/akka/akka-http) applications. 
 
 Learn more at the [documentation](akka-http/README.md).
 
