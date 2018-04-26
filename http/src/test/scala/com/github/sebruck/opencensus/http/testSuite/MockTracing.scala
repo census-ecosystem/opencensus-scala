@@ -1,4 +1,4 @@
-package com.github.sebruck.opencensus.akka.http
+package com.github.sebruck.opencensus.http.testSuite
 
 import java.util
 
@@ -7,6 +7,7 @@ import io.opencensus.trace._
 
 import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContext, Future}
+
 class MockTracing extends Tracing {
 
   type ParentSpanContext = Option[SpanContext]

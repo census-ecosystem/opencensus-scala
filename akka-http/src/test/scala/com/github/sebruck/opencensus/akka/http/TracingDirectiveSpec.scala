@@ -1,12 +1,14 @@
 package com.github.sebruck.opencensus.akka.http
 
-import akka.http.scaladsl.model.StatusCodes
+import akka.http.scaladsl.model.{HttpHeader, HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.sebruck.opencensus.Tracing
 import io.opencensus.trace.{AttributeValue, Status}
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
-import MockPropagation._
+import AkkaMockPropagation._
+import com.github.sebruck.opencensus.http.propagation.Propagation
+import com.github.sebruck.opencensus.http.testSuite.MockTracing
 
 class TracingDirectiveSpec
     extends FlatSpec
@@ -97,8 +99,9 @@ class TracingDirectiveSpec
   def directiveWithMock() = {
     val mockTracing = new MockTracing
     val directive = new TracingDirective {
-      override protected def tracing: Tracing         = mockTracing
-      override protected def propagation: Propagation = MockPropagation
+      override protected def tracing: Tracing = mockTracing
+      override protected def propagation: Propagation[HttpHeader, HttpRequest] =
+        AkkaMockPropagation
     }
 
     (directive, mockTracing)
