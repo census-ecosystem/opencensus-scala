@@ -21,7 +21,7 @@ lazy val root = (project in file("."))
     )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
-  .aggregate(core, akkaHttp, http4s)
+  .aggregate(core, akkaHttp, http4s, http)
 
 lazy val core = (project in file("core")).
   settings(
