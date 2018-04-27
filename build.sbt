@@ -18,6 +18,8 @@ lazy val root = (project in file("."))
       publishArtifact := false,
       siteSubdirName in ScalaUnidoc := "api",
       addMappingsToSiteDir(mappings in (ScalaUnidoc, packageDoc), siteSubdirName in ScalaUnidoc),
+      // This is needed for unidoc, otherwise it can not generate the scala doc
+      addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
     )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
