@@ -5,8 +5,8 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
-import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes
-import com.github.sebruck.opencensus.http.StatusTranslator
+import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes._
+import com.github.sebruck.opencensus.http.{HttpAttributes, StatusTranslator}
 import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.{Span, Status}

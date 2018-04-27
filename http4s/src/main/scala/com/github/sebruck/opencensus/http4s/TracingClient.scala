@@ -4,8 +4,12 @@ import cats.data.Kleisli
 import cats.effect.Effect
 import cats.implicits._
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
+import com.github.sebruck.opencensus.http.{
+  StatusTranslator,
+  HttpAttributes => BaseHttpAttributes
+}
+import com.github.sebruck.opencensus.http4s.HttpAttributes._
 import com.github.sebruck.opencensus.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.client.{Client, DisposableResponse}
@@ -46,7 +50,7 @@ abstract class TracingClient[F[_]: Effect] {
     val name = req.uri.path.toString
     val span = parentSpan.fold(tracing.startSpan(name))(span =>
       tracing.startSpanWithParent(name, span))
-    HttpAttributes.setAttributesForRequest(span, req)
+    BaseHttpAttributes.setAttributesForRequest(span, req)
     span
   }
 
@@ -56,7 +60,7 @@ abstract class TracingClient[F[_]: Effect] {
 
   private def recordSuccess(span: Span)(
       dr: DisposableResponse[F]): DisposableResponse[F] = {
-    HttpAttributes.setAttributesForResponse(span, dr.response)
+    BaseHttpAttributes.setAttributesForResponse(span, dr.response)
     tracing.endSpan(span, StatusTranslator.translate(dr.response.status.code))
     dr
   }

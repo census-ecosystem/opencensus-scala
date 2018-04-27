@@ -5,8 +5,12 @@ import cats.data.{Kleisli, OptionT}
 import cats.effect.Effect
 import cats.implicits._
 import com.github.sebruck.opencensus.Tracing
-import com.github.sebruck.opencensus.http.StatusTranslator
 import com.github.sebruck.opencensus.http.propagation.Propagation
+import com.github.sebruck.opencensus.http.{
+  StatusTranslator,
+  HttpAttributes => BaseHttpAttributes
+}
+import com.github.sebruck.opencensus.http4s.HttpAttributes._
 import com.github.sebruck.opencensus.http4s.TracingService.{
   SpanRequest,
   TracingService
@@ -59,12 +63,12 @@ abstract class TracingMiddleware[F[_]: Effect] {
         _ => tracing.startSpan(name),
         tracing.startSpanWithRemoteParent(name, _)
       )
-    HttpAttributes.setAttributesForRequest(span, req)
+    BaseHttpAttributes.setAttributesForRequest(span, req)
     span
   }
 
   private def recordSuccess(span: Span)(response: Response[F]): Response[F] = {
-    HttpAttributes.setAttributesForResponse(span, response)
+    BaseHttpAttributes.setAttributesForResponse(span, response)
     tracing.endSpan(span, StatusTranslator.translate(response.status.code))
     response
   }
