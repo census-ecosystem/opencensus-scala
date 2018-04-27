@@ -60,8 +60,10 @@ trait ClientSpec
     it should "end a span when the request fails" in {
       val (client, mockTracing) = clientWithMock()
 
-      client(_ => Future.failed(new Exception("Test Error")),
-             BlankSpan.INSTANCE)(HttpRequest(uri = "/test")).failed.futureValue
+      intercept[Exception] {
+        client(_ => Future.failed(new Exception("Test Error")),
+               BlankSpan.INSTANCE)(HttpRequest(uri = "/test")).futureValue
+      }
 
       mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
         Status.INTERNAL.getCanonicalCode)

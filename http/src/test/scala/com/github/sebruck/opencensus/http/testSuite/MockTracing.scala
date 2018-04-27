@@ -5,29 +5,31 @@ import java.util
 import com.github.sebruck.opencensus.Tracing
 import io.opencensus.trace._
 
-import scala.collection.mutable.ArrayBuffer
 import scala.concurrent.{ExecutionContext, Future}
 
 class MockTracing extends Tracing {
 
   type ParentSpanContext = Option[SpanContext]
-  val startedSpans: ArrayBuffer[MockSpan]     = ArrayBuffer[MockSpan]()
-  val endedSpansStatuses: ArrayBuffer[Status] = ArrayBuffer[Status]()
+  @volatile private var _startedSpans       = List.empty[MockSpan]
+  @volatile private var _endedSpansStatuses = List.empty[Status]
+
+  def startedSpans: List[MockSpan]     = _startedSpans
+  def endedSpansStatuses: List[Status] = _endedSpansStatuses
 
   override def startSpan(name: String): Span = {
     val span = new MockSpan(name, None)
-    startedSpans += span
+    _startedSpans = _startedSpans :+ span
     span
   }
 
   override def startSpanWithParent(name: String, parent: Span): Span = {
     val span = new MockSpan(name, Some(parent.getContext))
-    startedSpans += span
+    _startedSpans = _startedSpans :+ span
     span
   }
 
   override def endSpan(span: Span, status: Status): Unit = {
-    endedSpansStatuses += status
+    _endedSpansStatuses = _endedSpansStatuses :+ status
     ()
   }
 
@@ -42,7 +44,7 @@ class MockTracing extends Tracing {
   override def startSpanWithRemoteParent(name: String,
                                          parentContext: SpanContext): Span = {
     val span = new MockSpan(name, Some(parentContext))
-    startedSpans += span
+    _startedSpans = _startedSpans :+ span
     span
   }
 }
