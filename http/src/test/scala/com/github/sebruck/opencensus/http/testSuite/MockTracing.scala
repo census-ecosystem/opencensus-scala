@@ -13,8 +13,19 @@ class MockTracing extends Tracing {
   @volatile private var _startedSpans       = List.empty[MockSpan]
   @volatile private var _endedSpansStatuses = List.empty[Status]
 
-  def startedSpans: List[MockSpan]     = _startedSpans
-  def endedSpansStatuses: List[Status] = _endedSpansStatuses
+  def startedSpans: List[MockSpan] = {
+    // This sleep "fixes" flakyness of the tests. Since I couldn't find the
+    // underlying problem. Even synchronizing everything didn't help.
+    Thread.sleep(1)
+    _startedSpans
+  }
+
+  def endedSpansStatuses: List[Status] = {
+    // This sleep "fixes" flakyness of the tests. Since I couldn't find the
+    // underlying problem. Even synchronizing everything didn't help.
+    Thread.sleep(1)
+    _endedSpansStatuses
+  }
 
   override def startSpan(name: String): Span = {
     val span = new MockSpan(name, None)
