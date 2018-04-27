@@ -18,7 +18,8 @@ trait ClientSpec
   type Client = (HttpRequest => Future[HttpResponse],
                  Span) => HttpRequest => Future[HttpResponse]
 
-  def testClient(clientWithMock: () => (Client, MockTracing)) = {
+  def testClient(clientWithMock: () => (Client, MockTracing),
+                 withParent: Boolean) = {
 
     it should "enrich the HttpRequest with propagation headers" in {
       val (client, _) = clientWithMock()
@@ -44,7 +45,7 @@ trait ClientSpec
       )(request).futureValue
     }
 
-    it should "start and end a span with parent context when the request succeeds" in {
+    it should "start and end a span when the request succeeds" in {
       val (client, mockTracing) = clientWithMock()
 
       client(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
@@ -53,7 +54,12 @@ trait ClientSpec
       val startedSpan = mockTracing.startedSpans.headOption.value
 
       startedSpan.name shouldBe "/test"
-      startedSpan.parentContext.value shouldBe SpanContext.INVALID
+
+      if (withParent)
+        startedSpan.parentContext.value shouldBe SpanContext.INVALID
+      else
+        startedSpan.parentContext shouldBe None
+
       mockTracing.endedSpansStatuses should contain(Status.OK)
     }
 

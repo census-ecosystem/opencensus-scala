@@ -29,19 +29,17 @@ trait TracingClient {
     * @return the enriched function
     */
   def traceRequest(doRequest: HttpRequest => Future[HttpResponse],
-                   parentSpan: Span): HttpRequest => Future[HttpResponse] = {
-    request =>
-      val (enrichedRequest, span) =
-        startSpanAndEnrichRequest(request, parentSpan)
-      val result = doRequest(enrichedRequest)
+                   parentSpan: Span): HttpRequest => Future[HttpResponse] =
+    traceRequest(doRequest, Some(parentSpan))
 
-      result.onComplete {
-        case Success(response) => endSpanSuccess(response, span)
-        case Failure(_)        => endSpanError(span)
-      }
-
-      result
-  }
+  /**
+    * Enriches the doRequest function by tracing and propagation of the SpanContext via http headers.
+    *
+    * @param doRequest the function which executes the HttpRequest, usually Http.singleRequest
+    * @return the enriched function
+    */
+  def traceRequest(doRequest: HttpRequest => Future[HttpResponse])
+    : HttpRequest => Future[HttpResponse] = traceRequest(doRequest, None)
 
   /**
     * Enriches a `Flow[HttpRequest, HttpResponse, _]`, which is usually returned by `Http().outgoingConnection`,
@@ -53,7 +51,65 @@ trait TracingClient {
     */
   def traceRequestForConnection[Mat](
       connection: Flow[HttpRequest, HttpResponse, Mat],
-      parentSpan: Span): Flow[HttpRequest, HttpResponse, Mat] = {
+      parentSpan: Span): Flow[HttpRequest, HttpResponse, Mat] =
+    traceRequestForConnection(connection, Some(parentSpan))
+
+  /**
+    * Enriches a `Flow[HttpRequest, HttpResponse, _]`, which is usually returned by `Http().outgoingConnection`,
+    * with tracing and propagation of the SpanContext via http headers.
+    *
+    * @param connection the flow, usually this is the return value of `Http().outgoingConnection`
+    * @return the enriched flow
+    */
+  def traceRequestForConnection[Mat](
+      connection: Flow[HttpRequest, HttpResponse, Mat])
+    : Flow[HttpRequest, HttpResponse, Mat] =
+    traceRequestForConnection(connection, None)
+
+  /**
+    * Enriches a `Flow[(HttpRequest, T), (Try[HttpResponse], T), _]`, which is usually returned by
+    * `Http().cachedHostConnectionPool` with tracing and propagation of the SpanContext via http headers.
+    *
+    * @param connectionPool the flow, usually this is the return value of  `Http().cachedHostConnectionPool`
+    * @param parentSpan the current span which will act as parent of the new span
+    * @return the enriched flow
+    */
+  def traceRequestForPool[T, Mat](
+      connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat],
+      parentSpan: Span): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] =
+    traceRequestForPool(connectionPool, Some(parentSpan))
+
+  /**
+    * Enriches a `Flow[(HttpRequest, T), (Try[HttpResponse], T), _]`, which is usually returned by
+    * `Http().cachedHostConnectionPool` with tracing and propagation of the SpanContext via http headers.
+    *
+    * @param connectionPool the flow, usually this is the return value of  `Http().cachedHostConnectionPool`
+    * @return the enriched flow
+    */
+  def traceRequestForPool[T, Mat](
+      connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat]
+  ): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] =
+    traceRequestForPool(connectionPool, None)
+
+  private def traceRequest(
+      doRequest: HttpRequest => Future[HttpResponse],
+      parentSpan: Option[Span]): HttpRequest => Future[HttpResponse] =
+    request => {
+      val (enrichedRequest, span) =
+        startSpanAndEnrichRequest(request, parentSpan)
+      val result = doRequest(enrichedRequest)
+
+      result.onComplete {
+        case Success(response) => endSpanSuccess(response, span)
+        case Failure(_)        => endSpanError(span)
+      }
+
+      result
+    }
+
+  private def traceRequestForConnection[Mat](
+      connection: Flow[HttpRequest, HttpResponse, Mat],
+      parentSpan: Option[Span]): Flow[HttpRequest, HttpResponse, Mat] = {
 
     val startSpan = Flow[HttpRequest]
       .map(startSpanAndEnrichRequest(_, parentSpan))
@@ -79,17 +135,10 @@ trait TracingClient {
       .viaMat(endSpan)(Keep.left)
   }
 
-  /**
-    * Enriches a `Flow[(HttpRequest, T), (Try[HttpResponse], T), _]`, which is usually returned by
-    * `Http().cachedHostConnectionPool` with tracing and propagation of the SpanContext via http headers.
-    *
-    * @param connectionPool the flow, usually this is the return value of  `Http().cachedHostConnectionPool`
-    * @param parentSpan the current span which will act as parent of the new span
-    * @return the enriched flow
-    */
   def traceRequestForPool[T, Mat](
       connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat],
-      parentSpan: Span): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
+      parentSpan: Option[Span])
+    : Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
 
     val startSpan = Flow[(HttpRequest, T)]
       .map {
@@ -138,8 +187,10 @@ trait TracingClient {
 
   private def startSpanAndEnrichRequest(
       request: HttpRequest,
-      parentSpan: Span): (HttpRequest, Span) = {
-    val span = startSpanWithParent(request.uri.path.toString, parentSpan)
+      parentSpan: Option[Span]): (HttpRequest, Span) = {
+    val name = request.uri.path.toString
+    val span = parentSpan.fold(startSpan(name))(startSpanWithParent(name, _))
+
     HttpAttributes.setAttributesForRequest(span, request)
     val enrichedRequest = requestWithTraceContext(request, span)
 
