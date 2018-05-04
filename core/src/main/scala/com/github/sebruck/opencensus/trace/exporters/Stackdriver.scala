@@ -12,11 +12,10 @@ import scala.collection.JavaConverters._
 
 private[opencensus] object Stackdriver extends LazyLogging {
 
-  def init(config: StackdriverTraceExporterConfig): Unit =
-    if (config.enabled) {
-      log(config)
-      StackdriverTraceExporter.createAndRegister(buildConfig(config))
-    }
+  def init(config: StackdriverTraceExporterConfig): Unit = {
+    log(config)
+    StackdriverTraceExporter.createAndRegister(buildConfig(config))
+  }
 
   private def buildConfig(
       config: StackdriverTraceExporterConfig): StackdriverTraceConfiguration = {
