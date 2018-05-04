@@ -1,24 +1,35 @@
 package com.github.sebruck.opencensus.akka.http.trace
 
+import akka.http.scaladsl.model.headers.{`User-Agent`, Host}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
-import akka.http.scaladsl.model.headers.`User-Agent`
-import com.github.sebruck.opencensus.trace.AttributeValueOps._
-import io.opencensus.trace.Span
+import com.github.sebruck.opencensus.http.{RequestExtractor, ResponseExtractor}
 
-private[http] object HttpAttributes {
+object HttpAttributes {
 
-  def setAttributesForRequest(span: Span, req: HttpRequest): Unit = {
-    req
-      .header[`User-Agent`]
-      .map(_.value())
-      .foreach(span.putAttribute("http.user_agent", _))
+  implicit val requestExtractor: RequestExtractor[HttpRequest] =
+    new RequestExtractor[HttpRequest] {
+      override def host(req: HttpRequest): String = {
+        if (req.uri.isAbsolute)
+          req.uri.authority.host.address()
+        else
+          req
+            .header[Host]
+            .map(_.value())
+            // Having no Host header with a relative URL is invalid according to rfc2616,
+            // but Akka-HTTP still allows to create such HttpRequests.
+            .getOrElse("")
+      }
 
-    span.putAttribute("http.host", req.uri.authority.host.address())
-    span.putAttribute("http.method", req.method.value)
-    span.putAttribute("http.path", req.uri.path.toString())
-  }
+      override def method(req: HttpRequest): String = req.method.value
 
-  def setAttributesForResponse(span: Span, resp: HttpResponse): Unit = {
-    span.putAttribute("http.status_code", resp.status.intValue().toLong)
-  }
+      override def path(req: HttpRequest): String = req.uri.path.toString()
+
+      override def userAgent(req: HttpRequest): Option[String] =
+        req
+          .header[`User-Agent`]
+          .map(_.value())
+    }
+
+  implicit val responseExtractor: ResponseExtractor[HttpResponse] =
+    (res: HttpResponse) => res.status.intValue().toLong
 }
