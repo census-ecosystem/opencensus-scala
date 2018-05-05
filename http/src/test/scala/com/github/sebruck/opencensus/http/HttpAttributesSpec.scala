@@ -4,55 +4,64 @@ import com.github.sebruck.opencensus.http.testSuite.MockSpan
 import io.opencensus.trace.AttributeValue._
 import org.scalatest.{FlatSpec, Matchers}
 
-class HttpAttributesSpec extends FlatSpec with Matchers {
+trait HttpAttributesSpec extends FlatSpec with Matchers {
 
-  behavior of "setAttributesForRequest"
+  def httpAttributes[Request: RequestExtractor, Response: ResponseExtractor](
+      request: BuildRequest => Request,
+      response: Int => Response): Unit = {
 
-  it should "set the attributes" in {
-    val span = new MockSpan("span", None)
-    val request = MockRequest(
-      host = "host",
-      method = "method",
-      path = "path",
-      userAgent = "userAgent"
-    )
-
+    val span     = new MockSpan("span", None)
     val strValue = stringAttributeValue _
 
-    HttpAttributes.setAttributesForRequest(span, request)
+    val (host, path, userAgent) =
+      ("example.com", "/this/is/the/path", "agent")
 
-    span.attributes("http.host") shouldBe strValue("host")
-    span.attributes("http.method") shouldBe strValue("method")
-    span.attributes("http.path") shouldBe strValue("path")
-    span.attributes("http.user_agent") shouldBe strValue("userAgent")
-  }
+    HttpAttributes.setAttributesForRequest(
+      span,
+      request(
+        BuildRequest("http://" + host + ":8181",
+                     path + "?this&not",
+                     userAgent,
+                     None)))
 
-  behavior of "setAttributesForResponse"
+    behavior of "setAttributesForRequest"
 
-  it should "set the attributes" in {
-    val span     = new MockSpan("span", None)
-    val response = MockResponse(123)
-
-    HttpAttributes.setAttributesForResponse(span, response)
-    span.attributes("http.status_code") shouldBe longAttributeValue(123L)
-  }
-
-  case class MockRequest(host: String,
-                         method: String,
-                         path: String,
-                         userAgent: String)
-
-  case class MockResponse(status: Int)
-
-  implicit val requestExtractor: RequestExtractor[MockRequest] =
-    new RequestExtractor[MockRequest] {
-      override def method(req: MockRequest): String = req.method
-      override def userAgent(req: MockRequest): Option[String] =
-        Some(req.userAgent)
-      override def path(req: MockRequest): String = req.path
-      override def host(req: MockRequest): String = req.host
+    it should "set the method" in {
+      span.attributes("http.method") shouldBe strValue("GET")
     }
 
-  implicit val responseExtractor: ResponseExtractor[MockResponse] =
-    (res: MockResponse) => res.status.toLong
+    it should "set the path" in {
+      span.attributes("http.path") shouldBe strValue(path)
+    }
+
+    it should "set the user_agent" in {
+      span.attributes("http.user_agent") shouldBe strValue(userAgent)
+    }
+
+    it should "set the host from the absolute uri" in {
+      span.attributes("http.host") shouldBe strValue(host)
+    }
+
+    it should "set the host from the host header if uri is relative" in {
+      val span = new MockSpan("span", None)
+      HttpAttributes.setAttributesForRequest(
+        span,
+        request(BuildRequest("", path, userAgent, Some(host))))
+      span.attributes("http.host") shouldBe strValue(host)
+    }
+
+    behavior of "setAttributesForResponse"
+
+    it should "set the status code" in {
+      val span = new MockSpan("span", None)
+      HttpAttributes.setAttributesForResponse(span, response(203))
+      span
+        .attributes("http.status_code") shouldBe longAttributeValue(203L)
+    }
+  }
+
+  case class BuildRequest(host: String,
+                          path: String,
+                          userAgent: String,
+                          hostHeader: Option[String])
 }
