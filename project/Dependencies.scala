@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.13.1"
+  val OpencensusVersion   = "0.13.2"
   val ScalaTestVersion    = "3.0.5"
   val PureConfigVersion   = "0.9.1"
   val ScalaLoggingVersion = "3.9.0"
@@ -39,7 +39,7 @@ object Dependencies {
   ) ++ scalaTest
 
   lazy val http4sDependencies = Seq(
-    "org.http4s" %% "http4s-dsl"          % Http4sVersion,
-    "org.http4s" %% "http4s-client"       % Http4sVersion
+    "org.http4s" %% "http4s-dsl"    % Http4sVersion,
+    "org.http4s" %% "http4s-client" % Http4sVersion
   ) ++ scalaTest
 }
