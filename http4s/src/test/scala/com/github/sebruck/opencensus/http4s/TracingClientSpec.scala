@@ -41,7 +41,7 @@ class TracingClientSpec
 
     clientTracing.trace(expectingClient()).expect[String](path).unsafeRunSync()
     mockTracing.startedSpans.headOption.value.name shouldBe path
-    mockTracing.endedSpansStatuses.headOption.value shouldBe CensusStatus.OK
+    mockTracing.spanStatuses.headOption.value shouldBe CensusStatus.OK
   }
 
   it should "Use the parent span if existing" in {
@@ -99,7 +99,7 @@ class TracingClientSpec
         .expect[String](path)
         .unsafeRunSync())
 
-    mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
+    mockTracing.spanStatuses.map(_.getCanonicalCode) should contain(
       CensusStatus.INTERNAL.getCanonicalCode)
   }
 

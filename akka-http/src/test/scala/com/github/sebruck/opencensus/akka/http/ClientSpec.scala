@@ -60,7 +60,7 @@ trait ClientSpec
       else
         startedSpan.parentContext shouldBe None
 
-      mockTracing.endedSpansStatuses should contain(Status.OK)
+      mockTracing.spanStatuses should contain(Status.OK)
     }
 
     it should "end a span when the request fails" in {
@@ -71,7 +71,7 @@ trait ClientSpec
                BlankSpan.INSTANCE)(HttpRequest(uri = "/test")).futureValue
       }
 
-      mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
+      mockTracing.spanStatuses.map(_.getCanonicalCode) should contain(
         Status.INTERNAL.getCanonicalCode)
     }
 
