@@ -28,19 +28,19 @@ Add the following dependencies to your sbt project.
 
 ```scala
 // If you want to use only the core module
-"com.github.sebruck" %% "opencensus-scala-core" % "0.4.0" 
+"com.github.sebruck" %% "opencensus-scala-core" % "0.4.1" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.12.3"
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.13.2"
 
 // If you want to use opencensus-scala inside an Akka HTTP project 
-"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.4.0" 
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.4.1" 
 
 // If you want to use opencensus-scala inside a http4s project 
-"com.github.sebruck" %% "opencensus-scala-http4s" % "0.4.0" 
+"com.github.sebruck" %% "opencensus-scala-http4s" % "0.4.1" 
 ```
 
 ### Configuration
