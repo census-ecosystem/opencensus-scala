@@ -76,12 +76,6 @@ abstract class TracingMiddleware[F[_]: Effect] {
     span
   }
 
-  private def recordSuccess(span: Span)(response: Response[F]): Response[F] = {
-    BaseHttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span, StatusTranslator.translate(response.status.code))
-    response
-  }
-
   private def recordException(span: Span): Unit =
     tracing.endSpan(span, Status.INTERNAL)
 }
