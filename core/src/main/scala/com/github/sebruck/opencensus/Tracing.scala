@@ -41,6 +41,16 @@ trait Tracing {
   def startSpanWithRemoteParent(name: String, parentContext: SpanContext): Span
 
   /**
+    * Sets the status of the span
+    */
+  def setStatus(span: Span, status: Status): Unit
+
+  /**
+    * Ends the span
+    */
+  def endSpan(span: Span): Unit
+
+  /**
     * Ends the span with the given status
     */
   def endSpan(span: Span, status: Status): Unit
@@ -95,6 +105,14 @@ private[opencensus] trait TracingImpl extends Tracing {
   override def startSpanWithRemoteParent(name: String,
                                          parentContext: SpanContext): Span =
     buildSpan(tracer.spanBuilderWithRemoteParent(name, parentContext))
+
+  /** @inheritdoc */
+  def setStatus(span: Span, status: Status): Unit =
+    span.setStatus(status)
+
+  /** @inheritdoc */
+  def endSpan(span: Span): Unit =
+    span.end()
 
   /** @inheritdoc */
   override def endSpan(span: Span, status: Status): Unit =

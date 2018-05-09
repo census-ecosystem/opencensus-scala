@@ -56,7 +56,7 @@ trait ServiceRequirementsSpec
       successServiceFromMiddleware(middleware)
         .orNotFound(request)
         .unsafeRunSync()
-      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.OK
+      mockTracing.spanStatuses.headOption.value shouldBe Status.OK
     }
 
     it should "end a span with status INTERNAL when the route fails" in {
@@ -66,7 +66,7 @@ trait ServiceRequirementsSpec
           .orNotFound(request)
           .unsafeRunSync())
 
-      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INTERNAL
+      mockTracing.spanStatuses.headOption.value shouldBe Status.INTERNAL
     }
 
     it should "end a span with status INTERNAL_ERROR when the route completes with an errornous status code" in {
@@ -76,7 +76,7 @@ trait ServiceRequirementsSpec
         .orNotFound(request)
         .unsafeRunSync()
 
-      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INTERNAL
+      mockTracing.spanStatuses.headOption.value shouldBe Status.INTERNAL
     }
 
     it should "end a span with status INVALID_ARGUMENT when the route completes with a BadRequest" in {
@@ -86,7 +86,7 @@ trait ServiceRequirementsSpec
         .orNotFound(request)
         .unsafeRunSync()
 
-      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INVALID_ARGUMENT
+      mockTracing.spanStatuses.headOption.value shouldBe Status.INVALID_ARGUMENT
     }
 
     it should "set the http attributes" in {

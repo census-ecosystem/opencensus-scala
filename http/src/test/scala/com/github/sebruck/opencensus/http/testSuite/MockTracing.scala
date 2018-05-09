@@ -10,8 +10,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class MockTracing extends Tracing {
 
   type ParentSpanContext = Option[SpanContext]
-  @volatile private var _startedSpans       = List.empty[MockSpan]
-  @volatile private var _endedSpansStatuses = List.empty[Status]
+  @volatile private var _startedSpans = List.empty[MockSpan]
+  @volatile private var _endedSpans   = Set.empty[Span]
+  @volatile private var _spanStatuses = List.empty[Status]
 
   def startedSpans: List[MockSpan] = {
     // This sleep "fixes" flakyness of the tests. Since I couldn't find the
@@ -20,11 +21,18 @@ class MockTracing extends Tracing {
     _startedSpans
   }
 
-  def endedSpansStatuses: List[Status] = {
+  def endedSpans: Set[Span] = {
     // This sleep "fixes" flakyness of the tests. Since I couldn't find the
     // underlying problem. Even synchronizing everything didn't help.
     Thread.sleep(1)
-    _endedSpansStatuses
+    _endedSpans
+  }
+
+  def spanStatuses: List[Status] = {
+    // This sleep "fixes" flakyness of the tests. Since I couldn't find the
+    // underlying problem. Even synchronizing everything didn't help.
+    Thread.sleep(1)
+    _spanStatuses
   }
 
   override def startSpan(name: String): Span = {
@@ -39,8 +47,17 @@ class MockTracing extends Tracing {
     span
   }
 
+  override def setStatus(span: Span, status: Status): Unit = {
+    _spanStatuses = _spanStatuses :+ status
+  }
+
+  override def endSpan(span: Span): Unit = {
+    _endedSpans = _endedSpans + span
+  }
+
   override def endSpan(span: Span, status: Status): Unit = {
-    _endedSpansStatuses = _endedSpansStatuses :+ status
+    _spanStatuses = _spanStatuses :+ status
+    _endedSpans = _endedSpans + span
     ()
   }
 

@@ -35,7 +35,16 @@ abstract class TracingMiddleware[F[_]: Effect] {
       val span = buildSpan(req)
       OptionT(
         tracingService(SpanRequest(span, req))
-          .map(recordSuccess(span))
+          .map { response =>
+            BaseHttpAttributes.setAttributesForResponse(span, response)
+            tracing.setStatus(span,
+                              StatusTranslator.translate(response.status.code))
+
+            response.copy(
+              body =
+                response.body.onFinalize(Effect[F].delay(tracing.endSpan(span)))
+            )
+          }
           .value
           .adaptError {
             case e =>

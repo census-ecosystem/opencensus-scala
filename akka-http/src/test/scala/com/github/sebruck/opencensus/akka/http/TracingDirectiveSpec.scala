@@ -56,7 +56,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.OK)
+      mockTracing.spanStatuses should contain(Status.OK)
     }
   }
 
@@ -65,7 +65,7 @@ class TracingDirectiveSpec
 
     Get(path) ~> directive.traceRequest(_ =>
       Directives.complete(StatusCodes.InternalServerError)) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+      mockTracing.spanStatuses should contain(Status.INTERNAL)
     }
   }
 
@@ -74,7 +74,7 @@ class TracingDirectiveSpec
 
     Get(path) ~> directive.traceRequest(_ =>
       throw new Exception("test exception")) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+      mockTracing.spanStatuses should contain(Status.INTERNAL)
     }
   }
 
