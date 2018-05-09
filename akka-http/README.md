@@ -7,13 +7,13 @@ The API documentation can be found [here](https://sebruck.github.io/opencensus-s
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.4.0" 
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.4.1" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.12.3"
-"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.12.3"
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.13.2"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.13.2"
 ```
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
