@@ -2,12 +2,13 @@ package com.github.sebruck.opencensus.akka.http
 
 import akka.http.scaladsl.model.headers.RawHeader
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse, StatusCodes}
+import akka.stream.Materializer
 import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.{BlankSpan, Span, SpanContext, Status}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 trait ClientSpec
     extends FlatSpec
@@ -19,7 +20,8 @@ trait ClientSpec
                  Span) => HttpRequest => Future[HttpResponse]
 
   def testClient(clientWithMock: () => (Client, MockTracing),
-                 withParent: Boolean) = {
+                 withParent: Boolean)(implicit mat: Materializer,
+                                      ec: ExecutionContext): Unit = {
 
     it should "enrich the HttpRequest with propagation headers" in {
       val (client, _) = clientWithMock()
@@ -49,7 +51,9 @@ trait ClientSpec
       val (client, mockTracing) = clientWithMock()
 
       client(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
-        HttpRequest(uri = "/test")).futureValue
+        HttpRequest(uri = "/test"))
+        .flatMap(_.discardEntityBytes().future())
+        .futureValue
 
       val startedSpan = mockTracing.startedSpans.headOption.value
 

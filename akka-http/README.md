@@ -64,6 +64,12 @@ When the request completes or fails the span is ended with a proper status which
 
 ### Client
 
+#### Warning - Drain the response entity
+As stated in the akka [docs](https://doc.akka.io/docs/akka-http/current/implications-of-streaming-http-entity.html#implications-of-the-streaming-nature-of-request-response-entities)
+>Consuming (or discarding) the Entity of a request is mandatory!
+
+Otherwise a `Span` might not be closed.
+
 #### Request-Level client
 ```scala
 val response: Future[HttpResponse] = TracingClient.traceRequest(Http().singleRequest(_), parentSpan)(HttpRequest())
