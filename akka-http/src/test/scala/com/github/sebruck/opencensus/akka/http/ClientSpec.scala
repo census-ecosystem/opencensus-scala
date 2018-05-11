@@ -79,6 +79,17 @@ trait ClientSpec
         Status.INTERNAL.getCanonicalCode)
     }
 
+    it should "add an annotation for receiving the response" in {
+      val (client, mockTracing) = clientWithMock()
+
+      client(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
+        HttpRequest(uri = "/test")).futureValue
+
+      val startedSpan = mockTracing.startedSpans.headOption.value
+
+      startedSpan.annotaions should contain("Http Response Received")
+    }
+
     it should "return the http response in case of success" in {
       val (client, _) = clientWithMock()
 
