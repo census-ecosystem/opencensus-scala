@@ -65,6 +65,7 @@ class MockSpan(val name: String, val parentContext: Option[SpanContext])
   import scala.collection.JavaConverters._
 
   @volatile var attributes = Map[String, AttributeValue]()
+  @volatile var annotaions = List.empty[String]
 
   override def putAttributes(attr: util.Map[String, AttributeValue]): Unit = {
     attributes = attributes ++ attr.asScala
@@ -73,7 +74,8 @@ class MockSpan(val name: String, val parentContext: Option[SpanContext])
 
   override def addAnnotation(
       description: String,
-      attributes: util.Map[String, AttributeValue]): Unit  = ???
+      attributes: util.Map[String, AttributeValue]): Unit =
+    annotaions = description :: annotaions
   override def addAnnotation(annotation: Annotation): Unit = ???
   override def end(options: EndSpanOptions): Unit          = ()
   override def addLink(link: Link): Unit                   = ???

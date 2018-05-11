@@ -203,6 +203,7 @@ trait TracingClient {
   private def endSpanAfterEntityDrained(response: HttpResponse,
                                         span: Span): HttpResponse = {
     HttpAttributes.setAttributesForResponse(span, response)
+    span.addAnnotation("Http Response Received")
 
     // todo use new setStatus method here when merged
     response.copy(
