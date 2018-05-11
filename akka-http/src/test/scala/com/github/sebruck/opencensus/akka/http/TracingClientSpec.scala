@@ -8,13 +8,13 @@ import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.github.sebruck.opencensus.http.testSuite.MockTracing
 import io.opencensus.trace.Span
+import org.scalatest.BeforeAndAfterAll
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.control.NonFatal
 import scala.util.{Failure, Success, Try}
 
-class TracingClientSpec extends ClientSpec {
+class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
 
   implicit val system = ActorSystem()
   implicit val mat    = ActorMaterializer()
@@ -49,7 +49,7 @@ class TracingClientSpec extends ClientSpec {
       override protected val tracing: Tracing = mockTracing
       override protected val propagation: Propagation[HttpHeader, HttpRequest] =
         AkkaMockPropagation
-      override implicit protected val ec: ExecutionContext = global
+      override implicit protected val ec: ExecutionContext = executionContext
     }
 
     def fun =
@@ -67,7 +67,7 @@ class TracingClientSpec extends ClientSpec {
       override protected val tracing: Tracing = mockTracing
       override protected val propagation: Propagation[HttpHeader, HttpRequest] =
         AkkaMockPropagation
-      override implicit protected val ec: ExecutionContext = global
+      override implicit protected val ec: ExecutionContext = executionContext
     }
 
     val clientFunction =
@@ -97,7 +97,7 @@ class TracingClientSpec extends ClientSpec {
       override protected val tracing: Tracing = mockTracing
       override protected val propagation: Propagation[HttpHeader, HttpRequest] =
         AkkaMockPropagation
-      override implicit protected val ec: ExecutionContext = global
+      override implicit protected val ec: ExecutionContext = executionContext
     }
 
     val clientFunction =
@@ -131,5 +131,10 @@ class TracingClientSpec extends ClientSpec {
       }
 
     (clientFunction, mockTracing)
+  }
+
+  override protected def afterAll(): Unit = {
+    system.terminate()
+    super.afterAll()
   }
 }
