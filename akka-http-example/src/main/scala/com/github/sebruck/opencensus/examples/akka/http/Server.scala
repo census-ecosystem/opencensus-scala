@@ -10,8 +10,6 @@ import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.AttributeValue
 import org.slf4j.bridge.SLF4JBridgeHandler
 
-import scala.concurrent.Promise
-import scala.concurrent.duration._
 import scala.util.{Failure, Success}
 
 object Server extends App with LazyLogging {
@@ -23,17 +21,11 @@ object Server extends App with LazyLogging {
   implicit val mat    = ActorMaterializer()
   import system.dispatcher
 
-  def succeedIn(duration: FiniteDuration) = {
-    val p = Promise[String]
-    system.scheduler.scheduleOnce(duration)(p.success("Hello opencensus"))
-    p.future
-  }
-
   val routes: Route = traceRequest { span =>
     complete {
       val attrValue = AttributeValue.stringAttributeValue("test")
       span.putAttribute("my-attribute", attrValue)
-      succeedIn(2.seconds)
+      "Hello opencensus"
     }
   }
 
