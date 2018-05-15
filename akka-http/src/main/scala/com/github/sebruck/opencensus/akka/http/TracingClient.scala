@@ -5,9 +5,10 @@ import akka.stream.scaladsl.{Flow, GraphDSL, Keep, UnzipWith, Zip}
 import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
-import com.github.sebruck.opencensus.http.{HttpAttributes, StatusTranslator}
-import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes._
+import com.github.sebruck.opencensus.akka.http.utils.EndSpanResponse
+import com.github.sebruck.opencensus.http.HttpAttributes
+import com.github.sebruck.opencensus.http.propagation.Propagation
 import io.opencensus.trace.{Span, Status}
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -97,14 +98,12 @@ trait TracingClient {
     request => {
       val (enrichedRequest, span) =
         startSpanAndEnrichRequest(request, parentSpan)
-      val result = doRequest(enrichedRequest)
 
-      result.onComplete {
-        case Success(response) => endSpanSuccess(response, span)
-        case Failure(_)        => endSpanError(span)
-      }
-
-      result
+      doRequest(enrichedRequest)
+        .transform(EndSpanResponse.forClient(tracing, _, span), err => {
+          endSpanError(span)
+          err
+        })
     }
 
   private def traceRequestForConnection[Mat](
@@ -123,8 +122,7 @@ trait TracingClient {
     val endSpan = Flow[(Try[HttpResponse], Span)]
       .map {
         case (Success(response), span) =>
-          endSpanSuccess(response, span)
-          response
+          EndSpanResponse.forClient(tracing, response, span)
         case (Failure(e), span) =>
           endSpanError(span)
           throw e
@@ -153,8 +151,8 @@ trait TracingClient {
     val endSpan = Flow[((Try[HttpResponse], T), Span)]
       .map {
         case ((Success(response), context), span) =>
-          endSpanSuccess(response, span)
-          (Success(response), context)
+          (Success(EndSpanResponse.forClient(tracing, response, span)), context)
+
         case ((Failure(error), context), span) =>
           endSpanError(span)
           (Failure(error), context)
@@ -195,11 +193,6 @@ trait TracingClient {
     val enrichedRequest = requestWithTraceContext(request, span)
 
     (enrichedRequest, span)
-  }
-
-  private def endSpanSuccess(response: HttpResponse, span: Span): Unit = {
-    HttpAttributes.setAttributesForResponse(span, response)
-    endSpan(span, StatusTranslator.translate(response.status.intValue()))
   }
 
   private def endSpanError(span: Span): Unit = endSpan(span, Status.INTERNAL)
