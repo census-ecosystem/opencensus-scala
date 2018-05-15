@@ -69,14 +69,15 @@ trait ServiceRequirementsSpec
       mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INTERNAL
     }
 
-    it should "end a span with status INTERNAL_ERROR when the route completes with an errornous status code" in {
+    it should "end a span with status UNKNOWN when the route completes with an errornous status code" in {
       val (middleware, mockTracing) = middlewareWithMock()
 
       errorServiceFromMiddleware(middleware)
         .orNotFound(request)
         .unsafeRunSync()
+          .status
 
-      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INTERNAL
+      mockTracing.endedSpansStatuses.headOption.value shouldBe Status.UNKNOWN
     }
 
     it should "end a span with status INVALID_ARGUMENT when the route completes with a BadRequest" in {
