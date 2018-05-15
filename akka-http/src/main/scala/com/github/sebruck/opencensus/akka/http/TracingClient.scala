@@ -6,7 +6,7 @@ import akka.stream.{FlowShape, OverflowStrategy}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes._
-import com.github.sebruck.opencensus.akka.http.utils.EndSpanForResponse
+import com.github.sebruck.opencensus.akka.http.utils.EndSpanResponse
 import com.github.sebruck.opencensus.http.HttpAttributes
 import com.github.sebruck.opencensus.http.propagation.Propagation
 import io.opencensus.trace.{Span, Status}
@@ -100,7 +100,7 @@ trait TracingClient {
         startSpanAndEnrichRequest(request, parentSpan)
 
       doRequest(enrichedRequest)
-        .transform(EndSpanForResponse(tracing, _, span), err => {
+        .transform(EndSpanResponse.forClient(tracing, _, span), err => {
           endSpanError(span)
           err
         })
@@ -122,7 +122,7 @@ trait TracingClient {
     val endSpan = Flow[(Try[HttpResponse], Span)]
       .map {
         case (Success(response), span) =>
-          EndSpanForResponse(tracing, response, span)
+          EndSpanResponse.forClient(tracing, response, span)
         case (Failure(e), span) =>
           endSpanError(span)
           throw e
@@ -151,7 +151,7 @@ trait TracingClient {
     val endSpan = Flow[((Try[HttpResponse], T), Span)]
       .map {
         case ((Success(response), context), span) =>
-          (Success(EndSpanForResponse(tracing, response, span)), context)
+          (Success(EndSpanResponse.forClient(tracing, response, span)), context)
 
         case ((Failure(error), context), span) =>
           endSpanError(span)
