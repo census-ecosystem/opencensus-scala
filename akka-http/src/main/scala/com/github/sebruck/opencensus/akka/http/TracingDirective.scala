@@ -6,7 +6,8 @@ import akka.http.scaladsl.server.{Directive1, ExceptionHandler}
 import com.github.sebruck.opencensus.Tracing
 import com.github.sebruck.opencensus.akka.http.propagation.AkkaB3FormatPropagation
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes._
-import com.github.sebruck.opencensus.http.{HttpAttributes, StatusTranslator}
+import com.github.sebruck.opencensus.akka.http.utils.EndSpanForResponse
+import com.github.sebruck.opencensus.http.HttpAttributes
 import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.trace.{Span, Status}
@@ -46,12 +47,8 @@ trait TracingDirective extends LazyLogging {
     span
   }
 
-  private def recordSuccess(span: Span) = mapResponse { response =>
-    HttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span,
-                    StatusTranslator.translate(response.status.intValue()))
-    response
-  }
+  private def recordSuccess(span: Span) =
+    mapResponse(EndSpanForResponse(tracing, _, span))
 
   private def recordException(span: Span) =
     handleExceptions(ExceptionHandler {
