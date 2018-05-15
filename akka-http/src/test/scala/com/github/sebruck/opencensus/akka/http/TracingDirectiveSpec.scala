@@ -60,12 +60,12 @@ class TracingDirectiveSpec
     }
   }
 
-  it should "end a span with status INTERNAL_ERROR when the route completes with an errornous status code" in {
+  it should "end a span with status UNKNOWN when the route completes with an errornous status code" in {
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ =>
       Directives.complete(StatusCodes.InternalServerError)) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+      mockTracing.endedSpansStatuses should contain(Status.UNKNOWN)
     }
   }
 
