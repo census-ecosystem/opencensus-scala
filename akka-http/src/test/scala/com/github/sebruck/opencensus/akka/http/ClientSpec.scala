@@ -88,7 +88,7 @@ trait ClientSpec
         HttpRequest(uri = "/test")).map { _ =>
         val startedSpan = mockTracing.startedSpans.headOption.value
 
-        startedSpan.annotaions should contain("Http Response Received")
+        startedSpan.annotaions should contain("response received")
       }
     }
 

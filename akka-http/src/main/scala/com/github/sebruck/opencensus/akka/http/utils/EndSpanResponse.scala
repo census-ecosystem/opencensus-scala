@@ -6,14 +6,25 @@ import com.github.sebruck.opencensus.http.{HttpAttributes, StatusTranslator}
 import io.opencensus.trace.Span
 import com.github.sebruck.opencensus.akka.http.trace.HttpAttributes._
 
-private[http] object EndSpanForResponse {
+private[http] object EndSpanResponse {
 
-  def apply(tracing: Tracing,
-            response: HttpResponse,
-            span: Span): HttpResponse = {
+  def forServer(tracing: Tracing,
+                response: HttpResponse,
+                span: Span): HttpResponse =
+    end(tracing, response, span, "response sent")
+
+  def forClient(tracing: Tracing,
+                response: HttpResponse,
+                span: Span): HttpResponse =
+    end(tracing, response, span, "response received")
+
+  private def end(tracing: Tracing,
+                  response: HttpResponse,
+                  span: Span,
+                  responseAnnotation: String): HttpResponse = {
 
     HttpAttributes.setAttributesForResponse(span, response)
-    span.addAnnotation("Http Response Received") // TODO check census spec
+    span.addAnnotation(responseAnnotation)
 
     // todo use new setStatus method here when merged
     response.copy(
