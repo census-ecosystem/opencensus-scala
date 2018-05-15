@@ -37,6 +37,17 @@ lazy val akkaHttp = (project in file("akka-http")).
     libraryDependencies := akkaHttpDependencies,
   ).dependsOn(core, http % "compile->compile;test->test")
 
+lazy val akkaHttpExample = (project in file("akka-http-example")).
+  settings(
+    publishArtifact := false,
+    libraryDependencies ++= Seq(
+      "io.opencensus" % "opencensus-exporter-trace-logging" % "0.13.2",
+      "ch.qos.logback" % "logback-classic" % "1.2.3",
+      "org.slf4j" % "log4j-over-slf4j" % "1.7.25",
+      "org.slf4j" % "jul-to-slf4j" % "1.7.25"
+    )
+  ).dependsOn(akkaHttp)
+
 lazy val http4s = (project in file("http4s")).
   settings(
     name := "opencensus-scala-http4s",
