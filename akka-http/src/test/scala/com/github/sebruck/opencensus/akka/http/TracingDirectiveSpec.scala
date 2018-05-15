@@ -4,11 +4,11 @@ import akka.http.scaladsl.model.{HttpHeader, HttpRequest, StatusCodes}
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import com.github.sebruck.opencensus.Tracing
-import io.opencensus.trace.{AttributeValue, Status}
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
-import AkkaMockPropagation._
+import com.github.sebruck.opencensus.akka.http.AkkaMockPropagation._
 import com.github.sebruck.opencensus.http.propagation.Propagation
 import com.github.sebruck.opencensus.http.testSuite.MockTracing
+import io.opencensus.trace.{AttributeValue, Status}
+import org.scalatest.{FlatSpec, Matchers, OptionValues}
 
 class TracingDirectiveSpec
     extends FlatSpec
@@ -56,6 +56,7 @@ class TracingDirectiveSpec
     val (directive, mockTracing) = directiveWithMock()
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
+      responseEntity.discardBytes() // drain entity so the span gets closed
       mockTracing.endedSpansStatuses should contain(Status.OK)
     }
   }
@@ -65,7 +66,8 @@ class TracingDirectiveSpec
 
     Get(path) ~> directive.traceRequest(_ =>
       Directives.complete(StatusCodes.InternalServerError)) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.UNKNOWN)
+      responseEntity.discardBytes() // drain entity so the span gets closed
+      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
     }
   }
 
