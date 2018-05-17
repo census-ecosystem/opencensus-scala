@@ -7,7 +7,7 @@ The API documentation can be found [here](https://sebruck.github.io/opencensus-s
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-http4s" % "0.4.1" 
+"com.github.sebruck" %% "opencensus-scala-http4s" % "0.4.2" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
 "io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.13.2"
