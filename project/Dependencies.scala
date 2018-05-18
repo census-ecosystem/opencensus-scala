@@ -9,6 +9,7 @@ object Dependencies {
   val AkkaHttpVersion     = "10.1.1"
   val AkkaVersion         = "2.5.12"
   val Http4sVersion       = "0.18.10"
+  val Elastic4sVersion = "6.2.6"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -41,5 +42,10 @@ object Dependencies {
   lazy val http4sDependencies = Seq(
     "org.http4s" %% "http4s-dsl"    % Http4sVersion,
     "org.http4s" %% "http4s-client" % Http4sVersion
+  ) ++ scalaTest
+
+  lazy val elastic4sDependencies = Seq(
+    "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion,
+    "com.sksamuel.elastic4s" %% "elastic4s-http" % Elastic4sVersion
   ) ++ scalaTest
 }

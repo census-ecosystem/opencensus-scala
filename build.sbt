@@ -23,7 +23,7 @@ lazy val root = (project in file("."))
     )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
-  .aggregate(core, akkaHttp, http4s, http)
+  .aggregate(core, akkaHttp, http4s, elastic4s, http)
 
 lazy val core = (project in file("core")).
   settings(
@@ -53,6 +53,13 @@ lazy val http4s = (project in file("http4s")).
     name := "opencensus-scala-http4s",
     libraryDependencies := http4sDependencies,
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
+  ).dependsOn(core, http % "compile->compile;test->test")
+
+
+lazy val elastic4s = (project in file("elastic4s")).
+  settings(
+    name := "opencensus-scala-elastic4s",
+    libraryDependencies := elastic4sDependencies,
   ).dependsOn(core, http % "compile->compile;test->test")
 
 lazy val http = (project in file("http")).
