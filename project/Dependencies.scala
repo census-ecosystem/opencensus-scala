@@ -10,14 +10,18 @@ object Dependencies {
   val AkkaVersion         = "2.5.12"
   val Http4sVersion       = "0.18.10"
   val Elastic4sVersion = "6.2.6"
+  val CatsVersion         = "1.1.0"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
     "io.opencensus" % "opencensus-impl"                       % OpencensusVersion,
+    "io.opencensus" % "opencensus-testing"                    % OpencensusVersion % Test,
     "io.opencensus" % "opencensus-exporter-trace-stackdriver" % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
+    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-stats-prometheus"  % OpencensusVersion,
+    "io.prometheus" % "simpleclient_common"                   % "0.2.0"
   )
 
   lazy val scalaTest = Seq(
@@ -28,11 +32,15 @@ object Dependencies {
     "com.github.pureconfig" %% "pureconfig" % PureConfigVersion
   )
 
+  lazy val cats = Seq(
+    "org.typelevel" %% "cats-core" % CatsVersion
+  )
+
   lazy val logging = Seq(
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLoggingVersion
   )
 
-  lazy val coreDependencies = opencensus ++ pureConfig ++ logging ++ scalaTest
+  lazy val coreDependencies = opencensus ++ pureConfig ++ cats ++ logging ++ scalaTest
   lazy val akkaHttpDependencies = Seq(
     "com.typesafe.akka" %% "akka-http"         % AkkaHttpVersion,
     "com.typesafe.akka" %% "akka-stream"       % AkkaVersion,
