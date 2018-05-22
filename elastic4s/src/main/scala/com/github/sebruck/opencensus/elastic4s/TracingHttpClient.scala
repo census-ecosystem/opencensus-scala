@@ -11,6 +11,13 @@ import scala.util.{Failure, Success, Try}
 
 case class HttpRequest(method: String, endpoint: String)
 
+/**
+  * Enriches the `HttpClient` with tracing `.execute` calls.
+  *
+  * @param c the `HttpClient` to be enriched.
+  * @param T the `Tracing` that is used to start and end `Span`.
+  * @param parentSpan the current span which will act as parent of the new span
+  */
 class TracingHttpClient(c: HttpClient, T: Tracing, parentSpan: Option[Span])(
     implicit ec: ExecutionContext)
     extends HttpClient {
@@ -70,8 +77,15 @@ class TracingHttpClient(c: HttpClient, T: Tracing, parentSpan: Option[Span])(
 
   override def close(): Unit = client.close()
 }
-
 object TracingHttpClient {
+
+  /**
+    * Enriches the `HttpClient` with tracing `.execute` calls.
+    * Uses [[com.github.sebruck.opencensus.Tracing]] as Tracing
+    *
+    * @param c the `HttpClient` to be enriched.
+    * @param parentSpan the current span which will act as parent of the new span
+    */
   def apply(c: HttpClient, parentSpan: Option[Span])(
       implicit ec: ExecutionContext): TracingHttpClient =
     new TracingHttpClient(c, Tracing, parentSpan)
