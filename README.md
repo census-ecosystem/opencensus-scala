@@ -82,5 +82,10 @@ Utilities to use opencensus in [http4s](https://github.com/http4s/http4s) applic
 
 Learn more at the [documentation](http4s/README.md).
 
+### elastic4s 
+Utilities to use opencensus in [elastic4s](https://github.com/sksamuel/elastic4s) applications. 
+
+Learn more at the [documentation](elastic4s/README.md).
+
 ## Contributing
 Contributions are very welcome! As a starting point, have a look at the open issues. 
