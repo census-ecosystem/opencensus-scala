@@ -11,10 +11,10 @@ class StatsImpl(viewManager: ViewManager,
                 tagger: Tagger)
     extends Stats {
 
-  override def record(measurements: Measurement[_]*): Unit =
+  override def record(measurements: Measurement*): Unit =
     record(List.empty, measurements: _*)
 
-  override def record(tags: List[Tag], measurements: Measurement[_]*): Unit = {
+  override def record(tags: List[Tag], measurements: Measurement*): Unit = {
     val tagContext = tags
       .foldLeft(tagger.emptyBuilder())((builder, tag) =>
         builder.put(tag.key, tag.value))
@@ -31,22 +31,9 @@ class StatsImpl(viewManager: ViewManager,
   }
 
   private def putMeasurement(measureMap: MeasureMap,
-                             measurement: Measurement[_]): MeasureMap = {
-
-    measurement.measure.fold(
-      measureLong =>
-        measurement.value match {
-          case long: Long => measureMap.put(measureLong.javaMeasure, long)
-          case _ =>
-            throw new Exception("A long measure with a double value is invalid")
-      },
-      measureDouble =>
-        measurement.value match {
-          case double: Double =>
-            measureMap.put(measureDouble.javaMeasure, double)
-          case _ =>
-            throw new Exception("A double measure with a long value is invalid")
-      }
-    )
-  }
+                             measurement: Measurement): MeasureMap =
+    measurement match {
+      case LongMeasurement(m, value)   => measureMap.put(m.javaMeasure, value)
+      case DoubleMeasurement(m, value) => measureMap.put(m.javaMeasure, value)
+    }
 }

@@ -70,7 +70,7 @@ object Distribution {
 
 sealed abstract case class View(name: String,
                                 description: String,
-                                measure: Measure[_],
+                                measure: Measure,
                                 columns: List[String],
                                 aggregation: Aggregation,
                                 javaView: JavaView)
@@ -78,7 +78,7 @@ sealed abstract case class View(name: String,
 object View {
   def apply(name: String,
             description: String,
-            measure: Measure[_],
+            measure: Measure,
             columns: List[String],
             aggregation: Aggregation): Try[View] = Try {
 

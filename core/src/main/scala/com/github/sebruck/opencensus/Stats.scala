@@ -7,8 +7,8 @@ import io.opencensus.tags.{Tags => JavaTags}
 import scala.util.Try
 
 trait Stats {
-  def record(tags: List[Tag], measurements: Measurement[_]*): Unit
-  def record(measurements: Measurement[_]*): Unit
+  def record(tags: List[Tag], measurements: Measurement*): Unit
+  def record(measurements: Measurement*): Unit
   def registerView(view: View): Try[Unit]
 }
 
