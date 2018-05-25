@@ -41,10 +41,10 @@ class StatsImplSpec extends StatsSpecs {
 
 trait StatsSpecs extends FlatSpec with Matchers with Inspectors {
 
-  def recordingSpecs[T](
-      measurements: List[(Measurement[T], AggregationData)]
+  def recordingSpecs(
+      measurements: List[(Measurement, AggregationData)]
   ): Unit = {
-    def view(measure: Measure[_], name: String) =
+    def view(measure: Measure, name: String) =
       View(name, "viewdesc", measure, List("col1"), Sum).get
 
     it should "record measurements" in {
