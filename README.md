@@ -8,11 +8,7 @@ The API documentation can be found [here](https://sebruck.github.io/opencensus-s
 
 ## Implementation status
 
-### Tracing
-The exporters Instana, Logging, Stackdriver and Zipkin are supported.
-
-### Stats
-Not supported yet.
+Opencensus-scala supports the tracing and stats apis of opencensus.
 
 ### Instrumentations
 |Framework|Tracing    |Stats    |

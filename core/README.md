@@ -3,7 +3,7 @@ This module provides utilities to use opencensus in a scala idiomatic way.
 
 The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
 
-## Quickstart
+## Tracing Quickstart
 
 The [Tracing](https://sebruck.github.io/opencensus-scala/api/com/github/sebruck/opencensus/Tracing$.html) type 
 is the entry point of the library.
@@ -70,6 +70,75 @@ object AsyncTracingApp extends App {
   endSpan(anotherSpan, Status.OK)
 }
 ````
+
+## Stats Quickstart
+The [Stats](https://sebruck.github.io/opencensus-scala/api/com/github/sebruck/opencensus/Stats$.html) type 
+is the entry point of the library.
+
+In your build.sbt add the following dependency:
+
+```scala
+"com.github.sebruck" %% "opencensus-scala-core" % "0.4.3" 
+
+// Dependent on the trace exporters you want to use add one or more of the following
+"io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.13.2"
+"io.opencensus" % "opencensus-exporter-stats-prometheus"  % "0.13.2"
+"io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.13.2"
+
+// To run this (prometheus) example
+"io.prometheus" % "simpleclient_httpserver" % "0.4.0"
+```
+
+```scala
+import com.github.sebruck.opencensus.Stats
+import com.github.sebruck.opencensus.stats._
+import io.opencensus.exporter.stats.prometheus.PrometheusStatsCollector
+
+object Example extends App {
+
+  /*
+   Register Prometheus stats collector
+   and start the prometheus exposition http server
+   */
+  PrometheusStatsCollector.createAndRegister()
+  val server = new io.prometheus.client.exporter.HTTPServer(8080)
+
+  /*
+   Has to be done once for each measure and view
+   */
+  val ServiceTagName = "service_name"
+  val measureOrFailure = for {
+    // Create a new measure
+    measure <- Measure.double("my_measure", "what a cool measure", "by")
+    // Create & register a view which aggregates this measure
+    view <- View("my_view",
+                 "view description",
+                 measure,
+                 List(ServiceTagName),
+                 Sum)
+    _ <- Stats.registerView(view)
+  } yield measure
+
+  // throws exception if something above failed, should be handled properly
+  val measure = measureOrFailure.get
+
+  /*
+   Has to be done each time when a new value should be recorded
+   */
+  // throws exception if something above failed, should be handled properly
+  val tag = Tag(ServiceTagName, "my fancy service").get
+  Stats.record(List(tag), Measurement.double(measure, 2.1))
+}
+```
+
+If we now run this and do a curl, we can see the recorded metrics.
+
+```
+$ curl -XGET http://localhost:8080/metrics
+# HELP my_view view description
+# TYPE my_view untyped
+opencensus_my_view{service_name="my fancy service",} 2.1
+```
 
 ## Configuration
 Have a look at the [default configuration](src/main/resources/reference.conf)
