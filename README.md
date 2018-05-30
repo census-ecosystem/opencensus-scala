@@ -1,10 +1,10 @@
-[![Build Status](https://travis-ci.org/Sebruck/opencensus-scala.svg?branch=master)](https://travis-ci.org/Sebruck/opencensus-scala)
+[![Build Status](https://travis-ci.org/census-ecosystem/opencensus-scala.svg?branch=master)](https://travis-ci.org/census-ecosystem/opencensus-scala)
 # opencensus-scala
 This project is a lightweight scala wrapper for the 
 [opencensus-java](https://github.com/census-instrumentation/opencensus-java) library 
 and provides instrumentation for scala based frameworks.
 
-The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
+The API documentation can be found [here](https://census-ecosystem.github.io/opencensus-scala/api/).
 
 ## Implementation status
 
