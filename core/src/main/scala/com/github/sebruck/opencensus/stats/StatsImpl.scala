@@ -6,9 +6,9 @@ import io.opencensus.tags.Tagger
 
 import scala.util.Try
 
-class StatsImpl(viewManager: ViewManager,
-                statsRecorder: StatsRecorder,
-                tagger: Tagger)
+private[opencensus] class StatsImpl(viewManager: ViewManager,
+                                    statsRecorder: StatsRecorder,
+                                    tagger: Tagger)
     extends Stats {
 
   override def record(measurements: Measurement*): Unit =
@@ -33,7 +33,7 @@ class StatsImpl(viewManager: ViewManager,
   private def putMeasurement(measureMap: MeasureMap,
                              measurement: Measurement): MeasureMap =
     measurement match {
-      case LongMeasurement(m, value)   => measureMap.put(m.javaMeasure, value)
-      case DoubleMeasurement(m, value) => measureMap.put(m.javaMeasure, value)
+      case MeasurementLong(m, value)   => measureMap.put(m.javaMeasure, value)
+      case MeasurementDouble(m, value) => measureMap.put(m.javaMeasure, value)
     }
 }

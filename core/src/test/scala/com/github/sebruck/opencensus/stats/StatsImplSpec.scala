@@ -3,7 +3,7 @@ package com.github.sebruck.opencensus.stats
 import io.opencensus.implcore.internal.SimpleEventQueue
 import io.opencensus.implcore.stats.StatsComponentImplBase
 import io.opencensus.stats.AggregationData.{SumDataDouble, SumDataLong}
-import io.opencensus.stats.{AggregationData, View => JavaView}
+import io.opencensus.stats.AggregationData
 import io.opencensus.tags.{Tags => JavaTags}
 import io.opencensus.testing.common.TestClock
 import org.scalatest.{FlatSpec, Inspectors, Matchers}
