@@ -9,7 +9,7 @@ object Dependencies {
   val AkkaHttpVersion     = "10.1.1"
   val AkkaVersion         = "2.5.12"
   val Http4sVersion       = "0.18.10"
-  val Elastic4sVersion = "6.2.6"
+  val Elastic4sVersion    = "6.2.6"
   val CatsVersion         = "1.1.0"
 
   lazy val opencensus = Seq(
@@ -19,9 +19,7 @@ object Dependencies {
     "io.opencensus" % "opencensus-exporter-trace-stackdriver" % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-stats-prometheus"  % OpencensusVersion,
-    "io.prometheus" % "simpleclient_common"                   % "0.2.0"
+    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
   )
 
   lazy val scalaTest = Seq(
