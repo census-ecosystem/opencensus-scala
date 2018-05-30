@@ -10,53 +10,70 @@ import io.opencensus.tags.TagKey
 import scala.collection.JavaConverters._
 import scala.util.Try
 
+/**
+  * Aggregation is the process of combining a certain set of Measurements for a
+  * given Measure.
+  *
+  * <p>Aggregation currently supports 4 types of basic aggregation:
+  *
+  * <ul>
+  *   <li>Sum
+  *   <li>Count
+  *   <li>Distribution
+  *   <li>LastValue
+  * </ul>
+  *
+  * <p>When creating a View, one Aggregation needs to be specified as how to
+  * aggregate Measurements.
+  *
+  */
 sealed trait Aggregation {
-  def javaAggregation: JavaAggregation
 
-  def fold[T](count: => T,
-              sum: => T,
-              lastValue: => T,
-              distribution: Distribution => T): T
+  /**
+    * The underlying Aggregation of the java library.
+    */
+  def javaAggregation: JavaAggregation
 }
 
+/**
+  * Calculate count on aggregated Measurements.
+  */
 case object Count extends Aggregation {
-  override def fold[T](count: => T,
-                       sum: => T,
-                       lastValue: => T,
-                       distribution: Distribution => T): T = count
 
+  /** @inheritdoc */
   override val javaAggregation: JavaAggregation = JavaAggregation.Count.create()
 }
 
+/**
+  * Calculate sum on aggregated Measurements.
+  */
 case object Sum extends Aggregation {
-  override def fold[T](count: => T,
-                       sum: => T,
-                       lastValue: => T,
-                       distribution: Distribution => T): T = sum
 
+  /** @inheritdoc */
   override val javaAggregation: JavaAggregation = JavaAggregation.Sum.create()
 }
 
+/**
+  * Calculate the last value on aggregated Measurements.
+  */
 case object LastValue extends Aggregation {
-  override def fold[T](count: => T,
-                       sum: => T,
-                       lastValue: => T,
-                       distribution: Distribution => T): T = lastValue
 
+  /** @inheritdoc */
   override val javaAggregation: JavaAggregation =
     JavaAggregation.LastValue.create()
 }
 
+/**
+  * Calculate distribution stats on aggregated Measurements. Distribution includes mean,
+  * count, histogram, min, max and sum of squared deviations.
+  *
+  * @param buckets the boundaries for the buckets in the underlying histogram.
+  * @param javaAggregation The underlying Aggregation of the java library.
+  */
 sealed abstract case class Distribution(
     buckets: List[Double],
     javaAggregation: JavaAggregation.Distribution)
-    extends Aggregation {
-  override def fold[T](count: => T,
-                       sum: => T,
-                       lastValue: => T,
-                       distribution: Distribution => T): T =
-    distribution(this)
-}
+    extends Aggregation {}
 
 object Distribution {
   def apply(buckets: List[Double]): Try[Distribution] = Try {
@@ -68,6 +85,17 @@ object Distribution {
   }
 }
 
+/**
+  * A View specifies an aggregation and a set of tag keys.
+  * The aggregation will be broken down by the unique set of Measurement values for each measure.
+  *
+  * @param name Must be unique.
+  * @param description Detailed description of the view for documentation purpose.
+  * @param measure The measure type of this view
+  * @param columns Columns (a.k.a Tag Keys) to match with the associated Measure.
+  * @param aggregation The Aggregation associated with this View.
+  * @param javaView The underlying View of the java library
+  */
 sealed abstract case class View(name: String,
                                 description: String,
                                 measure: Measure,
@@ -76,6 +104,19 @@ sealed abstract case class View(name: String,
                                 javaView: JavaView)
 
 object View {
+
+  /**
+    * Tries to creates a View.
+    *
+    * Can fail when one of the parameters is contains an invalid value.
+    *
+    * @param name Must be unique.
+    * @param description Detailed description of the view for documentation purpose.
+    * @param measure The measure type of this view
+    * @param columns Columns (a.k.a Tag Keys) to match with the associated Measure.
+    * @param aggregation The Aggregation associated with this View.
+    * @return
+    */
   def apply(name: String,
             description: String,
             measure: Measure,
