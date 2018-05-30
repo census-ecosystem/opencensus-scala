@@ -67,7 +67,7 @@ class TracingDirectiveSpec
     Get(path) ~> directive.traceRequest(_ =>
       Directives.complete(StatusCodes.InternalServerError)) ~> check {
       responseEntity.discardBytes() // drain entity so the span gets closed
-      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+      mockTracing.endedSpansStatuses should contain(Status.UNKNOWN)
     }
   }
 

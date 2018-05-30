@@ -3,7 +3,7 @@ import CompilerOptions._
 
 name in ThisBuild := "opencensus-scala"
 organization in ThisBuild := "com.github.sebruck"
-scalaVersion in ThisBuild := "2.12.4"
+scalaVersion in ThisBuild := "2.12.6"
 scalacOptions in ThisBuild ++= compilerOptions
 releasePublishArtifactsAction in ThisBuild := PgpKeys.publishSigned.value
 publishTo in ThisBuild := Some(
