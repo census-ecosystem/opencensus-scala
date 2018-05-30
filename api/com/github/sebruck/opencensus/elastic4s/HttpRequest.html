@@ -133,10 +133,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../../index.html" class="extype" name="com.github.sebruck">sebruck</a></dd></dl></div>
-    </li><li name="com.github.sebruck.opencensus.http" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="http"></a><a id="http:http"></a>
+    </li><li name="com.github.sebruck.opencensus.elastic4s" visbl="pub" class="indented5 " data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="elastic4s"></a><a id="elastic4s:elastic4s"></a>
       <span class="permalink">
-      <a href="../../../../com/github/sebruck/opencensus/index.html#http" title="Permalink">
+      <a href="../../../../com/github/sebruck/opencensus/index.html#elastic4s" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -145,53 +145,33 @@
         <span class="kind">package</span>
       </span>
       <span class="symbol">
-        <a title="" href="index.html"><span class="name">http</span></a>
+        <a title="" href="index.html"><span class="name">elastic4s</span></a>
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="../index.html" class="extype" name="com.github.sebruck.opencensus">opencensus</a></dd></dl></div>
-    </li><li name="com.github.sebruck.opencensus.http.propagation" visbl="pub" class="indented6 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="propagation"></a><a id="propagation:propagation"></a>
-      <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/index.html#propagation" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">package</span>
-      </span>
-      <span class="symbol">
-        <a title="" href="propagation/index.html"><span class="name">propagation</span></a>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="index.html" class="extype" name="com.github.sebruck.opencensus.http">http</a></dd></dl></div>
     </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="object" href="HttpAttributes$.html" title=""></a>
-                        <a href="HttpAttributes$.html" title="">HttpAttributes</a>
+                        <a class="class" href="" title=""></a>
+                        <a href="" title="">HttpRequest</a>
+                      </li><li class="current-entities indented5">
+                        <a class="object" href="TracingHttpClient$.html" title=""></a>
+                        <a class="class" href="TracingHttpClient.html" title="Enriches the HttpClient with tracing .execute calls."></a>
+                        <a href="TracingHttpClient.html" title="Enriches the HttpClient with tracing .execute calls.">TracingHttpClient</a>
                       </li><li class="current-entities indented5">
                         <span class="separator"></span>
-                        <a class="trait" href="RequestExtractor.html" title=""></a>
-                        <a href="RequestExtractor.html" title="">RequestExtractor</a>
-                      </li><li class="current-entities indented5">
-                        <span class="separator"></span>
-                        <a class="trait" href="ResponseExtractor.html" title=""></a>
-                        <a href="ResponseExtractor.html" title="">ResponseExtractor</a>
-                      </li><li class="current-entities indented5">
-                        <span class="separator"></span>
-                        <a class="object" href="" title=""></a>
-                        <a href="" title="">StatusTranslator</a>
+                        <a class="object" href="implicits$.html" title=""></a>
+                        <a href="implicits$.html" title="">implicits</a>
                       </li>
               </ul>
             </div>
           </div>
           <div id="content">
-            <body class="object value">
+            <body class="class type">
       <div id="definition">
-        <div class="big-circle object">o</div>
-        <p id="owner"><a href="../../../../index.html" class="extype" name="com">com</a>.<a href="../../../index.html" class="extype" name="com.github">github</a>.<a href="../../index.html" class="extype" name="com.github.sebruck">sebruck</a>.<a href="../index.html" class="extype" name="com.github.sebruck.opencensus">opencensus</a>.<a href="index.html" class="extype" name="com.github.sebruck.opencensus.http">http</a></p>
-        <h1>StatusTranslator<span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html" title="Permalink">
+        <div class="big-circle class">c</div>
+        <p id="owner"><a href="../../../../index.html" class="extype" name="com">com</a>.<a href="../../../index.html" class="extype" name="com.github">github</a>.<a href="../../index.html" class="extype" name="com.github.sebruck">sebruck</a>.<a href="../index.html" class="extype" name="com.github.sebruck.opencensus">opencensus</a>.<a href="index.html" class="extype" name="com.github.sebruck.opencensus.elastic4s">elastic4s</a></p>
+        <h1>HttpRequest<span class="permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span></h1>
@@ -201,10 +181,10 @@
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
-        <span class="kind">object</span>
+        <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">StatusTranslator</span>
+        <span class="name">HttpRequest</span><span class="params">(<span name="method">method: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="endpoint">endpoint: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
 
@@ -213,7 +193,7 @@
           <span class="toggle">
             Linear Supertypes
           </span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -239,7 +219,7 @@
                   <span class="filtertype">Inherited<br />
                   </span>
                   <ol id="linearization">
-                    <li class="in" name="com.github.sebruck.opencensus.http.StatusTranslator"><span>StatusTranslator</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                    <li class="in" name="com.github.sebruck.opencensus.elastic4s.HttpRequest"><span>HttpRequest</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                   </ol>
                 </div><div class="ancestors">
               <span class="filtertype"></span>
@@ -257,7 +237,26 @@
 
       <div id="template">
         <div id="allMembers">
-        
+        <div id="constructors" class="members">
+              <h3>Instance Constructors</h3>
+              <ol><li name="com.github.sebruck.opencensus.elastic4s.HttpRequest#&lt;init&gt;" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="&lt;init&gt;(method:String,endpoint:String):com.github.sebruck.opencensus.elastic4s.HttpRequest"></a><a id="&lt;init&gt;:HttpRequest"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#&lt;init&gt;(method:String,endpoint:String):com.github.sebruck.opencensus.elastic4s.HttpRequest" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">new</span>
+      </span>
+      <span class="symbol">
+        <span class="name">HttpRequest</span><span class="params">(<span name="method">method: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="endpoint">endpoint: <span class="extype" name="scala.Predef.String">String</span></span>)</span>
+      </span>
+      
+      
+    </li></ol>
+            </div>
 
         
 
@@ -269,7 +268,7 @@
                 <li name="scala.AnyRef#!=" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="!=(x$1:Any):Boolean"></a><a id="!=(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#!=(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#!=(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -285,7 +284,7 @@
     </li><li name="scala.AnyRef###" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="##():Int"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html###():Int" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html###():Int" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -301,7 +300,7 @@
     </li><li name="scala.AnyRef#==" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="==(x$1:Any):Boolean"></a><a id="==(Any):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#==(x$1:Any):Boolean" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#==(x$1:Any):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -317,7 +316,7 @@
     </li><li name="scala.Any#asInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="asInstanceOf[T0]:T0"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#asInstanceOf[T0]:T0" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#asInstanceOf[T0]:T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -333,7 +332,7 @@
     </li><li name="scala.AnyRef#clone" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a><a id="clone():AnyRef"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#clone():Object" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#clone():Object" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -354,10 +353,26 @@
     </span>)</span>
               
         </dd></dl></div>
+    </li><li name="com.github.sebruck.opencensus.elastic4s.HttpRequest#endpoint" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="endpoint:String"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#endpoint:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">endpoint</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#eq" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a><a id="eq(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#eq(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#eq(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -370,26 +385,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#equals" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="equals(x$1:Any):Boolean"></a><a id="equals(Any):Boolean"></a>
-      <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#equals(x$1:Any):Boolean" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">equals</span><span class="params">(<span name="arg0">arg0: <span class="extype" name="scala.Any">Any</span></span>)</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#finalize():Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#finalize():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -411,7 +410,7 @@
     </li><li name="scala.AnyRef#getClass" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="getClass():Class[_]"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#getClass():Class[_]" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#getClass():Class[_]" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -427,29 +426,10 @@
                 <span class="name">@native</span><span class="args">()</span>
               
         </dd></dl></div>
-    </li><li name="scala.AnyRef#hashCode" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="hashCode():Int"></a>
-      <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#hashCode():Int" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">hashCode</span><span class="params">()</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd><dt>Annotations</dt><dd>
-                <span class="name">@native</span><span class="args">()</span>
-              
-        </dd></dl></div>
     </li><li name="scala.Any#isInstanceOf" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="isInstanceOf[T0]:Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#isInstanceOf[T0]:Boolean" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#isInstanceOf[T0]:Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -462,10 +442,26 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.github.sebruck.opencensus.elastic4s.HttpRequest#method" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="method:String"></a>
+      <span class="permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#method:String" title="Permalink">
+        <i class="material-icons"></i>
+      </a>
+    </span>
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">method</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
+      </span>
+      
+      
     </li><li name="scala.AnyRef#ne" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a><a id="ne(AnyRef):Boolean"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#ne(x$1:AnyRef):Boolean" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#ne(x$1:AnyRef):Boolean" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -481,7 +477,7 @@
     </li><li name="scala.AnyRef#notify" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notify():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#notify():Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#notify():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -500,7 +496,7 @@
     </li><li name="scala.AnyRef#notifyAll" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="notifyAll():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#notifyAll():Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#notifyAll():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -519,7 +515,7 @@
     </li><li name="scala.AnyRef#synchronized" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="synchronized[T0](x$1:=&gt;T0):T0"></a><a id="synchronized[T0](⇒T0):T0"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#synchronized[T0](x$1:=&gt;T0):T0" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -532,44 +528,10 @@
       </span>
       
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
-    </li><li name="scala.AnyRef#toString" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="toString():String"></a>
-      <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#toString():String" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">toString</span><span class="params">()</span><span class="result">: <span class="extype" name="java.lang.String">String</span></span>
-      </span>
-      
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.github.sebruck.opencensus.http.StatusTranslator#translate" visbl="pub" class="indented0 " data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="translate(httpStatus:Int):io.opencensus.trace.Status"></a><a id="translate(Int):Status"></a>
-      <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#translate(httpStatus:Int):io.opencensus.trace.Status" title="Permalink">
-        <i class="material-icons"></i>
-      </a>
-    </span>
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">translate</span><span class="params">(<span name="httpStatus">httpStatus: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="io.opencensus.trace.Status">Status</span></span>
-      </span>
-      
-      <p class="shortcomment cmt">According to
-https://github.com/census-instrumentation/opencensus-specs/blob/master/trace/HTTP.md#status
-</p>
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#wait():Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#wait():Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -591,7 +553,7 @@ https://github.com/census-instrumentation/opencensus-specs/blob/master/trace/HTT
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long,x$2:Int):Unit"></a><a id="wait(Long,Int):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#wait(x$1:Long,x$2:Int):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -613,7 +575,7 @@ https://github.com/census-instrumentation/opencensus-specs/blob/master/trace/HTT
     </li><li name="scala.AnyRef#wait" visbl="pub" class="indented0 " data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait(x$1:Long):Unit"></a><a id="wait(Long):Unit"></a>
       <span class="permalink">
-      <a href="../../../../../com/github/sebruck/opencensus/http/StatusTranslator$.html#wait(x$1:Long):Unit" title="Permalink">
+      <a href="../../../../../com/github/sebruck/opencensus/elastic4s/HttpRequest.html#wait(x$1:Long):Unit" title="Permalink">
         <i class="material-icons"></i>
       </a>
     </span>
@@ -644,7 +606,15 @@ https://github.com/census-instrumentation/opencensus-specs/blob/master/trace/HTT
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.Serializable">
+              <h3>Inherited from <span class="extype" name="scala.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="java.io.Serializable">
+              <h3>Inherited from <span class="extype" name="java.io.Serializable">Serializable</span></h3>
+            </div><div class="parent" name="scala.Product">
+              <h3>Inherited from <span class="extype" name="scala.Product">Product</span></h3>
+            </div><div class="parent" name="scala.Equals">
+              <h3>Inherited from <span class="extype" name="scala.Equals">Equals</span></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
