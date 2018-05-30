@@ -1,7 +1,7 @@
 # opencensus Akka HTTP instrumentation
 This modules contains utilities to use opencensus in Akka HTTP applications.
 
-The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
+The API documentation can be found [here](https://census-ecosystem.github.io/opencensus-scala/api/).
 
 ## Quickstart
 Have a look at the [usage examples](../akka-http-example/src/main/scala/com/github/sebruck/opencensus/examples/akka/http).

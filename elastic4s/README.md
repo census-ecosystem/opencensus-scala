@@ -1,7 +1,7 @@
 # opencensus Elastic4s instrumentation
 This modules contains utilities to use opencensus in Elastic4s applications.
 
-The API documentation can be found [here](https://sebruck.github.io/opencensus-scala/).
+The API documentation can be found [here](https://census-ecosystem.github.io/opencensus-scala/api/).
 
 ## Quickstart
 In your build.sbt add the following dependency:
