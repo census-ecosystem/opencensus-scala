@@ -6,7 +6,10 @@ import cats.effect.Effect
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
-import io.opencensus.scala.http.{StatusTranslator, HttpAttributes => BaseHttpAttributes}
+import io.opencensus.scala.http.{
+  StatusTranslator,
+  HttpAttributes => BaseHttpAttributes
+}
 import io.opencensus.scala.http4s.HttpAttributes._
 import io.opencensus.scala.http4s.TracingService.{SpanRequest, TracingService}
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
@@ -35,7 +38,8 @@ abstract class TracingMiddleware[F[_]: Effect] {
             case e =>
               recordException(span)
               e
-          })
+          }
+      )
     }
 
   /**
@@ -118,12 +122,14 @@ object TracingService {
     * }`
     * @return TracingService[F]
     */
-  def apply[F[_]](pf: PartialFunction[SpanRequest[F], F[Response[F]]])(
-      implicit F: Applicative[F]): TracingService[F] =
+  def apply[F[_]](
+      pf: PartialFunction[SpanRequest[F], F[Response[F]]]
+  )(implicit F: Applicative[F]): TracingService[F] =
     Kleisli(
       req =>
         pf.andThen(OptionT.liftF(_))
-          .applyOrElse(req, (_: SpanRequest[F]) => OptionT.none))
+          .applyOrElse(req, (_: SpanRequest[F]) => OptionT.none)
+    )
 
   /**
     * Used to extract the `span` from the `SpanRequest` e.g.:

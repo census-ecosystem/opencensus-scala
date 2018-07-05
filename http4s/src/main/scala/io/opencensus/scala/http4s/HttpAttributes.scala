@@ -27,7 +27,8 @@ private[http4s] object HttpAttributes {
             hostHeader
             // Having no Host header with a relative URL is invalid according to rfc2616,
             // but http4s still allows to create such HttpRequests.
-              .getOrElse(""))
+              .getOrElse("")
+          )
       }
     }
 

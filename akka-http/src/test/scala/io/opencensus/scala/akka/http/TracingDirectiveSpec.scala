@@ -31,8 +31,9 @@ class TracingDirectiveSpec
   it should "start a span without parent context when no span context was propagated" in {
     val (directive, mockTracing) = directiveWithMock()
 
-    Get(requestPathWithoutParent) ~> directive.traceRequest(_ =>
-      Directives.complete("")) ~> check {
+    Get(requestPathWithoutParent) ~> directive.traceRequest(
+      _ => Directives.complete("")
+    ) ~> check {
       val parentSpanContext =
         mockTracing.startedSpans.headOption.value.parentContext
       parentSpanContext shouldBe empty
@@ -64,8 +65,9 @@ class TracingDirectiveSpec
   it should "end a span with status UNKNOWN when the route completes with an errornous status code" in {
     val (directive, mockTracing) = directiveWithMock()
 
-    Get(path) ~> directive.traceRequest(_ =>
-      Directives.complete(StatusCodes.InternalServerError)) ~> check {
+    Get(path) ~> directive.traceRequest(
+      _ => Directives.complete(StatusCodes.InternalServerError)
+    ) ~> check {
       responseEntity.discardBytes() // drain entity so the span gets closed
       mockTracing.endedSpansStatuses should contain(Status.UNKNOWN)
     }
@@ -74,8 +76,9 @@ class TracingDirectiveSpec
   it should "end a span with status INTERNAL when the route fails" in {
     val (directive, mockTracing) = directiveWithMock()
 
-    Get(path) ~> directive.traceRequest(_ =>
-      throw new Exception("test exception")) ~> check {
+    Get(path) ~> directive.traceRequest(
+      _ => throw new Exception("test exception")
+    ) ~> check {
       mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
     }
   }
@@ -90,9 +93,11 @@ class TracingDirectiveSpec
       val attributes = startedSpan.attributes
 
       attributes.get("http.host").value shouldBe stringAttributeValue(
-        "example.com")
+        "example.com"
+      )
       attributes.get("http.path").value shouldBe stringAttributeValue(
-        "/my/fancy/path")
+        "/my/fancy/path"
+      )
       attributes.get("http.method").value shouldBe stringAttributeValue("GET")
       attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
     }

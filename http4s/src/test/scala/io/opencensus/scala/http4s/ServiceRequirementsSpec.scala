@@ -25,7 +25,8 @@ trait ServiceRequirementsSpec
       successServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
       failingServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
       badRequestServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
-      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO]) = {
+      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO]
+  ) = {
 
     it should "start a span with the path of the request" in {
       val (middleware, mockTracing) = middlewareWithMock()
@@ -41,7 +42,8 @@ trait ServiceRequirementsSpec
 
       successServiceFromMiddleware(middleware)
         .orNotFound(
-          Request[IO](Method.GET, Uri.unsafeFromString("/no/parent/context")))
+          Request[IO](Method.GET, Uri.unsafeFromString("/no/parent/context"))
+        )
         .unsafeRunSync()
       mockTracing.startedSpans.headOption.value.name shouldBe "/no/parent/context"
       mockTracing.startedSpans.headOption.value.parentContext shouldBe empty
@@ -61,7 +63,8 @@ trait ServiceRequirementsSpec
       Try(
         failingServiceFromMiddleware(middleware)
           .orNotFound(request)
-          .unsafeRunSync())
+          .unsafeRunSync()
+      )
 
       mockTracing.endedSpansStatuses.headOption.value shouldBe Status.INTERNAL
     }
@@ -72,7 +75,7 @@ trait ServiceRequirementsSpec
       errorServiceFromMiddleware(middleware)
         .orNotFound(request)
         .unsafeRunSync()
-          .status
+        .status
 
       mockTracing.endedSpansStatuses.headOption.value shouldBe Status.UNKNOWN
     }
@@ -93,15 +96,20 @@ trait ServiceRequirementsSpec
 
       successServiceFromMiddleware(middleware)
         .orNotFound(
-          Request[IO](Method.GET,
-                      Uri.unsafeFromString("http://example.com/my/fancy/path")))
+          Request[IO](
+            Method.GET,
+            Uri.unsafeFromString("http://example.com/my/fancy/path")
+          )
+        )
         .unsafeRunSync()
       val attributes = mockTracing.startedSpans.headOption.value.attributes
 
       attributes.get("http.host").value shouldBe stringAttributeValue(
-        "example.com")
+        "example.com"
+      )
       attributes.get("http.path").value shouldBe stringAttributeValue(
-        "/my/fancy/path")
+        "/my/fancy/path"
+      )
       attributes.get("http.method").value shouldBe stringAttributeValue("GET")
       attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
     }

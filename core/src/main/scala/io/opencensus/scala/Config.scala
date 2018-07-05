@@ -3,7 +3,8 @@ package io.opencensus.scala
 private[scala] case class StackdriverTraceExporterConfig(
     enabled: Boolean,
     projectId: String,
-    credentialsFile: Option[String])
+    credentialsFile: Option[String]
+)
 
 private[scala] case class LoggingTraceExporterConfig(
     enabled: Boolean
@@ -24,9 +25,12 @@ private[scala] case class TraceExportersConfig(
     stackdriver: StackdriverTraceExporterConfig,
     logging: LoggingTraceExporterConfig,
     zipkin: ZipkinTraceExporterConfig,
-    instana: InstanaTraceExporterConfig)
+    instana: InstanaTraceExporterConfig
+)
 
-private[scala] case class TraceConfig(samplingProbability: Double,
-                                           exporters: TraceExportersConfig)
+private[scala] case class TraceConfig(
+    samplingProbability: Double,
+    exporters: TraceExportersConfig
+)
 
 private[scala] case class Config(trace: TraceConfig)

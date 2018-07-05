@@ -5,7 +5,10 @@ import cats.effect.Effect
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
-import io.opencensus.scala.http.{StatusTranslator, HttpAttributes => BaseHttpAttributes}
+import io.opencensus.scala.http.{
+  StatusTranslator,
+  HttpAttributes => BaseHttpAttributes
+}
 import io.opencensus.scala.http4s.HttpAttributes._
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
@@ -24,13 +27,15 @@ abstract class TracingClient[F[_]: Effect] {
     */
   def trace(client: Client[F], parentSpan: Option[Span] = None): Client[F] = {
     val tracedOpen: Kleisli[F, Request[F], DisposableResponse[F]] =
-      Kleisli(req =>
-        for {
-          span <- startSpan(parentSpan, req)
-          enrichedReq = addTraceHeaders(req, span)
-          res <- client.open.run(enrichedReq).adaptError(traceError(span))
-          _ = recordSuccess(span)(res)
-        } yield res)
+      Kleisli(
+        req =>
+          for {
+            span <- startSpan(parentSpan, req)
+            enrichedReq = addTraceHeaders(req, span)
+            res <- client.open.run(enrichedReq).adaptError(traceError(span))
+            _ = recordSuccess(span)(res)
+          } yield res
+      )
 
     Client(tracedOpen, client.shutdown)
   }
@@ -40,23 +45,29 @@ abstract class TracingClient[F[_]: Effect] {
   }
 
   private def startSpan(parentSpan: Option[Span], req: Request[F])(
-      implicit E: Effect[F]) = E.delay(startAndEnrichSpan(req, parentSpan))
+      implicit E: Effect[F]
+  ) = E.delay(startAndEnrichSpan(req, parentSpan))
 
-  private def startAndEnrichSpan(req: Request[F],
-                                 parentSpan: Option[Span]): Span = {
+  private def startAndEnrichSpan(
+      req: Request[F],
+      parentSpan: Option[Span]
+  ): Span = {
     val name = req.uri.path.toString
-    val span = parentSpan.fold(tracing.startSpan(name))(span =>
-      tracing.startSpanWithParent(name, span))
+    val span = parentSpan.fold(tracing.startSpan(name))(
+      span => tracing.startSpanWithParent(name, span)
+    )
     BaseHttpAttributes.setAttributesForRequest(span, req)
     span
   }
 
   private def addTraceHeaders(request: Request[F], span: Span): Request[F] =
     request.withHeaders(
-      request.headers.put(propagation.headersWithTracingContext(span): _*))
+      request.headers.put(propagation.headersWithTracingContext(span): _*)
+    )
 
-  private def recordSuccess(span: Span)(
-      dr: DisposableResponse[F]): DisposableResponse[F] = {
+  private def recordSuccess(
+      span: Span
+  )(dr: DisposableResponse[F]): DisposableResponse[F] = {
     BaseHttpAttributes.setAttributesForResponse(span, dr.response)
     tracing.endSpan(span, StatusTranslator.translate(dr.response.status.code))
     dr

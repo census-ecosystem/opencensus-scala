@@ -35,6 +35,8 @@ trait Stats {
 }
 
 object Stats
-    extends StatsImpl(JavaStats.getViewManager,
-                      JavaStats.getStatsRecorder,
-                      JavaTags.getTagger)
+    extends StatsImpl(
+      JavaStats.getViewManager,
+      JavaStats.getStatsRecorder,
+      JavaTags.getTagger
+    )

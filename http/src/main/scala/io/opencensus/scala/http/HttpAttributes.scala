@@ -5,7 +5,8 @@ import io.opencensus.trace.Span
 
 object HttpAttributes {
   def setAttributesForRequest[R](span: Span, req: R)(
-      implicit ext: RequestExtractor[R]): Unit = {
+      implicit ext: RequestExtractor[R]
+  ): Unit = {
     ext.userAgent(req).foreach(span.putAttribute("http.user_agent", _))
     span.putAttribute("http.host", ext.host(req))
     span.putAttribute("http.method", ext.method(req))
@@ -13,7 +14,8 @@ object HttpAttributes {
   }
 
   def setAttributesForResponse[R](span: Span, resp: R)(
-      implicit ext: ResponseExtractor[R]): Unit = {
+      implicit ext: ResponseExtractor[R]
+  ): Unit = {
     span.putAttribute("http.status_code", ext.statusCode(resp))
   }
 }

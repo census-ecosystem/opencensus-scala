@@ -15,8 +15,9 @@ class TracingMiddlewareSpec
   behavior of "TracingMiddleware"
 
   val ex = new Exception("test exception")
-  def tracingService(response: Span => IO[Response[IO]] = span =>
-    Ok(span.getContext.toString)): TracingService[IO] =
+  def tracingService(
+      response: Span => IO[Response[IO]] = span => Ok(span.getContext.toString)
+  ): TracingService[IO] =
     TracingService[IO] {
       case GET -> Root / "my" / "fancy" / "path" withSpan span => response(span)
     }

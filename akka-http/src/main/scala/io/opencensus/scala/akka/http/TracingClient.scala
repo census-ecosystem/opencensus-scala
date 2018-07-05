@@ -29,8 +29,10 @@ trait TracingClient {
     * @param parentSpan the current span which will act as parent of the new span
     * @return the enriched function
     */
-  def traceRequest(doRequest: HttpRequest => Future[HttpResponse],
-                   parentSpan: Span): HttpRequest => Future[HttpResponse] =
+  def traceRequest(
+      doRequest: HttpRequest => Future[HttpResponse],
+      parentSpan: Span
+  ): HttpRequest => Future[HttpResponse] =
     traceRequest(doRequest, Some(parentSpan))
 
   /**
@@ -39,8 +41,9 @@ trait TracingClient {
     * @param doRequest the function which executes the HttpRequest, usually Http.singleRequest
     * @return the enriched function
     */
-  def traceRequest(doRequest: HttpRequest => Future[HttpResponse])
-    : HttpRequest => Future[HttpResponse] = traceRequest(doRequest, None)
+  def traceRequest(
+      doRequest: HttpRequest => Future[HttpResponse]
+  ): HttpRequest => Future[HttpResponse] = traceRequest(doRequest, None)
 
   /**
     * Enriches a `Flow[HttpRequest, HttpResponse, _]`, which is usually returned by `Http().outgoingConnection`,
@@ -52,7 +55,8 @@ trait TracingClient {
     */
   def traceRequestForConnection[Mat](
       connection: Flow[HttpRequest, HttpResponse, Mat],
-      parentSpan: Span): Flow[HttpRequest, HttpResponse, Mat] =
+      parentSpan: Span
+  ): Flow[HttpRequest, HttpResponse, Mat] =
     traceRequestForConnection(connection, Some(parentSpan))
 
   /**
@@ -63,8 +67,8 @@ trait TracingClient {
     * @return the enriched flow
     */
   def traceRequestForConnection[Mat](
-      connection: Flow[HttpRequest, HttpResponse, Mat])
-    : Flow[HttpRequest, HttpResponse, Mat] =
+      connection: Flow[HttpRequest, HttpResponse, Mat]
+  ): Flow[HttpRequest, HttpResponse, Mat] =
     traceRequestForConnection(connection, None)
 
   /**
@@ -77,7 +81,8 @@ trait TracingClient {
     */
   def traceRequestForPool[T, Mat](
       connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat],
-      parentSpan: Span): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] =
+      parentSpan: Span
+  ): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] =
     traceRequestForPool(connectionPool, Some(parentSpan))
 
   /**
@@ -94,7 +99,8 @@ trait TracingClient {
 
   private def traceRequest(
       doRequest: HttpRequest => Future[HttpResponse],
-      parentSpan: Option[Span]): HttpRequest => Future[HttpResponse] =
+      parentSpan: Option[Span]
+  ): HttpRequest => Future[HttpResponse] =
     request => {
       val (enrichedRequest, span) =
         startSpanAndEnrichRequest(request, parentSpan)
@@ -108,7 +114,8 @@ trait TracingClient {
 
   private def traceRequestForConnection[Mat](
       connection: Flow[HttpRequest, HttpResponse, Mat],
-      parentSpan: Option[Span]): Flow[HttpRequest, HttpResponse, Mat] = {
+      parentSpan: Option[Span]
+  ): Flow[HttpRequest, HttpResponse, Mat] = {
 
     val startSpan = Flow[HttpRequest]
       .map(startSpanAndEnrichRequest(_, parentSpan))
@@ -135,8 +142,8 @@ trait TracingClient {
 
   def traceRequestForPool[T, Mat](
       connectionPool: Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat],
-      parentSpan: Option[Span])
-    : Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
+      parentSpan: Option[Span]
+  ): Flow[(HttpRequest, T), (Try[HttpResponse], T), Mat] = {
 
     val startSpan = Flow[(HttpRequest, T)]
       .map {
@@ -185,7 +192,8 @@ trait TracingClient {
 
   private def startSpanAndEnrichRequest(
       request: HttpRequest,
-      parentSpan: Option[Span]): (HttpRequest, Span) = {
+      parentSpan: Option[Span]
+  ): (HttpRequest, Span) = {
     val name = request.uri.path.toString
     val span = parentSpan.fold(startSpan(name))(startSpanWithParent(name, _))
 
@@ -197,8 +205,10 @@ trait TracingClient {
 
   private def endSpanError(span: Span): Unit = endSpan(span, Status.INTERNAL)
 
-  private def requestWithTraceContext(request: HttpRequest,
-                                      span: Span): HttpRequest = {
+  private def requestWithTraceContext(
+      request: HttpRequest,
+      span: Span
+  ): HttpRequest = {
     val traceHeaders = propagation.headersWithTracingContext(span)
     request.mapHeaders(_ ++ traceHeaders)
   }

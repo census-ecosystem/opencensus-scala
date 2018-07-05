@@ -1,6 +1,10 @@
 package io.opencensus.scala.stats
 
-import io.opencensus.stats.{BucketBoundaries, Aggregation => JavaAggregation, View => JavaView}
+import io.opencensus.stats.{
+  BucketBoundaries,
+  Aggregation => JavaAggregation,
+  View => JavaView
+}
 import io.opencensus.tags.TagKey
 
 import scala.collection.JavaConverters._
@@ -68,14 +72,15 @@ case object LastValue extends Aggregation {
   */
 sealed abstract case class Distribution(
     buckets: List[Double],
-    javaAggregation: JavaAggregation.Distribution)
-    extends Aggregation {}
+    javaAggregation: JavaAggregation.Distribution
+) extends Aggregation {}
 
 object Distribution {
   def apply(buckets: List[Double]): Try[Distribution] = Try {
 
     val javaDistribution = JavaAggregation.Distribution.create(
-      BucketBoundaries.create(buckets.map(new java.lang.Double(_)).asJava))
+      BucketBoundaries.create(buckets.map(new java.lang.Double(_)).asJava)
+    )
 
     new Distribution(buckets, javaDistribution) {}
   }
@@ -92,12 +97,14 @@ object Distribution {
   * @param aggregation The Aggregation associated with this View.
   * @param javaView The underlying View of the java library
   */
-sealed abstract case class View(name: String,
-                                description: String,
-                                measure: Measure,
-                                columns: List[String],
-                                aggregation: Aggregation,
-                                javaView: JavaView)
+sealed abstract case class View(
+    name: String,
+    description: String,
+    measure: Measure,
+    columns: List[String],
+    aggregation: Aggregation,
+    javaView: JavaView
+)
 
 object View {
 
@@ -113,11 +120,13 @@ object View {
     * @param aggregation The Aggregation associated with this View.
     * @return
     */
-  def apply(name: String,
-            description: String,
-            measure: Measure,
-            columns: List[String],
-            aggregation: Aggregation): Try[View] = Try {
+  def apply(
+      name: String,
+      description: String,
+      measure: Measure,
+      columns: List[String],
+      aggregation: Aggregation
+  ): Try[View] = Try {
 
     val javaView = JavaView.create(
       JavaView.Name.create(name),

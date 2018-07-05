@@ -8,20 +8,26 @@ import io.opencensus.trace.Span
 
 private[http] object EndSpanResponse {
 
-  def forServer(tracing: Tracing,
-                response: HttpResponse,
-                span: Span): HttpResponse =
+  def forServer(
+      tracing: Tracing,
+      response: HttpResponse,
+      span: Span
+  ): HttpResponse =
     end(tracing, response, span, "response sent")
 
-  def forClient(tracing: Tracing,
-                response: HttpResponse,
-                span: Span): HttpResponse =
+  def forClient(
+      tracing: Tracing,
+      response: HttpResponse,
+      span: Span
+  ): HttpResponse =
     end(tracing, response, span, "response received")
 
-  private def end(tracing: Tracing,
-                  response: HttpResponse,
-                  span: Span,
-                  responseAnnotation: String): HttpResponse = {
+  private def end(
+      tracing: Tracing,
+      response: HttpResponse,
+      span: Span,
+      responseAnnotation: String
+  ): HttpResponse = {
 
     HttpAttributes.setAttributesForResponse(span, response)
     span.addAnnotation(responseAnnotation)
@@ -29,8 +35,12 @@ private[http] object EndSpanResponse {
     // todo use new setStatus method here when merged
     response.copy(
       entity = response.entity.transformDataBytes(
-        EndSpanFlow(span,
-                    tracing,
-                    StatusTranslator.translate(response.status.intValue()))))
+        EndSpanFlow(
+          span,
+          tracing,
+          StatusTranslator.translate(response.status.intValue())
+        )
+      )
+    )
   }
 }

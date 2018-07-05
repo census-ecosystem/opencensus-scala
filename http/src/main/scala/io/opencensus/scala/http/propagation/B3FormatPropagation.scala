@@ -27,9 +27,11 @@ trait B3FormatPropagation[Header, Request]
     mutable.Builder[Header, immutable.Seq[Header]]
 
   private object HeaderSetter extends Setter[HttpHeaderBuilder] {
-    override def put(carrier: HttpHeaderBuilder,
-                     key: String,
-                     value: String): Unit = {
+    override def put(
+        carrier: HttpHeaderBuilder,
+        key: String,
+        value: String
+    ): Unit = {
       carrier += createHeader(key, value)
     }
   }

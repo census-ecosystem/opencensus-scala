@@ -8,8 +8,11 @@ publishArtifact in Test := false
 
 // License of your choice
 licenses in ThisBuild := Seq(
-  "MIT" -> url("http://www.opensource.org/licenses/mit-license.php"))
-homepage in ThisBuild := Some(url("https://github.com/Sebruck/opencensus-scala/"))
+  "MIT" -> url("http://www.opensource.org/licenses/mit-license.php")
+)
+homepage in ThisBuild := Some(
+  url("https://github.com/Sebruck/opencensus-scala/")
+)
 scmInfo in ThisBuild := Some(
   ScmInfo(
     url("https://github.com/Sebruck/opencensus-scala/"),
@@ -17,8 +20,10 @@ scmInfo in ThisBuild := Some(
   )
 )
 developers in ThisBuild := List(
-  Developer(id = "sebruck",
-            name = "Sebastian Bruckner",
-            email = "sebbruck@googlemail.com",
-            url = url("https://github.com/Sebruck"))
+  Developer(
+    id = "sebruck",
+    name = "Sebastian Bruckner",
+    email = "sebbruck@googlemail.com",
+    url = url("https://github.com/Sebruck")
+  )
 )

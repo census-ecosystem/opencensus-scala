@@ -19,15 +19,17 @@ case class HttpRequest(method: String, endpoint: String)
   * @param parentSpan the current span which will act as parent of the new span
   */
 class TracingHttpClient(c: HttpClient, T: Tracing, parentSpan: Option[Span])(
-    implicit ec: ExecutionContext)
-    extends HttpClient {
+    implicit ec: ExecutionContext
+) extends HttpClient {
   import T._
 
   override def client: HttpRequestClient = new HttpRequestClient {
 
-    override def async(method: String,
-                       endpoint: String,
-                       params: Map[String, Any]): Future[HttpResponse] = {
+    override def async(
+        method: String,
+        endpoint: String,
+        params: Map[String, Any]
+    ): Future[HttpResponse] = {
       val span = startSpanFor(method, endpoint)
 
       c.client
@@ -35,10 +37,12 @@ class TracingHttpClient(c: HttpClient, T: Tracing, parentSpan: Option[Span])(
         .transform(end(span))
     }
 
-    override def async(method: String,
-                       endpoint: String,
-                       params: Map[String, Any],
-                       entity: HttpEntity): Future[HttpResponse] = {
+    override def async(
+        method: String,
+        endpoint: String,
+        params: Map[String, Any],
+        entity: HttpEntity
+    ): Future[HttpResponse] = {
       val span = startSpanFor(method, endpoint)
 
       c.client
@@ -87,6 +91,7 @@ object TracingHttpClient {
     * @param parentSpan the current span which will act as parent of the new span
     */
   def apply(c: HttpClient, parentSpan: Option[Span])(
-      implicit ec: ExecutionContext): TracingHttpClient =
+      implicit ec: ExecutionContext
+  ): TracingHttpClient =
     new TracingHttpClient(c, Tracing, parentSpan)
 }
