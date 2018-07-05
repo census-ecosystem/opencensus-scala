@@ -5,6 +5,8 @@ name in ThisBuild := "opencensus-scala"
 organization in ThisBuild := "com.github.sebruck"
 scalaVersion in ThisBuild := "2.12.6"
 scalacOptions in ThisBuild ++= compilerOptions
+scalafmtOnCompile in ThisBuild := true
+
 releasePublishArtifactsAction in ThisBuild := PgpKeys.publishSigned.value
 publishTo in ThisBuild := Some(
   if (isSnapshot.value)
