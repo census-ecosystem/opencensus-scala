@@ -18,25 +18,33 @@ class StatsImplSpec extends StatsSpecs {
     Measure.double(name, "desc", "unit").get
 
   val measurementsLong =
-    List(Measurement.long(measureLong("name"), 4L)   -> SumDataLong.create(4L),
-         Measurement.long(measureLong("name2"), 12L) -> SumDataLong.create(12L))
+    List(
+      Measurement.long(measureLong("name"), 4L)   -> SumDataLong.create(4L),
+      Measurement.long(measureLong("name2"), 12L) -> SumDataLong.create(12L)
+    )
 
   val measurementsDouble = List(
     Measurement.double(measureDouble("name"), 4.0) -> SumDataDouble.create(4.0),
     Measurement.double(measureDouble("name2"), 12.0) -> SumDataDouble.create(
-      12.0))
+      12.0
+    )
+  )
 
   "record single measure long" should behave like recordingSpecs(
-    measurementsLong.take(1))
+    measurementsLong.take(1)
+  )
 
   "record single measure double" should behave like recordingSpecs(
-    measurementsDouble.take(1))
+    measurementsDouble.take(1)
+  )
 
   "record different long measures in batch" should behave like recordingSpecs(
-    measurementsLong)
+    measurementsLong
+  )
 
   "record different double measures in batch" should behave like recordingSpecs(
-    measurementsDouble)
+    measurementsDouble
+  )
 }
 
 trait StatsSpecs extends FlatSpec with Matchers with Inspectors {
@@ -74,10 +82,14 @@ trait StatsSpecs extends FlatSpec with Matchers with Inspectors {
     val statsComponent =
       new StatsComponentImplBase(new SimpleEventQueue, TestClock.create())
 
-    (statsComponent,
-     new StatsImpl(statsComponent.getViewManager,
-                   statsComponent.getStatsRecorder,
-                   JavaTags.getTagger))
+    (
+      statsComponent,
+      new StatsImpl(
+        statsComponent.getViewManager,
+        statsComponent.getStatsRecorder,
+        JavaTags.getTagger
+      )
+    )
 
   }
 

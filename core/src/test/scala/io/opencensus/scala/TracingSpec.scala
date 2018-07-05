@@ -18,7 +18,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
           instana = InstanaTraceExporterConfig(enabled = false, "")
         ),
         samplingProbability = 0.25
-      ))
+      )
+    )
 
   "startSpan" should "start a span" in {
     startSpan("mySpan").getContext.isValid shouldBe true
@@ -69,8 +70,9 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    trace("span", failureStatus = failureStatus)(_ =>
-      Future.failed(new Exception("42"))).failed
+    trace("span", failureStatus = failureStatus)(
+      _ => Future.failed(new Exception("42"))
+    ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }
 
@@ -91,8 +93,9 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    traceWithParent("span", parent, failureStatus = failureStatus)(_ =>
-      Future.failed(new Exception("42"))).failed
+    traceWithParent("span", parent, failureStatus = failureStatus)(
+      _ => Future.failed(new Exception("42"))
+    ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }
 

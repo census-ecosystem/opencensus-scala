@@ -26,8 +26,10 @@ object Tag {
     * The first value of the tuple is the name and the second value is the value.
     * Both must not be longer than 255 characters and may contain only printable characters.
     */
-  def apply(keyValue: (String, String),
-            keyValues: (String, String)*): Try[List[Tag]] =
+  def apply(
+      keyValue: (String, String),
+      keyValues: (String, String)*
+  ): Try[List[Tag]] =
     (keyValue :: keyValues.toList).traverse {
       case (key, value) => apply(key, value)
     }

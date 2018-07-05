@@ -85,3 +85,5 @@ Learn more at the [documentation](elastic4s/README.md).
 
 ## Contributing
 Contributions are very welcome! As a starting point, have a look at the open issues. 
+
+Please also check the [CONTRIBUTION.md](CONTRIBUTION.md).

@@ -21,27 +21,33 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
 
   "traceRequest function based with parent" should behave like testClient(
     clientWithMockFunction(withParent = true) _,
-    withParent = true)
+    withParent = true
+  )
 
   "traceRequest function based without parent" should behave like testClient(
     clientWithMockFunction(withParent = false) _,
-    withParent = false)
+    withParent = false
+  )
 
   "traceRequest host flow based with parent" should behave like testClient(
     clientWithMockHostFlow(withParent = true) _,
-    withParent = true)
+    withParent = true
+  )
 
   "traceRequest host flow based without parent" should behave like testClient(
     clientWithMockHostFlow(withParent = false) _,
-    withParent = false)
+    withParent = false
+  )
 
   "traceRequest connection flow based with parent" should behave like testClient(
     clientWithMockConnectionFlow(withParent = true) _,
-    withParent = true)
+    withParent = true
+  )
 
   "traceRequest connection flow based without parent" should behave like testClient(
     clientWithMockConnectionFlow(withParent = false) _,
-    withParent = false)
+    withParent = false
+  )
 
   def clientWithMockFunction(withParent: Boolean)() = {
     val mockTracing = new MockTracing
@@ -86,7 +92,7 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
             .single(request)
             .via(enrichedFlow)
             .runWith(Sink.head)
-      }
+        }
 
     (clientFunction, mockTracing)
   }
@@ -107,8 +113,9 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
             .mapAsync(1) {
               case (r, _) =>
                 doRequest(r)
-                  .map[(Try[HttpResponse], Unit)](response =>
-                    (Success(response), ()))
+                  .map[(Try[HttpResponse], Unit)](
+                    response => (Success(response), ())
+                  )
                   .recover {
                     case NonFatal(e) => (Failure(e), ())
                   }
@@ -128,7 +135,7 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
               case (Success(response), _) => response
               case (Failure(error), _)    => throw error
             }
-      }
+        }
 
     (clientFunction, mockTracing)
   }

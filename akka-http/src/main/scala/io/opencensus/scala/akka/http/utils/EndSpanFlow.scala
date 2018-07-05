@@ -34,8 +34,10 @@ class EndSpanFlow[Element](span: Span, tracing: Tracing, status: Status)
 }
 
 object EndSpanFlow {
-  def apply[Element](span: Span,
-                     tracing: Tracing,
-                     status: Status): Flow[Element, Element, NotUsed] =
+  def apply[Element](
+      span: Span,
+      tracing: Tracing,
+      status: Status
+  ): Flow[Element, Element, NotUsed] =
     Flow.fromGraph(new EndSpanFlow(span, tracing, status))
 }

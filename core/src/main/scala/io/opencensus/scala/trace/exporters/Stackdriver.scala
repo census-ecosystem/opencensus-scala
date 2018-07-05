@@ -2,7 +2,10 @@ package io.opencensus.scala.trace.exporters
 
 import com.google.auth.oauth2.GoogleCredentials
 import com.typesafe.scalalogging.LazyLogging
-import io.opencensus.exporter.trace.stackdriver.{StackdriverTraceConfiguration, StackdriverTraceExporter}
+import io.opencensus.exporter.trace.stackdriver.{
+  StackdriverTraceConfiguration,
+  StackdriverTraceExporter
+}
 import io.opencensus.scala.StackdriverTraceExporterConfig
 
 import scala.collection.JavaConverters._
@@ -15,7 +18,8 @@ private[scala] object Stackdriver extends LazyLogging {
   }
 
   private def buildConfig(
-      config: StackdriverTraceExporterConfig): StackdriverTraceConfiguration = {
+      config: StackdriverTraceExporterConfig
+  ): StackdriverTraceConfiguration = {
     import config._
 
     val stackdriverConfig = StackdriverTraceConfiguration
@@ -26,8 +30,11 @@ private[scala] object Stackdriver extends LazyLogging {
       val credentials = GoogleCredentials
         .fromStream(this.getClass.getResourceAsStream(path))
         .createScoped(
-          Set("https://www.googleapis.com/auth/cloud-platform",
-              "https://www.googleapis.com/auth/trace.append").asJava)
+          Set(
+            "https://www.googleapis.com/auth/cloud-platform",
+            "https://www.googleapis.com/auth/trace.append"
+          ).asJava
+        )
 
       stackdriverConfig.setCredentials(credentials)
     }
@@ -43,6 +50,7 @@ private[scala] object Stackdriver extends LazyLogging {
       .getOrElse("")
 
     logger.info(
-      s"Enabling StackdriverTraceExporter with project id $projectId" + credentialsLogInfo)
+      s"Enabling StackdriverTraceExporter with project id $projectId" + credentialsLogInfo
+    )
   }
 }

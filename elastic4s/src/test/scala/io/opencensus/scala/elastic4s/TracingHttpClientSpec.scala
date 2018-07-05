@@ -4,7 +4,10 @@ import com.sksamuel.elastic4s.http.ElasticDsl._
 import com.sksamuel.elastic4s.http.search.SearchResponse
 import com.sksamuel.elastic4s.http.{search => _, _}
 import io.opencensus.scala.http.testSuite.MockTracing
-import io.opencensus.trace.AttributeValue.{longAttributeValue, stringAttributeValue}
+import io.opencensus.trace.AttributeValue.{
+  longAttributeValue,
+  stringAttributeValue
+}
 import io.opencensus.trace.{BlankSpan, Span, Status}
 import org.scalatest.{AsyncFlatSpec, EitherValues, Matchers, OptionValues}
 
@@ -45,7 +48,8 @@ class TracingHttpClientSpec
 
     client.execute(search("testIndex")).failed.map { _ =>
       mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
-        Status.INTERNAL.getCanonicalCode)
+        Status.INTERNAL.getCanonicalCode
+      )
     }
   }
 
@@ -66,29 +70,36 @@ class TracingHttpClientSpec
       val attributes = mockTracing.startedSpans.headOption.value.attributes
 
       attributes.get("http.path").value shouldBe stringAttributeValue(
-        "/testIndex/_search")
+        "/testIndex/_search"
+      )
       attributes.get("http.method").value shouldBe stringAttributeValue("POST")
       attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
       attributes.get("http.host").value shouldBe stringAttributeValue(
-        "/elasticsearch")
+        "/elasticsearch"
+      )
     }
   }
 
   val emptySearchRes: Future[HttpResponse] = Future.successful(
-    HttpResponse(200, Some(HttpEntity.StringEntity("{}", None)), Map.empty))
+    HttpResponse(200, Some(HttpEntity.StringEntity("{}", None)), Map.empty)
+  )
 
   private def httpClient(res: Future[HttpResponse] = emptySearchRes) =
     new HttpClient {
       override def client: HttpRequestClient = new HttpRequestClient {
-        override def async(method: String,
-                           endpoint: String,
-                           params: Map[String, Any]): Future[HttpResponse] =
+        override def async(
+            method: String,
+            endpoint: String,
+            params: Map[String, Any]
+        ): Future[HttpResponse] =
           res
 
-        override def async(method: String,
-                           endpoint: String,
-                           params: Map[String, Any],
-                           entity: HttpEntity): Future[HttpResponse] =
+        override def async(
+            method: String,
+            endpoint: String,
+            params: Map[String, Any],
+            entity: HttpEntity
+        ): Future[HttpResponse] =
           res
 
         override def close(): Unit = ()

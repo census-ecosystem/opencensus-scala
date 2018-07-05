@@ -8,7 +8,8 @@ trait HttpAttributesSpec extends FlatSpec with Matchers {
 
   def httpAttributes[Request: RequestExtractor, Response: ResponseExtractor](
       request: BuildRequest => Request,
-      response: Int => Response): Unit = {
+      response: Int => Response
+  ): Unit = {
 
     val span     = new MockSpan("span", None)
     val strValue = stringAttributeValue _
@@ -19,10 +20,14 @@ trait HttpAttributesSpec extends FlatSpec with Matchers {
     HttpAttributes.setAttributesForRequest(
       span,
       request(
-        BuildRequest("http://" + host + ":8181",
-                     path + "?this&not",
-                     userAgent,
-                     None)))
+        BuildRequest(
+          "http://" + host + ":8181",
+          path + "?this&not",
+          userAgent,
+          None
+        )
+      )
+    )
 
     behavior of "setAttributesForRequest"
 
@@ -46,7 +51,8 @@ trait HttpAttributesSpec extends FlatSpec with Matchers {
       val span = new MockSpan("span", None)
       HttpAttributes.setAttributesForRequest(
         span,
-        request(BuildRequest("", path, userAgent, Some(host))))
+        request(BuildRequest("", path, userAgent, Some(host)))
+      )
       span.attributes("http.host") shouldBe strValue(host)
     }
 
@@ -60,8 +66,10 @@ trait HttpAttributesSpec extends FlatSpec with Matchers {
     }
   }
 
-  case class BuildRequest(host: String,
-                          path: String,
-                          userAgent: String,
-                          hostHeader: Option[String])
+  case class BuildRequest(
+      host: String,
+      path: String,
+      userAgent: String,
+      hostHeader: Option[String]
+  )
 }

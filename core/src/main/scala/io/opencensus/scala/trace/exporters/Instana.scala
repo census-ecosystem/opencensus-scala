@@ -8,7 +8,8 @@ private[scala] object Instana extends LazyLogging {
 
   def init(config: InstanaTraceExporterConfig): Unit = {
     logger.info(
-      s"Enabling InstanaTraceExporter with agent endpoint ${config.agentEndpoint}")
+      s"Enabling InstanaTraceExporter with agent endpoint ${config.agentEndpoint}"
+    )
     InstanaTraceExporter.createAndRegister(config.agentEndpoint)
   }
 }

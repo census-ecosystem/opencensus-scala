@@ -18,7 +18,8 @@ class B3FormatPropagationSpec
   "headersWithTracingContext" should "return the correct B3 headers from a spans context" in {
     headersWithTracingContext(BlankSpan.INSTANCE) should contain theSameElementsAs List(
       "X-B3-TraceId" -> "00000000000000000000000000000000",
-      "X-B3-SpanId"  -> "0000000000000000")
+      "X-B3-SpanId"  -> "0000000000000000"
+    )
   }
 
   behavior of "extractContext"
@@ -39,8 +40,10 @@ class B3FormatPropagationSpec
     extractContext(Map.empty) shouldBe a[Failure[_]]
   }
 
-  override def headerValue(req: Map[String, String],
-                           key: String): Option[String] = req.get(key)
+  override def headerValue(
+      req: Map[String, String],
+      key: String
+  ): Option[String] = req.get(key)
 
   override def createHeader(key: String, value: String): (String, String) =
     (key, value)

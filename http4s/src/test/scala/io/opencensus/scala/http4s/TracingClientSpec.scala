@@ -4,7 +4,10 @@ import cats.effect.IO
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.{MockPropagation, MockTracing}
-import io.opencensus.trace.AttributeValue.{longAttributeValue, stringAttributeValue}
+import io.opencensus.trace.AttributeValue.{
+  longAttributeValue,
+  stringAttributeValue
+}
 import io.opencensus.trace.{BlankSpan, Status => CensusStatus}
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
@@ -22,8 +25,10 @@ class TracingClientSpec
   behavior of "TracingClient"
 
   val path = "my/fancy/path"
-  def expectingClient(assertion: Request[IO] => Assertion = _ => Succeeded,
-                      response: IO[Response[IO]] = Ok()): Client[IO] =
+  def expectingClient(
+      assertion: Request[IO] => Assertion = _ => Succeeded,
+      response: IO[Response[IO]] = Ok()
+  ): Client[IO] =
     Client.fromHttpService(HttpService[IO] {
       case req @ GET -> Root / "my" / "fancy" / "path" =>
         assertion(req)
@@ -71,8 +76,10 @@ class TracingClientSpec
 
     val testHeader = Header("Some", "Header")
     val request =
-      Request[IO](uri = Uri.unsafeFromString(path),
-                  headers = Headers(List(testHeader)))
+      Request[IO](
+        uri = Uri.unsafeFromString(path),
+        headers = Headers(List(testHeader))
+      )
 
     val hasHeaderAssertion =
       (r: Request[IO]) => r.headers.toList should contain(testHeader)
@@ -91,10 +98,12 @@ class TracingClientSpec
       clientTracing
         .trace(expectingClient(response = err))
         .expect[String](path)
-        .unsafeRunSync())
+        .unsafeRunSync()
+    )
 
     mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
-      CensusStatus.INTERNAL.getCanonicalCode)
+      CensusStatus.INTERNAL.getCanonicalCode
+    )
   }
 
   it should "return the http response in case of success" in {
@@ -119,11 +128,13 @@ class TracingClientSpec
     val attributes = mockTracing.startedSpans.headOption.value.attributes
 
     attributes.get("http.path").value shouldBe stringAttributeValue(
-      "/my/fancy/path")
+      "/my/fancy/path"
+    )
     attributes.get("http.method").value shouldBe stringAttributeValue("GET")
     attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
     attributes.get("http.host").value shouldBe stringAttributeValue(
-      "example.com")
+      "example.com"
+    )
   }
 
   def clientTracingWithMock() = {

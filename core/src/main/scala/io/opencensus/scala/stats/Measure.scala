@@ -1,6 +1,9 @@
 package io.opencensus.scala.stats
 
-import io.opencensus.stats.Measure.{MeasureDouble => JavaMeasureDouble, MeasureLong => JavaMeasureLong}
+import io.opencensus.stats.Measure.{
+  MeasureDouble => JavaMeasureDouble,
+  MeasureLong => JavaMeasureLong
+}
 import io.opencensus.stats.{Measure => JavaMeasure}
 
 import scala.util.Try
@@ -54,21 +57,23 @@ sealed trait Measure {
 }
 
 /** @inheritdoc */
-sealed abstract case class MeasureLong(name: String,
-                                       description: String,
-                                       unit: String,
-                                       javaMeasure: JavaMeasureLong)
-    extends Measure {
+sealed abstract case class MeasureLong(
+    name: String,
+    description: String,
+    unit: String,
+    javaMeasure: JavaMeasureLong
+) extends Measure {
   type Value = Long
   type JavaM = JavaMeasureLong
 }
 
 /** @inheritdoc */
-sealed abstract case class MeasureDouble(name: String,
-                                         description: String,
-                                         unit: String,
-                                         javaMeasure: JavaMeasureDouble)
-    extends Measure {
+sealed abstract case class MeasureDouble(
+    name: String,
+    description: String,
+    unit: String,
+    javaMeasure: JavaMeasureDouble
+) extends Measure {
   type Value = Double
   type JavaM = JavaMeasureDouble
 }
@@ -87,10 +92,12 @@ object Measure {
     */
   def long(name: String, description: String, unit: String): Try[MeasureLong] =
     Try {
-      new MeasureLong(name,
-                      description,
-                      unit,
-                      JavaMeasureLong.create(name, description, unit)) {}
+      new MeasureLong(
+        name,
+        description,
+        unit,
+        JavaMeasureLong.create(name, description, unit)
+      ) {}
     }
 
   /**
@@ -103,14 +110,18 @@ object Measure {
     * @param description A description of the measure which is used in documentation.
     * @param unit The units in which Measure values are measured.
     */
-  def double(name: String,
-             description: String,
-             unit: String): Try[MeasureDouble] =
+  def double(
+      name: String,
+      description: String,
+      unit: String
+  ): Try[MeasureDouble] =
     Try {
-      new MeasureDouble(name,
-                        description,
-                        unit,
-                        JavaMeasureDouble.create(name, description, unit)) {}
+      new MeasureDouble(
+        name,
+        description,
+        unit,
+        JavaMeasureDouble.create(name, description, unit)
+      ) {}
     }
 }
 
@@ -136,9 +147,10 @@ sealed trait Measurement {
 }
 private[stats] case class MeasurementLong(measure: MeasureLong, value: Long)
     extends Measurement
-private[stats] case class MeasurementDouble(measure: MeasureDouble,
-                                            value: Double)
-    extends Measurement
+private[stats] case class MeasurementDouble(
+    measure: MeasureDouble,
+    value: Double
+) extends Measurement
 
 object Measurement {
 

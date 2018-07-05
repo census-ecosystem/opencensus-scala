@@ -1,9 +1,21 @@
 package io.opencensus.scala
 
 import com.typesafe.scalalogging.LazyLogging
-import io.opencensus.scala.trace.exporters.{Instana, Logging, Stackdriver, Zipkin}
+import io.opencensus.scala.trace.exporters.{
+  Instana,
+  Logging,
+  Stackdriver,
+  Zipkin
+}
 import io.opencensus.trace.samplers.Samplers
-import io.opencensus.trace.{EndSpanOptions, Span, SpanBuilder, SpanContext, Status, Tracing => OpencensusTracing}
+import io.opencensus.trace.{
+  EndSpanOptions,
+  Span,
+  SpanBuilder,
+  SpanContext,
+  Status,
+  Tracing => OpencensusTracing
+}
 import pureconfig.loadConfigOrThrow
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +58,8 @@ trait Tracing {
     * @return the return value of f
     */
   def trace[T](name: String, failureStatus: Throwable => Status = unknownError)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
+      f: Span => Future[T]
+  )(implicit ec: ExecutionContext): Future[T]
 
   /**
     * Starts a new child span of the given parent span before executing the given function.
@@ -61,10 +74,11 @@ trait Tracing {
     *         as a parameter in case it is needed as parent reference for further spans.
     * @return the return value of f
     */
-  def traceWithParent[T](name: String,
-                         parentSpan: Span,
-                         failureStatus: Throwable => Status = unknownError)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
+  def traceWithParent[T](
+      name: String,
+      parentSpan: Span,
+      failureStatus: Throwable => Status = unknownError
+  )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
 private[scala] trait TracingImpl extends Tracing {
@@ -80,8 +94,10 @@ private[scala] trait TracingImpl extends Tracing {
     buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
 
   /** @inheritdoc */
-  override def startSpanWithRemoteParent(name: String,
-                                         parentContext: SpanContext): Span =
+  override def startSpanWithRemoteParent(
+      name: String,
+      parentContext: SpanContext
+  ): Span =
     buildSpan(tracer.spanBuilderWithRemoteParent(name, parentContext))
 
   /** @inheritdoc */
@@ -89,21 +105,23 @@ private[scala] trait TracingImpl extends Tracing {
     span.end(EndSpanOptions.builder().setStatus(status).build())
 
   /** @inheritdoc */
-  override def trace[T](name: String,
-                        failureStatus: Throwable => Status = unknownError)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
+  override def trace[T](
+      name: String,
+      failureStatus: Throwable => Status = unknownError
+  )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
     traceSpan(startSpan(name), failureStatus)(f)
 
   /** @inheritdoc */
-  override def traceWithParent[T](name: String,
-                                  parentSpan: Span,
-                                  failureStatus: Throwable => Status =
-                                    unknownError)(f: Span => Future[T])(
-      implicit ec: ExecutionContext): Future[T] =
+  override def traceWithParent[T](
+      name: String,
+      parentSpan: Span,
+      failureStatus: Throwable => Status = unknownError
+  )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] =
     traceSpan(startSpanWithParent(name, parentSpan), failureStatus)(f)
 
   private def traceSpan[T](span: Span, failureStatus: Throwable => Status)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = {
+      f: Span => Future[T]
+  )(implicit ec: ExecutionContext): Future[T] = {
     val result = f(span)
 
     result.onComplete {

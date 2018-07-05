@@ -45,15 +45,19 @@ class MockTracing extends Tracing {
   }
 
   override def trace[T](name: String, failureStatus: Throwable => Status)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
+      f: Span => Future[T]
+  )(implicit ec: ExecutionContext): Future[T] = ???
 
-  override def traceWithParent[T](name: String,
-                                  parentSpan: Span,
-                                  failureStatus: Throwable => Status)(
-      f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
+  override def traceWithParent[T](
+      name: String,
+      parentSpan: Span,
+      failureStatus: Throwable => Status
+  )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T] = ???
 
-  override def startSpanWithRemoteParent(name: String,
-                                         parentContext: SpanContext): Span = {
+  override def startSpanWithRemoteParent(
+      name: String,
+      parentContext: SpanContext
+  ): Span = {
     val span = new MockSpan(name, Some(parentContext))
     _startedSpans = _startedSpans :+ span
     span
@@ -74,7 +78,8 @@ class MockSpan(val name: String, val parentContext: Option[SpanContext])
 
   override def addAnnotation(
       description: String,
-      attributes: util.Map[String, AttributeValue]): Unit =
+      attributes: util.Map[String, AttributeValue]
+  ): Unit =
     annotaions = description :: annotaions
   override def addAnnotation(annotation: Annotation): Unit = ???
   override def end(options: EndSpanOptions): Unit          = ()

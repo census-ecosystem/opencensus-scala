@@ -16,11 +16,15 @@ trait ClientSpec
     with ScalaFutures
     with OptionValues {
 
-  type Client = (HttpRequest => Future[HttpResponse],
-                 Span) => HttpRequest => Future[HttpResponse]
+  type Client = (
+      HttpRequest => Future[HttpResponse],
+      Span
+  ) => HttpRequest => Future[HttpResponse]
 
-  def testClient(clientWithMock: () => (Client, MockTracing),
-                 withParent: Boolean)(implicit mat: Materializer): Unit = {
+  def testClient(
+      clientWithMock: () => (Client, MockTracing),
+      withParent: Boolean
+  )(implicit mat: Materializer): Unit = {
 
     it should "enrich the HttpRequest with propagation headers" in {
       val (client, _) = clientWithMock()
@@ -50,8 +54,10 @@ trait ClientSpec
     it should "start and end a span when the request succeeds" in {
       val (client, mockTracing) = clientWithMock()
 
-      val call = client(_ => Future.successful(HttpResponse()),
-                        BlankSpan.INSTANCE)(HttpRequest(uri = "/test"))
+      val call = client(
+        _ => Future.successful(HttpResponse()),
+        BlankSpan.INSTANCE
+      )(HttpRequest(uri = "/test"))
         .flatMap(_.discardEntityBytes().future())
 
       call.map { _ =>
@@ -72,12 +78,16 @@ trait ClientSpec
       val (client, mockTracing) = clientWithMock()
 
       val failingClient = recoverToSucceededIf[Exception](
-        client(_ => Future.failed(new Exception("Test Error")),
-               BlankSpan.INSTANCE)(HttpRequest(uri = "/test")))
+        client(
+          _ => Future.failed(new Exception("Test Error")),
+          BlankSpan.INSTANCE
+        )(HttpRequest(uri = "/test"))
+      )
 
       failingClient.map { _ =>
         mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
-          Status.INTERNAL.getCanonicalCode)
+          Status.INTERNAL.getCanonicalCode
+        )
       }
     }
 
@@ -85,7 +95,8 @@ trait ClientSpec
       val (client, mockTracing) = clientWithMock()
 
       client(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
-        HttpRequest(uri = "/test")).map { _ =>
+        HttpRequest(uri = "/test")
+      ).map { _ =>
         val startedSpan = mockTracing.startedSpans.headOption.value
 
         startedSpan.annotaions should contain("response received")
@@ -96,8 +107,10 @@ trait ClientSpec
       val (client, _) = clientWithMock()
 
       val result =
-        client(_ => Future.successful(HttpResponse(StatusCodes.ImATeapot)),
-               BlankSpan.INSTANCE)(HttpRequest(uri = "/test"))
+        client(
+          _ => Future.successful(HttpResponse(StatusCodes.ImATeapot)),
+          BlankSpan.INSTANCE
+        )(HttpRequest(uri = "/test"))
 
       result.map(_.status shouldBe StatusCodes.ImATeapot)
     }
@@ -105,8 +118,10 @@ trait ClientSpec
     it should "return the exception in case of failure" in {
       val (client, _) = clientWithMock()
 
-      val result = client(_ => Future.failed(new Exception("Test error")),
-                          BlankSpan.INSTANCE)(HttpRequest(uri = "/test")).failed
+      val result = client(
+        _ => Future.failed(new Exception("Test error")),
+        BlankSpan.INSTANCE
+      )(HttpRequest(uri = "/test")).failed
 
       result.map(_.getMessage shouldBe "Test error")
     }
@@ -118,18 +133,22 @@ trait ClientSpec
       val request        = HttpRequest(uri = "http://example.com/my/fancy/path")
 
       client(_ => Future.successful(HttpResponse()), BlankSpan.INSTANCE)(
-        request).map { _ =>
+        request
+      ).map { _ =>
         // Wait some time to ensure the "onComplete" which writes the status_code attribute has run
         Thread.sleep(100)
         val attributes = mock.startedSpans.headOption.value.attributes
 
         attributes.get("http.host").value shouldBe stringAttributeValue(
-          "example.com")
+          "example.com"
+        )
         attributes.get("http.path").value shouldBe stringAttributeValue(
-          "/my/fancy/path")
+          "/my/fancy/path"
+        )
         attributes.get("http.method").value shouldBe stringAttributeValue("GET")
         attributes.get("http.status_code").value shouldBe longAttributeValue(
-          200L)
+          200L
+        )
       }
     }
   }

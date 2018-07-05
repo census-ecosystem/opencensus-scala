@@ -7,8 +7,10 @@ import io.opencensus.scala.http.HttpAttributesSpec
 class HttpAkkaAttributesSpec extends HttpAttributesSpec {
   import HttpAttributes._
 
-  "Akka http attributes extraction" should behave like httpAttributes(request,
-                                                                      response)
+  "Akka http attributes extraction" should behave like httpAttributes(
+    request,
+    response
+  )
 
   def request: BuildRequest => HttpRequest =
     (request: BuildRequest) =>
@@ -16,7 +18,7 @@ class HttpAkkaAttributesSpec extends HttpAttributesSpec {
         uri = request.host ++ request.path,
         headers = List(`User-Agent`(request.userAgent)) ++ request.hostHeader
           .map(Host(_))
-    )
+      )
 
   def response: Int => HttpResponse = HttpResponse(_)
 }
