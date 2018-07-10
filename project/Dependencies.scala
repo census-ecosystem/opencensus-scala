@@ -2,12 +2,12 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.13.2"
+  val OpencensusVersion   = "0.15.0"
   val ScalaTestVersion    = "3.0.5"
   val PureConfigVersion   = "0.9.1"
   val ScalaLoggingVersion = "3.9.0"
-  val AkkaHttpVersion     = "10.1.1"
-  val AkkaVersion         = "2.5.12"
+  val AkkaHttpVersion     = "10.1.3"
+  val AkkaVersion         = "2.5.13"
   val Http4sVersion       = "0.18.10"
   val Elastic4sVersion    = "6.2.6"
   val CatsVersion         = "1.1.0"

@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
       siteSubdirName in ScalaUnidoc
     ),
     // This is needed for unidoc, otherwise it can not generate the scala doc
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
   )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
@@ -58,7 +58,7 @@ lazy val http4s = (project in file("http4s"))
   .settings(
     name := "opencensus-scala-http4s",
     libraryDependencies := http4sDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 
