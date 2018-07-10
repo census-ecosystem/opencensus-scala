@@ -11,7 +11,7 @@ is the entry point of the library.
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-core" % "0.4.3" 
+"com.github.sebruck" %% "opencensus-scala-core" % "0.5.0" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
 "io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.13.2"
@@ -78,7 +78,7 @@ is the entry point of the library.
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-core" % "0.4.3" 
+"com.github.sebruck" %% "opencensus-scala-core" % "0.5.0" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
 "io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.13.2"
