@@ -38,6 +38,7 @@ opencensus-scala {
 
 ````scala
 import io.opencensus.trace.Status
+import io.opencensus.scala.Tracing
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -90,8 +91,8 @@ In your build.sbt add the following dependency:
 ```
 
 ```scala
-import com.github.sebruck.opencensus.Stats
-import com.github.sebruck.opencensus.stats._
+import io.opencensus.scala.Stats
+import io.opencensus.scala.stats._
 import io.opencensus.exporter.stats.prometheus.PrometheusStatsCollector
 
 object Example extends App {
