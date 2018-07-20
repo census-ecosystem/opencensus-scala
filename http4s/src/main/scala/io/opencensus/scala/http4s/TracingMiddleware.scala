@@ -32,7 +32,7 @@ abstract class TracingMiddleware[F[_]: Effect] {
       val span = buildSpan(req)
       OptionT(
         tracingService(SpanRequest(span, req))
-          .map(recordSuccess(span))
+          .map(recordResponse(span))
           .value
           .adaptError {
             case e =>
@@ -65,10 +65,12 @@ abstract class TracingMiddleware[F[_]: Effect] {
     span
   }
 
-  private def recordSuccess(span: Span)(response: Response[F]): Response[F] = {
+  private def recordResponse(span: Span)(response: Response[F]): Response[F] = {
     BaseHttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span, StatusTranslator.translate(response.status.code))
-    response
+    tracing.setStatus(span, StatusTranslator.translate(response.status.code))
+    response.copy(
+      body = response.body.onFinalize(Effect[F].delay(tracing.endSpan(span)))
+    )
   }
 
   private def recordException(span: Span): Unit =

@@ -21,6 +21,13 @@ class MockTracing extends Tracing {
     _startedSpans
   }
 
+  def spanStauts: List[(Span, Status)] = {
+    // This sleep "fixes" flakyness of the tests. Since I couldn't find the
+    // underlying problem. Even synchronizing everything didn't help.
+    Thread.sleep(1)
+    _setStatus
+  }
+
   def endedSpans: List[(Span, Option[Status])] = {
     // This sleep "fixes" flakyness of the tests. Since I couldn't find the
     // underlying problem. Even synchronizing everything didn't help.
