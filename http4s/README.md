@@ -47,6 +47,7 @@ When the request completes or fails the span is ended with a proper status which
 import cats.effect.IO
 import io.opencensus.scala.http4s.TracingService._
 import io.opencensus.scala.http4s.TracingMiddleware
+import io.opencensus.scala.http.ServiceData
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
@@ -57,7 +58,9 @@ object TracingService extends Http4sDsl[IO] {
        Ok(span.getContext.toString)
    }
  
-   val withTracingMiddleware: HttpService[IO] = TracingMiddleware(service)
+   // optional service data gets added as attribute to the created span
+   val serviceData = ServiceData(name = "MyService", version = "1.2.3")
+   val withTracingMiddleware: HttpService[IO] = TracingMiddleware(service, serviceData)
 }
 ```
 
@@ -77,8 +80,11 @@ object TracingService extends Http4sDsl[IO] {
       Ok()
   }
 
+
+   // optional service data gets added as attribute to the created span
+  val serviceData = ServiceData(name = "MyService", version = "1.2.3")
   val withTracingMiddleware: HttpService[IO] =
-    TracingMiddleware.withoutSpan(service)
+    TracingMiddleware.withoutSpan(service, serviceData)
 }
 
 ```

@@ -1,6 +1,7 @@
 package io.opencensus.scala.http4s
 
 import cats.effect.IO
+import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http4s.TracingService.{TracingService, withSpan}
 import io.opencensus.trace.Span
 import org.http4s._
@@ -14,7 +15,8 @@ class TracingMiddlewareSpec
 
   behavior of "TracingMiddleware"
 
-  val ex = new Exception("test exception")
+  val ex   = new Exception("test exception")
+  val data = ServiceData("serviceX", "x.s.2")
   def tracingService(
       response: Span => IO[Response[IO]] = span => Ok(span.getContext.toString)
   ): TracingService[IO] =
@@ -37,6 +39,17 @@ class TracingMiddlewareSpec
       _.fromTracingService(tracingService(_ => InternalServerError()))
   )
 
+  "tracing with span and with service data" should behave like testService(
+    successServiceFromMiddleware = _.fromTracingService(tracingService(), data),
+    failingServiceFromMiddleware =
+      _.fromTracingService(tracingService(_ => IO.raiseError(ex)), data),
+    badRequestServiceFromMiddleware =
+      _.fromTracingService(tracingService(_ => BadRequest()), data),
+    errorServiceFromMiddleware =
+      _.fromTracingService(tracingService(_ => InternalServerError()), data),
+    Some(data)
+  )
+
   it should "pass the span to the service" in {
     val (middleware, _) = middlewareWithMock()
 
@@ -54,5 +67,15 @@ class TracingMiddlewareSpec
     failingServiceFromMiddleware = _.withoutSpan(service(IO.raiseError(ex))),
     badRequestServiceFromMiddleware = _.withoutSpan(service(BadRequest())),
     errorServiceFromMiddleware = _.withoutSpan(service(InternalServerError()))
+  )
+
+  "tracing without span and with service data" should behave like testService(
+    successServiceFromMiddleware = _.withoutSpan(service(), data),
+    failingServiceFromMiddleware =
+      _.withoutSpan(service(IO.raiseError(ex)), data),
+    badRequestServiceFromMiddleware = _.withoutSpan(service(BadRequest()), data),
+    errorServiceFromMiddleware =
+      _.withoutSpan(service(InternalServerError()), data),
+    Some(data)
   )
 }
