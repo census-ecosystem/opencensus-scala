@@ -35,7 +35,7 @@ opencensus-scala {
 ### Tracing
 
 
-The `TracingHttpClient` starts a new span either from the passed in parent span or without a parent span.
+The `TracingElasticClient` starts a new span either from the passed in parent span or without a parent span.
 
 When the request to elasticserarch completes or fails the span is ended with a proper status which fits to the http response code.
 
@@ -43,31 +43,30 @@ When the request to elasticserarch completes or fails the span is ended with a p
 ### Client
 
 ```scala
-import com.github.sebruck.opencensus.elastic4s.implicits._
+import io.opencensus.scala.elastic4s.implicits._
 import com.sksamuel.elastic4s.http.ElasticDsl._
-import com.sksamuel.elastic4s.http.HttpClient
+import com.sksamuel.elastic4s.http.ElasticClient
+import com.sksamuel.elastic4s.http.ElasticProperties
 import io.opencensus.trace.BlankSpan
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 object ExampleElastic4s extends App {
-  val httpClient: HttpClient = HttpClient("elasticsearch://localhost:9200")
-
+  val elasticClient: ElasticClient = ElasticClient(ElasticProperties("elasticsearch://localhost:9200"))
   // without a parent span
-  httpClient.traced
+  elasticClient.traced
     .execute(search("indexName"))
   //  Future[Either[RequestFailure, RequestSuccess[SearchResponse]]]
-
   // from a parent span
   val parentSpan = BlankSpan.INSTANCE
-  httpClient
+  elasticClient
     .traced(parentSpan)
     .execute(search("indexName"))
   //  Future[Either[RequestFailure, RequestSuccess[SearchResponse]]]
 }
 ```
 
-The `traced` function enriches the `HttpClient`,
+The `traced` function enriches the `ElasticClient`,
  it starts a new span and sets the HttpAttributes dependent on the `Request` and `RequestFailure` or `RequestSuccess`.
 
 When the call completes or fails the span is ended with a proper status which fits to the http response code.

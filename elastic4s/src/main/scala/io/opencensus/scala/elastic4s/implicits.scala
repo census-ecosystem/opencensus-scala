@@ -1,27 +1,25 @@
 package io.opencensus.scala.elastic4s
 
-import com.sksamuel.elastic4s.http.HttpClient
+import com.sksamuel.elastic4s.http.ElasticClient
 import io.opencensus.trace.Span
-
-import scala.concurrent.ExecutionContext
 
 object implicits {
 
-  implicit class ClientWithTracing(httpClient: HttpClient) {
+  implicit class ClientWithTracing(elastiClient: ElasticClient) {
 
     /**
-      * Enriches the `HttpClient` with tracing `.execute` calls.
+      * Enriches the `ElasticClient` with tracing `.execute` calls.
       *
       * @param parentSpan the current span which will act as parent of the new span
       */
-    def traced(parentSpan: Span)(implicit ec: ExecutionContext): HttpClient =
-      TracingHttpClient(httpClient, Some(parentSpan))
+    def traced(parentSpan: Span): ElasticClient =
+      TracingElasticClient(elastiClient, Some(parentSpan))
 
     /**
-      * Enriches the `HttpClient` with tracing `.execute` calls.
+      * Enriches the `ElasticClient` with tracing `.execute` calls.
       */
-    def traced(implicit ec: ExecutionContext): HttpClient =
-      TracingHttpClient(httpClient, None)
+    def traced: ElasticClient =
+      TracingElasticClient(elastiClient, None)
 
   }
 }
