@@ -5,11 +5,9 @@ import cats.effect.Effect
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
-import io.opencensus.scala.http.{
-  StatusTranslator,
-  HttpAttributes => BaseHttpAttributes
-}
+import io.opencensus.scala.http.{HttpAttributes => BaseHttpAttributes}
 import io.opencensus.scala.http4s.HttpAttributes._
+import io.opencensus.scala.http4s.TracingUtils.recordResponse
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.client.{Client, DisposableResponse}
@@ -33,8 +31,8 @@ abstract class TracingClient[F[_]: Effect] {
             span <- startSpan(parentSpan, req)
             enrichedReq = addTraceHeaders(req, span)
             res <- client.open.run(enrichedReq).adaptError(traceError(span))
-            _ = recordSuccess(span)(res)
-          } yield res
+          } yield
+            res.copy(response = recordResponse(span, tracing)(res.response))
       )
 
     Client(tracedOpen, client.shutdown)
@@ -44,9 +42,8 @@ abstract class TracingClient[F[_]: Effect] {
     case e => recordException(span); e
   }
 
-  private def startSpan(parentSpan: Option[Span], req: Request[F])(
-      implicit E: Effect[F]
-  ) = E.delay(startAndEnrichSpan(req, parentSpan))
+  def startSpan(parentSpan: Option[Span], req: Request[F]) =
+    Effect[F].delay(startAndEnrichSpan(req, parentSpan))
 
   private def startAndEnrichSpan(
       req: Request[F],
@@ -65,13 +62,6 @@ abstract class TracingClient[F[_]: Effect] {
       request.headers.put(propagation.headersWithTracingContext(span): _*)
     )
 
-  private def recordSuccess(
-      span: Span
-  )(dr: DisposableResponse[F]): DisposableResponse[F] = {
-    BaseHttpAttributes.setAttributesForResponse(span, dr.response)
-    tracing.endSpan(span, StatusTranslator.translate(dr.response.status.code))
-    dr
-  }
   private def recordException(span: Span): Unit =
     tracing.endSpan(span, Status.INTERNAL)
 }

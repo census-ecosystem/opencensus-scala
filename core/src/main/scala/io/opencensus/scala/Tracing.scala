@@ -41,6 +41,16 @@ trait Tracing {
   def startSpanWithRemoteParent(name: String, parentContext: SpanContext): Span
 
   /**
+    * Sets the status of the span
+    */
+  def setStatus(span: Span, status: Status): Unit
+
+  /**
+    * Ends the span
+    */
+  def endSpan(span: Span): Unit
+
+  /**
     * Ends the span with the given status
     */
   def endSpan(span: Span, status: Status): Unit
@@ -92,6 +102,13 @@ private[scala] trait TracingImpl extends Tracing {
   /** @inheritdoc */
   override def startSpanWithParent(name: String, parent: Span): Span =
     buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+
+  /** @inheritdoc */
+  override def setStatus(span: Span, status: Status): Unit =
+    span.setStatus(status)
+
+  /** @inheritdoc */
+  override def endSpan(span: Span): Unit = span.end()
 
   /** @inheritdoc */
   override def startSpanWithRemoteParent(

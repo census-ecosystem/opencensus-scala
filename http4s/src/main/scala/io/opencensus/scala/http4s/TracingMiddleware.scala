@@ -6,12 +6,10 @@ import cats.effect.Effect
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
-import io.opencensus.scala.http.{
-  StatusTranslator,
-  HttpAttributes => BaseHttpAttributes
-}
+import io.opencensus.scala.http.{HttpAttributes => BaseHttpAttributes}
 import io.opencensus.scala.http4s.HttpAttributes._
 import io.opencensus.scala.http4s.TracingService.{SpanRequest, TracingService}
+import io.opencensus.scala.http4s.TracingUtils.recordResponse
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
 import org.http4s.{Header, HttpService, Request, Response}
@@ -32,7 +30,7 @@ abstract class TracingMiddleware[F[_]: Effect] {
       val span = buildSpan(req)
       OptionT(
         tracingService(SpanRequest(span, req))
-          .map(recordSuccess(span))
+          .map(recordResponse(span, tracing))
           .value
           .adaptError {
             case e =>
@@ -63,12 +61,6 @@ abstract class TracingMiddleware[F[_]: Effect] {
       )
     BaseHttpAttributes.setAttributesForRequest(span, req)
     span
-  }
-
-  private def recordSuccess(span: Span)(response: Response[F]): Response[F] = {
-    BaseHttpAttributes.setAttributesForResponse(span, response)
-    tracing.endSpan(span, StatusTranslator.translate(response.status.code))
-    response
   }
 
   private def recordException(span: Span): Unit =
