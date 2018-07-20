@@ -30,7 +30,7 @@ abstract class TracingClient[F[_]: Effect] {
           for {
             span <- startSpan(parentSpan, req)
             enrichedReq = addTraceHeaders(req, span)
-            res <- client.open.run(enrichedReq).adaptError(traceError(span))
+            res <- client.open.run(enrichedReq).onError(traceError(span))
           } yield
             res.copy(response = recordResponse(span, tracing)(res.response))
       )
@@ -38,8 +38,8 @@ abstract class TracingClient[F[_]: Effect] {
     Client(tracedOpen, client.shutdown)
   }
 
-  private def traceError(span: Span): PartialFunction[Throwable, Throwable] = {
-    case e => recordException(span); e
+  private def traceError(span: Span): PartialFunction[Throwable, F[Unit]] = {
+    case e => recordException(span)
   }
 
   def startSpan(parentSpan: Option[Span], req: Request[F]) =
@@ -62,8 +62,8 @@ abstract class TracingClient[F[_]: Effect] {
       request.headers.put(propagation.headersWithTracingContext(span): _*)
     )
 
-  private def recordException(span: Span): Unit =
-    tracing.endSpan(span, Status.INTERNAL)
+  private def recordException(span: Span) =
+    Effect[F].delay(tracing.endSpan(span, Status.INTERNAL))
 }
 
 object TracingClient {
