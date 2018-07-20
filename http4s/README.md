@@ -45,8 +45,8 @@ When the request completes or fails the span is ended with a proper status which
 #### Tracing and passing span to an underlying service
 ```scala
 import cats.effect.IO
-import com.github.sebruck.opencensus.http4s.TracingService._
-import com.github.sebruck.opencensus.http4s.TracingMiddleware
+import io.opencensus.scala.http4s.TracingService._
+import io.opencensus.scala.http4s.TracingMiddleware
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
@@ -65,8 +65,8 @@ object TracingService extends Http4sDsl[IO] {
 
 ```scala
 import cats.effect.IO
-import com.github.sebruck.opencensus.http4s.TracingService._
-import com.github.sebruck.opencensus.http4s.TracingMiddleware
+import io.opencensus.scala.http4s.TracingService._
+import io.opencensus.scala.http4s.TracingMiddleware
 import org.http4s._
 import org.http4s.dsl.Http4sDsl
 
@@ -88,7 +88,7 @@ object TracingService extends Http4sDsl[IO] {
 ```scala
   import cats.effect.IO
   import org.http4s.client.Client
-  import com.github.sebruck.opencensus.http4s.implicits._
+  import io.opencensus.scala.http4s.implicits._
 
   val client: Client[IO] = ???
 

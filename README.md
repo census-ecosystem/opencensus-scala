@@ -15,6 +15,7 @@ Opencensus-scala supports the tracing and stats apis of opencensus.
 |---------|-----------|---------|
 |Akka HTTP|supported  |planned  |
 |Http4s   |supported  |planned  |
+|Elastic4s|supported  |planned  |
 |Play     |planned    |planned  |
 
 
@@ -37,6 +38,9 @@ Add the following dependencies to your sbt project.
 
 // If you want to use opencensus-scala inside a http4s project 
 "com.github.sebruck" %% "opencensus-scala-http4s" % "0.5.0" 
+
+// If you want to use opencensus-scala inside a elastic4s project 
+"com.github.sebruck" %% "opencensus-scala-elastic4s" % "0.5.0" 
 ```
 
 ### Configuration

@@ -42,7 +42,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 
 object TracingService extends App {
-  import com.github.sebruck.opencensus.akka.http.TracingDirective._
+  import io.opencensus.scala.akka.http.TracingDirective._
 
   implicit val system: ActorSystem             = ActorSystem()
   implicit val materializer: ActorMaterializer = ActorMaterializer()
