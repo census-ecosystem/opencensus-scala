@@ -70,7 +70,7 @@ trait ClientSpec
         else
           startedSpan.parentContext shouldBe None
 
-        mockTracing.endedSpansStatuses should contain(Status.OK)
+        mockTracing.endedSpans.map(_._2.get) should contain(Status.OK)
       }
     }
 
@@ -85,7 +85,7 @@ trait ClientSpec
       )
 
       failingClient.map { _ =>
-        mockTracing.endedSpansStatuses.map(_.getCanonicalCode) should contain(
+        mockTracing.endedSpans.map(_._2.get.getCanonicalCode) should contain(
           Status.INTERNAL.getCanonicalCode
         )
       }

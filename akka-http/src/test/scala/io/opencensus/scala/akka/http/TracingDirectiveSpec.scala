@@ -58,7 +58,7 @@ class TracingDirectiveSpec
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
       responseEntity.discardBytes() // drain entity so the span gets closed
-      mockTracing.endedSpansStatuses should contain(Status.OK)
+      mockTracing.endedSpans.map(_._2.get) should contain(Status.OK)
     }
   }
 
@@ -69,7 +69,7 @@ class TracingDirectiveSpec
       _ => Directives.complete(StatusCodes.InternalServerError)
     ) ~> check {
       responseEntity.discardBytes() // drain entity so the span gets closed
-      mockTracing.endedSpansStatuses should contain(Status.UNKNOWN)
+      mockTracing.endedSpans.map(_._2.get) should contain(Status.UNKNOWN)
     }
   }
 
@@ -79,7 +79,7 @@ class TracingDirectiveSpec
     Get(path) ~> directive.traceRequest(
       _ => throw new Exception("test exception")
     ) ~> check {
-      mockTracing.endedSpansStatuses should contain(Status.INTERNAL)
+      mockTracing.endedSpans.map(_._2.get) should contain(Status.INTERNAL)
     }
   }
 
