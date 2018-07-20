@@ -8,7 +8,7 @@ import io.opencensus.scala.Tracing
 import io.opencensus.scala.akka.http.propagation.AkkaB3FormatPropagation
 import io.opencensus.scala.akka.http.trace.HttpAttributes._
 import io.opencensus.scala.akka.http.utils.EndSpanResponse
-import io.opencensus.scala.http.HttpAttributes
+import io.opencensus.scala.http.{ServiceAttributes, HttpAttributes, ServiceData}
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.trace.{Span, Status}
 
@@ -24,13 +24,25 @@ trait TracingDirective extends LazyLogging {
     * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code
     */
-  val traceRequest: Directive1[Span] =
+  def traceRequest: Directive1[Span] = traceRequest(ServiceData())
+
+  /**
+    * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
+    * The span is ended when the request completes or fails with a status code which is suitable
+    * to the http response code.
+    *
+    * Adds the data which is set in serviceData as attributes to the span.
+    */
+  def traceRequestForService(serviceData: ServiceData): Directive1[Span] =
+    traceRequest(serviceData)
+
+  private def traceRequest(serviceData: ServiceData): Directive1[Span] =
     extractRequest.flatMap { req =>
-      val span = buildSpan(req)
+      val span = buildSpan(req, serviceData)
       recordSuccess(span) & recordException(span) & provide(span)
     }
 
-  private def buildSpan(req: HttpRequest): Span = {
+  private def buildSpan(req: HttpRequest, serviceData: ServiceData): Span = {
     val name = req.uri.path.toString()
 
     val span = propagation
@@ -43,6 +55,7 @@ trait TracingDirective extends LazyLogging {
         tracing.startSpanWithRemoteParent(name, _)
       )
 
+    ServiceAttributes.setAttributesForService(span, serviceData)
     HttpAttributes.setAttributesForRequest(span, req)
     span
   }

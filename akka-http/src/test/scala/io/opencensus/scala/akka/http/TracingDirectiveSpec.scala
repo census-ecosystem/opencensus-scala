@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.akka.http.AkkaMockPropagation._
+import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.MockTracing
 import io.opencensus.trace.{AttributeValue, Status}
@@ -16,7 +17,7 @@ class TracingDirectiveSpec
     with ScalatestRouteTest
     with OptionValues {
 
-  behavior of "trace"
+  behavior of "traceRequest"
 
   val path = "/my/fancy/path"
 
@@ -89,8 +90,7 @@ class TracingDirectiveSpec
 
     Get(path) ~> directive.traceRequest(_ => Directives.complete("")) ~> check {
       val startedSpan = mockTracing.startedSpans.headOption.value
-
-      val attributes = startedSpan.attributes
+      val attributes  = startedSpan.attributes
 
       attributes.get("http.host").value shouldBe stringAttributeValue(
         "example.com"
@@ -100,6 +100,28 @@ class TracingDirectiveSpec
       )
       attributes.get("http.method").value shouldBe stringAttributeValue("GET")
       attributes.get("http.status_code").value shouldBe longAttributeValue(200L)
+    }
+  }
+
+  behavior of "traceRequestForService"
+
+  it should "set the service attributes" in {
+    import AttributeValue._
+    val (directive, mockTracing) = directiveWithMock()
+
+    val tracingDirective =
+      directive.traceRequestForService(ServiceData("myname", "myversion"))
+
+    Get(path) ~> tracingDirective(_ => Directives.complete("")) ~> check {
+      val startedSpan = mockTracing.startedSpans.headOption.value
+      val attributes  = startedSpan.attributes
+
+      attributes.get("service.name").value shouldBe stringAttributeValue(
+        "myname"
+      )
+
+      attributes.get("service.version").value shouldBe stringAttributeValue(
+        "myversion")
     }
   }
 
