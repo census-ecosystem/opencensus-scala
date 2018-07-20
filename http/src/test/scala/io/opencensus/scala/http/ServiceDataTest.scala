@@ -15,8 +15,10 @@ class ServiceDataTest extends FlatSpec with Matchers {
   }
 
   it should "contain the name and the version" in {
-    ServiceData("name", "version") shouldBe ServiceData(Some("name"),
-                                                        Some("version"))
+    ServiceData("name", "version") shouldBe ServiceData(
+      Some("name"),
+      Some("version")
+    )
   }
 
   "setName" should "set the name" in {
@@ -24,7 +26,9 @@ class ServiceDataTest extends FlatSpec with Matchers {
   }
 
   "setVersion" should "set the version" in {
-    ServiceData().setVersion("version") shouldBe ServiceData(None,
-                                                             Some("version"))
+    ServiceData().setVersion("version") shouldBe ServiceData(
+      None,
+      Some("version")
+    )
   }
 }

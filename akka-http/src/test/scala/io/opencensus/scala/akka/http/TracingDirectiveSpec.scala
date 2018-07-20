@@ -121,7 +121,8 @@ class TracingDirectiveSpec
       )
 
       attributes.get("service.version").value shouldBe stringAttributeValue(
-        "myversion")
+        "myversion"
+      )
     }
   }
 
