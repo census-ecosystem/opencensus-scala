@@ -1,6 +1,7 @@
 package io.opencensus.scala.http4s
 
 import cats.effect.IO
+import fs2.Stream
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.{MockPropagation, MockTracing}
@@ -43,6 +44,26 @@ class TracingClientSpec
     mockTracing.endedSpans.headOption
       .flatMap(_._2)
       .value shouldBe CensusStatus.OK
+  }
+
+  it should "set the status but not end the span if body is not drained" in {
+    val (clientTracing, mockTracing) = clientTracingWithMock()
+
+    val req = Request[IO](uri = Uri.unsafeFromString(path))
+    clientTracing
+      .trace(
+        expectingClient(
+          response =
+            IO(Response(body = Stream("What".getBytes.toList: _*).covary[IO]))
+        )
+      )
+      .fetch(req)(_ => IO(""))
+      .unsafeRunSync()
+
+    mockTracing.spanStauts.headOption
+      .map(_._2)
+      .value shouldBe CensusStatus.OK
+    mockTracing.endedSpans shouldBe empty
   }
 
   it should "Use the parent span if existing" in {
