@@ -1,5 +1,6 @@
 package io.opencensus.scala.http4s
 
+import cats.data.OptionT
 import cats.effect.IO
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
@@ -102,6 +103,20 @@ trait ServiceRequirementsSpec
       badRequestServiceFromMiddleware(middleware)
         .orNotFound(request)
         .flatMap(r => r.body.compile.drain)
+        .unsafeRunSync()
+
+      mockTracing.endedSpans.headOption
+        .flatMap(_._2)
+        .value shouldBe Status.INVALID_ARGUMENT
+    }
+
+    it should "end a span with INVALID_ARGUMENT when no route was found" in {
+      val (middleware, mockTracing) = middlewareWithMock()
+
+      successServiceFromMiddleware(middleware)
+        .orNotFound(
+          Request[IO](Method.GET, Uri.unsafeFromString("/not/existing"))
+        )
         .unsafeRunSync()
 
       mockTracing.endedSpans.headOption

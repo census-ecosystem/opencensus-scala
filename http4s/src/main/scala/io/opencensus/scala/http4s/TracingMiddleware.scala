@@ -27,17 +27,11 @@ abstract class TracingMiddleware[F[_]: Effect] {
     */
   def fromTracingService(tracingService: TracingService[F]): HttpService[F] =
     Kleisli { req =>
-      val span = buildSpan(req)
-      OptionT(
-        tracingService(SpanRequest(span, req))
-          .map(recordResponse(span, tracing))
-          .value
-          .adaptError {
-            case e =>
-              recordException(span)
-              e
-          }
-      )
+      for {
+        span <- OptionT.liftF(buildSpan(req))
+        fResponse = tracingService(SpanRequest(span, req))
+        response <- recordFailures(fResponse, span)
+      } yield recordResponse(span, tracing)(response)
     }
 
   /**
@@ -51,7 +45,23 @@ abstract class TracingMiddleware[F[_]: Effect] {
   def withoutSpan(service: HttpService[F]): HttpService[F] =
     fromTracingService(service.local[SpanRequest[F]](spanReq => spanReq.req))
 
-  private def buildSpan(req: Request[F]): Span = {
+  private def recordFailures(
+      result: OptionT[F, Response[F]],
+      span: Span
+  ): OptionT[F, Response[F]] =
+    OptionT(
+      result.value
+        .onError {
+          case _ => recordException(span)
+        }
+        .flatMap {
+          case None =>
+            reordNotFound(span).map(_ => None: Option[Response[F]])
+          case some => Effect[F].pure(some)
+        }
+    )
+
+  private def buildSpan(req: Request[F]) = Effect[F].delay {
     val name = req.uri.path.toString
     val span = propagation
       .extractContext(req)
@@ -63,8 +73,11 @@ abstract class TracingMiddleware[F[_]: Effect] {
     span
   }
 
-  private def recordException(span: Span): Unit =
-    tracing.endSpan(span, Status.INTERNAL)
+  private def recordException(span: Span) =
+    Effect[F].delay(tracing.endSpan(span, Status.INTERNAL))
+
+  private def reordNotFound(span: Span) =
+    Effect[F].delay(tracing.endSpan(span, Status.INVALID_ARGUMENT))
 }
 
 object TracingMiddleware {
