@@ -1,8 +1,8 @@
 package io.opencensus.scala.http4s
 
-import cats.data.OptionT
 import cats.effect.IO
 import io.opencensus.scala.Tracing
+import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.{MockPropagation, MockTracing}
 import io.opencensus.trace.Status
@@ -26,7 +26,8 @@ trait ServiceRequirementsSpec
       successServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
       failingServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
       badRequestServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
-      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO]
+      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
+      serviceDataSet: Option[ServiceData] = None
   ) = {
 
     it should "start a span with the path of the request" in {
@@ -156,6 +157,27 @@ trait ServiceRequirementsSpec
         .unsafeRunSync()
 
       mockTracing.startedSpans.headOption.value.parentContext shouldBe defined
+    }
+
+    it should "set service data if given" in {
+      import io.opencensus.trace.AttributeValue._
+      val (middleware, mockTracing) = middlewareWithMock()
+
+      successServiceFromMiddleware(middleware)
+        .orNotFound(request)
+        .unsafeRunSync()
+      val attributes = mockTracing.startedSpans.headOption.value.attributes
+
+      serviceDataSet match {
+        case Some(ServiceData(Some(name), Some(version))) =>
+          attributes.get("service.name").value shouldBe stringAttributeValue(
+            name
+          )
+          attributes.get("service.version").value shouldBe stringAttributeValue(
+            version
+          )
+        case None => succeed
+      }
     }
   }
 

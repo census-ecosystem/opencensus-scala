@@ -6,7 +6,11 @@ import cats.effect.Effect
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
-import io.opencensus.scala.http.{HttpAttributes => BaseHttpAttributes}
+import io.opencensus.scala.http.{
+  ServiceAttributes,
+  ServiceData,
+  HttpAttributes => BaseHttpAttributes
+}
 import io.opencensus.scala.http4s.HttpAttributes._
 import io.opencensus.scala.http4s.TracingService.{SpanRequest, TracingService}
 import io.opencensus.scala.http4s.TracingUtils.recordResponse
@@ -23,12 +27,18 @@ abstract class TracingMiddleware[F[_]: Effect] {
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
     * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code.
+    * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
   def fromTracingService(tracingService: TracingService[F]): HttpService[F] =
+    fromTracingService(tracingService, ServiceData())
+  def fromTracingService(
+      tracingService: TracingService[F],
+      serviceData: ServiceData
+  ): HttpService[F] =
     Kleisli { req =>
       for {
-        span <- OptionT.liftF(buildSpan(req))
+        span <- OptionT.liftF(buildSpan(req, serviceData))
         fResponse = tracingService(SpanRequest(span, req))
         response <- recordFailures(fResponse, span)
       } yield recordResponse(span, tracing)(response)
@@ -40,10 +50,19 @@ abstract class TracingMiddleware[F[_]: Effect] {
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
     * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code.
+    * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
   def withoutSpan(service: HttpService[F]): HttpService[F] =
-    fromTracingService(service.local[SpanRequest[F]](spanReq => spanReq.req))
+    withoutSpan(service, ServiceData())
+  def withoutSpan(
+      service: HttpService[F],
+      serviceData: ServiceData
+  ): HttpService[F] =
+    fromTracingService(
+      service.local[SpanRequest[F]](spanReq => spanReq.req),
+      serviceData
+    )
 
   private def recordFailures(
       result: OptionT[F, Response[F]],
@@ -61,17 +80,19 @@ abstract class TracingMiddleware[F[_]: Effect] {
         }
     )
 
-  private def buildSpan(req: Request[F]) = Effect[F].delay {
-    val name = req.uri.path.toString
-    val span = propagation
-      .extractContext(req)
-      .fold(
-        _ => tracing.startSpan(name),
-        tracing.startSpanWithRemoteParent(name, _)
-      )
-    BaseHttpAttributes.setAttributesForRequest(span, req)
-    span
-  }
+  private def buildSpan(req: Request[F], serviceData: ServiceData) =
+    Effect[F].delay {
+      val name = req.uri.path.toString
+      val span = propagation
+        .extractContext(req)
+        .fold(
+          _ => tracing.startSpan(name),
+          tracing.startSpanWithRemoteParent(name, _)
+        )
+      ServiceAttributes.setAttributesForService(span, serviceData)
+      BaseHttpAttributes.setAttributesForRequest(span, req)
+      span
+    }
 
   private def recordException(span: Span) =
     Effect[F].delay(tracing.endSpan(span, Status.INTERNAL))
@@ -87,10 +108,16 @@ object TracingMiddleware {
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
     * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code.
+    * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
   def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
     createMiddleware[F].fromTracingService(tracingService)
+  def apply[F[_]: Effect](
+      tracingService: TracingService[F],
+      serviceData: ServiceData
+  ): HttpService[F] =
+    createMiddleware[F].fromTracingService(tracingService, serviceData)
 
   /**
     * Adds tracing to a `HttpService[F]`, does not pass the `span` to the service itself.
@@ -98,10 +125,16 @@ object TracingMiddleware {
     * Starts a new span and sets a parent context if the request contains valid headers in the b3 format.
     * The span is ended when the request completes or fails with a status code which is suitable
     * to the http response code.
+    * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
   def withoutSpan[F[_]: Effect](service: HttpService[F]): HttpService[F] =
     createMiddleware[F].withoutSpan(service)
+  def withoutSpan[F[_]: Effect](
+      service: HttpService[F],
+      serviceData: ServiceData
+  ): HttpService[F] =
+    createMiddleware[F].withoutSpan(service, serviceData)
 
   private def createMiddleware[F[_]: Effect] = {
     new TracingMiddleware[F] {

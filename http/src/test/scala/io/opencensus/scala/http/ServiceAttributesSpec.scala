@@ -29,7 +29,9 @@ class ServiceAttributesSpec extends FlatSpec with Matchers {
     val span = new MockSpan("", None)
     setAttributesForService(span, ServiceData("myservice", "myversion"))
 
-    span.attributes shouldBe Map("service.name"    -> strValue("myservice"),
-                                 "service.version" -> strValue("myversion"))
+    span.attributes shouldBe Map(
+      "service.name"    -> strValue("myservice"),
+      "service.version" -> strValue("myversion")
+    )
   }
 }

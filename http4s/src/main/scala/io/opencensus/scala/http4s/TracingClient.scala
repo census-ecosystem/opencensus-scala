@@ -39,10 +39,10 @@ abstract class TracingClient[F[_]: Effect] {
   }
 
   private def traceError(span: Span): PartialFunction[Throwable, F[Unit]] = {
-    case e => recordException(span)
+    case _ => recordException(span)
   }
 
-  def startSpan(parentSpan: Option[Span], req: Request[F]) =
+  private def startSpan(parentSpan: Option[Span], req: Request[F]) =
     Effect[F].delay(startAndEnrichSpan(req, parentSpan))
 
   private def startAndEnrichSpan(
