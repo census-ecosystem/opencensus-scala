@@ -157,6 +157,7 @@ private[scala] trait TracingImpl extends Tracing {
 }
 
 object Tracing extends TracingImpl with LazyLogging {
+  import pureconfig.generic.auto._
   override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
 
   if (config.trace.exporters.stackdriver.enabled)
