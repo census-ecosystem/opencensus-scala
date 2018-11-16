@@ -9,7 +9,7 @@ Have a look at the [usage examples](../akka-http-example/src/main/scala/com/gith
 In your build.sbt add the following dependency:
 
 ```scala
-"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.6.0" 
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.6.1" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
 "io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.15.0"
