@@ -46,7 +46,7 @@ lazy val akkaHttpExample = (project in file("akka-http-example"))
   .settings(
     publishArtifact := false,
     libraryDependencies ++= Seq(
-      "io.opencensus"  % "opencensus-exporter-trace-logging" % "0.15.0",
+      "io.opencensus"  % "opencensus-exporter-trace-logging" % "0.18.0",
       "ch.qos.logback" % "logback-classic"                   % "1.2.3",
       "org.slf4j"      % "log4j-over-slf4j"                  % "1.7.25",
       "org.slf4j"      % "jul-to-slf4j"                      % "1.7.25"
