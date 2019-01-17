@@ -3,7 +3,7 @@ import CompilerOptions._
 
 name in ThisBuild := "opencensus-scala"
 organization in ThisBuild := "com.github.sebruck"
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.8"
 scalacOptions in ThisBuild ++= compilerOptions
 scalafmtOnCompile in ThisBuild := true
 
@@ -24,7 +24,7 @@ lazy val root = (project in file("."))
       siteSubdirName in ScalaUnidoc
     ),
     // This is needed for unidoc, otherwise it can not generate the scala doc
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.7")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
   )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
@@ -58,7 +58,7 @@ lazy val http4s = (project in file("http4s"))
   .settings(
     name := "opencensus-scala-http4s",
     libraryDependencies := http4sDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.8")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 

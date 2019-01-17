@@ -2,15 +2,15 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.17.0"
+  val OpencensusVersion   = "0.18.0"
   val ScalaTestVersion    = "3.0.5"
-  val PureConfigVersion   = "0.10.0"
-  val ScalaLoggingVersion = "3.9.0"
-  val AkkaHttpVersion     = "10.1.5"
-  val AkkaVersion         = "2.5.18"
+  val PureConfigVersion   = "0.10.1"
+  val ScalaLoggingVersion = "3.9.2"
+  val AkkaHttpVersion     = "10.1.7"
+  val AkkaVersion         = "2.5.19"
   val Http4sVersion       = "0.18.21"
-  val Elastic4sVersion    = "6.4.0"
-  val CatsVersion         = "1.4.0"
+  val Elastic4sVersion    = "6.5.0"
+  val CatsVersion         = "1.5.0"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -42,7 +42,8 @@ object Dependencies {
   lazy val akkaHttpDependencies = Seq(
     "com.typesafe.akka" %% "akka-http"         % AkkaHttpVersion,
     "com.typesafe.akka" %% "akka-stream"       % AkkaVersion,
-    "com.typesafe.akka" %% "akka-http-testkit" % AkkaHttpVersion % Test
+    "com.typesafe.akka" %% "akka-http-testkit" % AkkaHttpVersion % Test,
+    "com.typesafe.akka" %% "akka-testkit"      % AkkaVersion % Test
   ) ++ scalaTest
 
   lazy val http4sDependencies = Seq(
