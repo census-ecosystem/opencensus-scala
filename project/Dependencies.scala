@@ -11,6 +11,7 @@ object Dependencies {
   val Http4sVersion       = "0.18.21"
   val Elastic4sVersion    = "6.5.0"
   val CatsVersion         = "1.5.0"
+  val DoobieVersion       = "0.6.0"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -55,4 +56,8 @@ object Dependencies {
     "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion,
     "com.sksamuel.elastic4s" %% "elastic4s-http" % Elastic4sVersion
   ) ++ scalaTest
+
+  lazy val doobieDependencies = Seq(
+    "org.tpolecat" %% "doobie-core" % DoobieVersion
+  ) ++ scalaTest ++ cats
 }

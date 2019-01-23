@@ -82,6 +82,11 @@ Utilities to use opencensus in [http4s](https://github.com/http4s/http4s) applic
 
 Learn more at the [documentation](http4s/README.md).
 
+### doobie 
+Utilities to use opencensus in [doobie](https://github.com/tpolecat/doobie) applications. 
+
+Learn more at the [documentation](doobie/README.md).
+
 ### elastic4s 
 Utilities to use opencensus in [elastic4s](https://github.com/sksamuel/elastic4s) applications. 
 
