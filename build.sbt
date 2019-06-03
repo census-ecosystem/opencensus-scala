@@ -58,7 +58,7 @@ lazy val http4s = (project in file("http4s"))
   .settings(
     name := "opencensus-scala-http4s",
     libraryDependencies := http4sDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.10")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 
@@ -73,7 +73,7 @@ lazy val doobie = (project in file("doobie"))
   .settings(
     name := "opencensus-scala-doobie",
     libraryDependencies := doobieDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
+    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.10")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 
