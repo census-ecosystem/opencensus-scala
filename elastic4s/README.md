@@ -10,10 +10,10 @@ In your build.sbt add the following dependency:
 "com.github.sebruck" %% "opencensus-scala-elastic4s" % "0.7.0-M1" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.18.0"
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.23.0"
 ```
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
@@ -44,9 +44,9 @@ When the request to elasticserarch completes or fails the span is ended with a p
 
 ```scala
 import io.opencensus.scala.elastic4s.implicits._
-import com.sksamuel.elastic4s.http.ElasticDsl._
-import com.sksamuel.elastic4s.http.ElasticClient
-import com.sksamuel.elastic4s.http.ElasticProperties
+import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.ElasticClient
+import com.sksamuel.elastic4s.ElasticProperties
 import io.opencensus.trace.BlankSpan
 
 import scala.concurrent.ExecutionContext.Implicits.global

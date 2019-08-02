@@ -10,10 +10,10 @@ In your build.sbt add the following dependency:
 "com.github.sebruck" %% "opencensus-scala-http4s" % "0.7.0-M1" 
 
 // Dependent on the trace exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.18.0"
-"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.18.0"
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.23.0"
 ```
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
@@ -75,7 +75,7 @@ import org.http4s.dsl.Http4sDsl
 
 
 object TracingService extends Http4sDsl[IO] {
-  val service: HttpService[IO] = HttpService[IO] {
+  val service: HttpRoutes[IO] = HttpService[IO] {
     case GET -> Root / "path" =>
       Ok()
   }
@@ -83,7 +83,7 @@ object TracingService extends Http4sDsl[IO] {
 
    // optional service data gets added as attribute to the created span
   val serviceData = ServiceData(name = "MyService", version = "1.2.3")
-  val withTracingMiddleware: HttpService[IO] =
+  val withTracingMiddleware: HttpRoutes[IO] =
     TracingMiddleware.withoutSpan(service, serviceData)
 }
 
