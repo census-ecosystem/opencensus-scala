@@ -8,7 +8,7 @@ import io.opencensus.tags.{Tags => JavaTags}
 import io.opencensus.testing.common.TestClock
 import org.scalatest.{FlatSpec, Inspectors, Matchers}
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class StatsImplSpec extends StatsSpecs {
 

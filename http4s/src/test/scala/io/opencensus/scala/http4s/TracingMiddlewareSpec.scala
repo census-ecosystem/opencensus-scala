@@ -24,8 +24,8 @@ class TracingMiddlewareSpec
       case GET -> Root / "my" / "fancy" / "path" withSpan span => response(span)
     }
 
-  def service(response: IO[Response[IO]] = Ok()): HttpService[IO] =
-    HttpService[IO] {
+  def service(response: IO[Response[IO]] = Ok()): HttpRoutes[IO] =
+    HttpRoutes.of[IO] {
       case GET -> Root / "my" / "fancy" / "path" => response
     }
 
@@ -55,8 +55,9 @@ class TracingMiddlewareSpec
 
     val responseBody = middleware
       .fromTracingService(tracingService())
-      .orNotFound(request)
-      .flatMap(_.as[String])
+      .run(request)
+      .value
+      .flatMap(_.get.as[String])
       .unsafeRunSync()
 
     responseBody should include("SpanContext")

@@ -10,9 +10,9 @@ import io.opencensus.trace.AttributeValue.{
   stringAttributeValue
 }
 import io.opencensus.trace.{BlankSpan, Status => CensusStatus}
+import org.http4s._
 import org.http4s.client.Client
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{HttpService, _}
 import org.scalatest._
 
 import scala.util.Try
@@ -30,11 +30,15 @@ class TracingClientSpec
       assertion: Request[IO] => Assertion = _ => Succeeded,
       response: IO[Response[IO]] = Ok()
   ): Client[IO] =
-    Client.fromHttpService(HttpService[IO] {
-      case req @ GET -> Root / "my" / "fancy" / "path" =>
-        assertion(req)
-        response
-    })
+    Client.fromHttpApp[IO](
+      HttpRoutes
+        .of[IO] {
+          case req @ GET -> Root / "my" / "fancy" / "path" =>
+            assertion(req)
+            response
+        }
+        .mapF(_.getOrElse(Response.notFound))
+    )
 
   it should "start and end a span when the request succeeds" in {
     val (clientTracing, mockTracing) = clientTracingWithMock()

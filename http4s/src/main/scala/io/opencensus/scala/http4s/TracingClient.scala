@@ -1,7 +1,6 @@
 package io.opencensus.scala.http4s
 
-import cats.data.Kleisli
-import cats.effect.Effect
+import cats.effect.{Effect, Resource}
 import cats.implicits._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
@@ -10,8 +9,8 @@ import io.opencensus.scala.http4s.HttpAttributes._
 import io.opencensus.scala.http4s.TracingUtils.recordResponse
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
-import org.http4s.client.{Client, DisposableResponse}
-import org.http4s.{Header, Request}
+import org.http4s.client.Client
+import org.http4s.{Header, Request, Response}
 
 abstract class TracingClient[F[_]: Effect] {
 
@@ -24,18 +23,17 @@ abstract class TracingClient[F[_]: Effect] {
     * @param parentSpan the current span which will act as parent of the new span if given
     */
   def trace(client: Client[F], parentSpan: Option[Span] = None): Client[F] = {
-    val tracedOpen: Kleisli[F, Request[F], DisposableResponse[F]] =
-      Kleisli(
-        req =>
-          for {
-            span <- startSpan(parentSpan, req)
-            enrichedReq = addTraceHeaders(req, span)
-            res <- client.open.run(enrichedReq).onError(traceError(span))
-          } yield
-            res.copy(response = recordResponse(span, tracing)(res.response))
-      )
+    val tracedOpen: Request[F] => Resource[F, Response[F]] =
+      req =>
+        for {
+          span <- Resource.liftF(startSpan(parentSpan, req))
+          enrichedReq = addTraceHeaders(req, span)
+          res <- client
+            .run(enrichedReq)
+            .onError(traceError(span).andThen(x => Resource.liftF(x)))
+        } yield recordResponse(span, tracing)(res)
 
-    Client(tracedOpen, client.shutdown)
+    Client(tracedOpen)
   }
 
   private def traceError(span: Span): PartialFunction[Throwable, F[Unit]] = {
@@ -67,9 +65,10 @@ abstract class TracingClient[F[_]: Effect] {
 }
 
 object TracingClient {
-  def apply[F[_]: Effect]: TracingClient[F] = new TracingClient[F] {
-    override protected val tracing: Tracing = Tracing
-    override protected val propagation: Propagation[Header, Request[F]] =
-      new Http4sFormatPropagation[F] {}
-  }
+  def apply[F[_]: Effect]: TracingClient[F] =
+    new TracingClient[F] {
+      override protected val tracing: Tracing = Tracing
+      override protected val propagation: Propagation[Header, Request[F]] =
+        new Http4sFormatPropagation[F] {}
+    }
 }

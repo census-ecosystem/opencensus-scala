@@ -1,6 +1,6 @@
 package io.opencensus.scala.elastic4s
 
-import com.sksamuel.elastic4s.http.HttpResponse
+import com.sksamuel.elastic4s.HttpResponse
 import io.opencensus.scala.http.HttpAttributesSpec
 
 class HttpAttributesOpsSpec extends HttpAttributesSpec {

@@ -17,7 +17,8 @@ trait MockPropagation[Header, Request] extends Propagation[Header, Request] {
   val sampledSpanContext = SpanContext.create(
     TraceId.fromLowerBase16(fakeTraceId),
     SpanId.fromLowerBase16(fakeSpanId),
-    TraceOptions.builder().setIsSampled(true).build()
+    TraceOptions.builder().setIsSampled(true).build(),
+    Tracestate.builder.build()
   )
 
   override def headersWithTracingContext(span: Span): immutable.Seq[Header] =

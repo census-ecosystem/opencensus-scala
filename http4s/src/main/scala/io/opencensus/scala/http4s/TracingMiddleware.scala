@@ -16,7 +16,7 @@ import io.opencensus.scala.http4s.TracingService.{SpanRequest, TracingService}
 import io.opencensus.scala.http4s.TracingUtils.recordResponse
 import io.opencensus.scala.http4s.propagation.Http4sFormatPropagation
 import io.opencensus.trace.{Span, Status}
-import org.http4s.{Header, HttpService, Request, Response}
+import org.http4s.{Header, HttpRoutes, Request, Response}
 
 abstract class TracingMiddleware[F[_]: Effect] {
   protected def tracing: Tracing
@@ -30,12 +30,12 @@ abstract class TracingMiddleware[F[_]: Effect] {
     * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
-  def fromTracingService(tracingService: TracingService[F]): HttpService[F] =
+  def fromTracingService(tracingService: TracingService[F]): HttpRoutes[F] =
     fromTracingService(tracingService, ServiceData())
   def fromTracingService(
       tracingService: TracingService[F],
       serviceData: ServiceData
-  ): HttpService[F] =
+  ): HttpRoutes[F] =
     Kleisli { req =>
       for {
         span <- OptionT.liftF(buildSpan(req, serviceData))
@@ -53,12 +53,12 @@ abstract class TracingMiddleware[F[_]: Effect] {
     * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
-  def withoutSpan(service: HttpService[F]): HttpService[F] =
+  def withoutSpan(service: HttpRoutes[F]): HttpRoutes[F] =
     withoutSpan(service, ServiceData())
   def withoutSpan(
-      service: HttpService[F],
+      service: HttpRoutes[F],
       serviceData: ServiceData
-  ): HttpService[F] =
+  ): HttpRoutes[F] =
     fromTracingService(
       service.local[SpanRequest[F]](spanReq => spanReq.req),
       serviceData
@@ -111,12 +111,12 @@ object TracingMiddleware {
     * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
-  def apply[F[_]: Effect](tracingService: TracingService[F]): HttpService[F] =
+  def apply[F[_]: Effect](tracingService: TracingService[F]): HttpRoutes[F] =
     createMiddleware[F].fromTracingService(tracingService)
   def apply[F[_]: Effect](
       tracingService: TracingService[F],
       serviceData: ServiceData
-  ): HttpService[F] =
+  ): HttpRoutes[F] =
     createMiddleware[F].fromTracingService(tracingService, serviceData)
 
   /**
@@ -128,12 +128,12 @@ object TracingMiddleware {
     * Adds service data as attribute to the span when given.
     * @return HttpService[F]
     */
-  def withoutSpan[F[_]: Effect](service: HttpService[F]): HttpService[F] =
+  def withoutSpan[F[_]: Effect](service: HttpRoutes[F]): HttpRoutes[F] =
     createMiddleware[F].withoutSpan(service)
   def withoutSpan[F[_]: Effect](
-      service: HttpService[F],
+      service: HttpRoutes[F],
       serviceData: ServiceData
-  ): HttpService[F] =
+  ): HttpRoutes[F] =
     createMiddleware[F].withoutSpan(service, serviceData)
 
   private def createMiddleware[F[_]: Effect] = {

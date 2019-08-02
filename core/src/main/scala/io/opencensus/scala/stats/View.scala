@@ -7,7 +7,7 @@ import io.opencensus.stats.{
 }
 import io.opencensus.tags.TagKey
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 import scala.util.Try
 
 /**
@@ -79,7 +79,7 @@ object Distribution {
   def apply(buckets: List[Double]): Try[Distribution] = Try {
 
     val javaDistribution = JavaAggregation.Distribution.create(
-      BucketBoundaries.create(buckets.map(new java.lang.Double(_)).asJava)
+      BucketBoundaries.create(buckets.map(java.lang.Double.valueOf).asJava)
     )
 
     new Distribution(buckets, javaDistribution) {}

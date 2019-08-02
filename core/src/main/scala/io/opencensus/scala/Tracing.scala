@@ -164,7 +164,7 @@ object Tracing extends TracingImpl with LazyLogging {
     Stackdriver.init(config.trace.exporters.stackdriver)
 
   if (config.trace.exporters.logging.enabled)
-    Logging.init(config.trace.exporters.logging)
+    Logging.init()
 
   if (config.trace.exporters.zipkin.enabled)
     Zipkin.init(config.trace.exporters.zipkin)

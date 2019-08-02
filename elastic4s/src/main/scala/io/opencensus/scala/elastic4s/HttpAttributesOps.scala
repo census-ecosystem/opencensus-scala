@@ -1,6 +1,6 @@
 package io.opencensus.scala.elastic4s
 
-import com.sksamuel.elastic4s.http.HttpResponse
+import com.sksamuel.elastic4s.HttpResponse
 import io.opencensus.scala.http.{RequestExtractor, ResponseExtractor}
 
 private[elastic4s] object HttpAttributesOps {
@@ -18,5 +18,5 @@ private[elastic4s] object HttpAttributesOps {
     }
 
   implicit val responseExtractor: ResponseExtractor[HttpResponse] =
-    (res: HttpResponse) => res.statusCode.toInt
+    (res: HttpResponse) => res.statusCode.toLong
 }
