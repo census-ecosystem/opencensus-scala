@@ -53,8 +53,7 @@ object Dependencies {
   ) ++ scalaTest
 
   lazy val elastic4sDependencies = Seq(
-    "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion,
-//    "com.sksamuel.elastic4s" %% "elastic4s-http" % Elastic4sVersion
+    "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion
   ) ++ scalaTest
 
   lazy val doobieDependencies = Seq(
