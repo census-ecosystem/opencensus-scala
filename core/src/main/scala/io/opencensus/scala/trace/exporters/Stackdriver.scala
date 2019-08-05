@@ -8,7 +8,7 @@ import io.opencensus.exporter.trace.stackdriver.{
 }
 import io.opencensus.scala.StackdriverTraceExporterConfig
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 private[scala] object Stackdriver extends LazyLogging {
 

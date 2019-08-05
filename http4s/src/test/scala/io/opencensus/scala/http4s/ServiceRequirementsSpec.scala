@@ -7,7 +7,7 @@ import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.{MockPropagation, MockTracing}
 import io.opencensus.trace.Status
 import org.http4s.dsl.Http4sDsl
-import org.http4s.{Header, HttpService, Method, Request, Uri}
+import org.http4s._
 import org.scalatest.{FlatSpec, Matchers, OptionValues}
 
 import scala.util.Try
@@ -23,10 +23,10 @@ trait ServiceRequirementsSpec
   val request  = Request[IO](Method.GET, uri)
 
   def testService(
-      successServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
-      failingServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
-      badRequestServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
-      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpService[IO],
+      successServiceFromMiddleware: TracingMiddleware[IO] => HttpRoutes[IO],
+      failingServiceFromMiddleware: TracingMiddleware[IO] => HttpRoutes[IO],
+      badRequestServiceFromMiddleware: TracingMiddleware[IO] => HttpRoutes[IO],
+      errorServiceFromMiddleware: TracingMiddleware[IO] => HttpRoutes[IO],
       serviceDataSet: Option[ServiceData] = None
   ) = {
 
@@ -34,7 +34,8 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
+        .run(request)
+        .value
         .unsafeRunSync()
       mockTracing.startedSpans.headOption.value.name shouldBe path
     }
@@ -43,9 +44,10 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(
+        .run(
           Request[IO](Method.GET, Uri.unsafeFromString("/no/parent/context"))
         )
+        .value
         .unsafeRunSync()
       mockTracing.startedSpans.headOption.value.name shouldBe "/no/parent/context"
       mockTracing.startedSpans.headOption.value.parentContext shouldBe empty
@@ -55,8 +57,9 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
-        .flatMap(_.body.compile.drain)
+        .run(request)
+        .value
+        .flatMap(_.get.body.compile.drain)
         .unsafeRunSync()
       mockTracing.endedSpans.headOption.flatMap(_._2).value shouldBe Status.OK
     }
@@ -65,7 +68,8 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
+        .run(request)
+        .value
         .unsafeRunSync()
 
       mockTracing.spanStauts.headOption.map(_._2).value shouldBe Status.OK
@@ -76,7 +80,8 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
       Try(
         failingServiceFromMiddleware(middleware)
-          .orNotFound(request)
+          .run(request)
+          .value
           .unsafeRunSync()
       )
 
@@ -89,8 +94,9 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       errorServiceFromMiddleware(middleware)
-        .orNotFound(request)
-        .flatMap(r => r.body.compile.drain.map(_ => r.status))
+        .run(request)
+        .value
+        .flatMap(r => r.get.body.compile.drain.map(_ => r.get.status))
         .unsafeRunSync()
 
       mockTracing.endedSpans.headOption
@@ -102,8 +108,9 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       badRequestServiceFromMiddleware(middleware)
-        .orNotFound(request)
-        .flatMap(r => r.body.compile.drain)
+        .run(request)
+        .value
+        .flatMap(r => r.get.body.compile.drain)
         .unsafeRunSync()
 
       mockTracing.endedSpans.headOption
@@ -115,9 +122,10 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(
+        .run(
           Request[IO](Method.GET, Uri.unsafeFromString("/not/existing"))
         )
+        .value
         .unsafeRunSync()
 
       mockTracing.endedSpans.headOption
@@ -130,12 +138,13 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(
+        .run(
           Request[IO](
             Method.GET,
             Uri.unsafeFromString("http://example.com/my/fancy/path")
           )
         )
+        .value
         .unsafeRunSync()
       val attributes = mockTracing.startedSpans.headOption.value.attributes
 
@@ -153,7 +162,8 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
+        .run(request)
+        .value
         .unsafeRunSync()
 
       mockTracing.startedSpans.headOption.value.parentContext shouldBe defined
@@ -164,7 +174,8 @@ trait ServiceRequirementsSpec
       val (middleware, mockTracing) = middlewareWithMock()
 
       successServiceFromMiddleware(middleware)
-        .orNotFound(request)
+        .run(request)
+        .value
         .unsafeRunSync()
       val attributes = mockTracing.startedSpans.headOption.value.attributes
 
@@ -176,7 +187,7 @@ trait ServiceRequirementsSpec
           attributes.get("service.version").value shouldBe stringAttributeValue(
             version
           )
-        case None => succeed
+        case _ => succeed
       }
     }
   }

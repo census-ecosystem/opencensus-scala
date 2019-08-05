@@ -138,7 +138,7 @@ trait ServiceRequirementsSpec
               .value shouldBe stringAttributeValue(
               version
             )
-          case None => succeed
+          case _ => succeed
         }
       }
     }

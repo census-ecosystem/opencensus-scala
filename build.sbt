@@ -1,10 +1,8 @@
 import Dependencies._
-import CompilerOptions._
 
 name in ThisBuild := "opencensus-scala"
 organization in ThisBuild := "com.github.sebruck"
-scalaVersion in ThisBuild := "2.12.8"
-scalacOptions in ThisBuild ++= compilerOptions
+scalaVersion in ThisBuild := "2.13.0"
 scalafmtOnCompile in ThisBuild := true
 
 releasePublishArtifactsAction in ThisBuild := PgpKeys.publishSigned.value
@@ -24,7 +22,7 @@ lazy val root = (project in file("."))
       siteSubdirName in ScalaUnidoc
     ),
     // This is needed for unidoc, otherwise it can not generate the scala doc
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.9")
+    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
   )
   .enablePlugins(ScalaUnidocPlugin)
   .enablePlugins(SiteScaladocPlugin)
@@ -46,7 +44,7 @@ lazy val akkaHttpExample = (project in file("akka-http-example"))
   .settings(
     publishArtifact := false,
     libraryDependencies ++= Seq(
-      "io.opencensus"  % "opencensus-exporter-trace-logging" % "0.18.0",
+      "io.opencensus"  % "opencensus-exporter-trace-logging" % "0.23.0",
       "ch.qos.logback" % "logback-classic"                   % "1.2.3",
       "org.slf4j"      % "log4j-over-slf4j"                  % "1.7.25",
       "org.slf4j"      % "jul-to-slf4j"                      % "1.7.25"
@@ -58,7 +56,7 @@ lazy val http4s = (project in file("http4s"))
   .settings(
     name := "opencensus-scala-http4s",
     libraryDependencies := http4sDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.10")
+    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 
@@ -73,7 +71,7 @@ lazy val doobie = (project in file("doobie"))
   .settings(
     name := "opencensus-scala-doobie",
     libraryDependencies := doobieDependencies,
-    addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.10")
+    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3")
   )
   .dependsOn(core, http % "compile->compile;test->test")
 

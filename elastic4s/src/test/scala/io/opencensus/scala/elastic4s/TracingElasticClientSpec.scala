@@ -1,9 +1,17 @@
 package io.opencensus.scala.elastic4s
 
 import cats.Id
-import com.sksamuel.elastic4s.http.ElasticDsl._
-import com.sksamuel.elastic4s.http.search.SearchResponse
-import com.sksamuel.elastic4s.http.{search => _, _}
+import com.sksamuel.elastic4s.{
+  ElasticClient,
+  ElasticRequest,
+  Executor,
+  Functor,
+  HttpClient,
+  HttpEntity,
+  HttpResponse
+}
+import com.sksamuel.elastic4s.ElasticDsl._
+import com.sksamuel.elastic4s.requests.searches.SearchResponse
 import io.opencensus.scala.http.testSuite.MockTracing
 import io.opencensus.trace.AttributeValue.{
   longAttributeValue,
@@ -88,23 +96,20 @@ class TracingElasticClientSpec
   private def elasticClient(
       res: Either[Throwable, HttpResponse] = emptySearchRes
   ) =
-    new ElasticClient {
-      override def client: HttpClient = new HttpClient {
-        override def send(
-            request: ElasticRequest,
-            callback: Either[Throwable, HttpResponse] => Unit
-        ): Unit =
-          callback(res)
-
-        override def close(): Unit = ()
-      }
+    ElasticClient(new HttpClient {
+      override def send(
+          request: ElasticRequest,
+          callback: Either[Throwable, HttpResponse] => Unit
+      ): Unit =
+        callback(res)
 
       override def close(): Unit = ()
-    }
+    })
 
   private def tracingAndClient(c: ElasticClient, parentSpan: Option[Span]) = {
-    val tracing       = new MockTracing() {}
-    val clientTracing = new TracingElasticClient(c, tracing, parentSpan)
+    val tracing = new MockTracing() {}
+    val clientTracing =
+      TracingElasticClient.tracingElasticClient(c, tracing, parentSpan)
     (tracing, clientTracing)
   }
 

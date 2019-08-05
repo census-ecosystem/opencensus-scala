@@ -2,16 +2,16 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.22.1"
-  val ScalaTestVersion    = "3.0.7"
-  val PureConfigVersion   = "0.11.0"
+  val OpencensusVersion   = "0.23.0"
+  val ScalaTestVersion    = "3.0.8"
+  val PureConfigVersion   = "0.11.1"
   val ScalaLoggingVersion = "3.9.2"
-  val AkkaHttpVersion     = "10.1.8"
+  val AkkaHttpVersion     = "10.1.9"
   val AkkaVersion         = "2.5.23"
-  val Http4sVersion       = "0.18.23"
-  val Elastic4sVersion    = "6.5.1"
-  val CatsVersion         = "1.6.0"
-  val DoobieVersion       = "0.7.0"
+  val Http4sVersion       = "0.21.0-M2"
+  val Elastic4sVersion    = "7.1.1"
+  val CatsVersion         = "2.0.0-M4"
+  val DoobieVersion       = "0.8.0-M3"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -53,8 +53,7 @@ object Dependencies {
   ) ++ scalaTest
 
   lazy val elastic4sDependencies = Seq(
-    "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion,
-    "com.sksamuel.elastic4s" %% "elastic4s-http" % Elastic4sVersion
+    "com.sksamuel.elastic4s" %% "elastic4s-core" % Elastic4sVersion
   ) ++ scalaTest
 
   lazy val doobieDependencies = Seq(

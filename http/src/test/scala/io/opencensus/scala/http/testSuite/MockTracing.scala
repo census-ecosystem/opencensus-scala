@@ -93,7 +93,7 @@ class MockTracing extends Tracing {
 
 class MockSpan(val name: String, val parentContext: Option[SpanContext])
     extends Span(SpanContext.INVALID, null) {
-  import scala.collection.JavaConverters._
+  import scala.jdk.CollectionConverters._
 
   @volatile var attributes = Map[String, AttributeValue]()
   @volatile var annotaions = List.empty[String]

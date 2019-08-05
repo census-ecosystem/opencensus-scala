@@ -1,6 +1,6 @@
 package io.opencensus.scala.elastic4s
 
-import com.sksamuel.elastic4s.http.ElasticClient
+import com.sksamuel.elastic4s.ElasticClient
 import io.opencensus.trace.Span
 
 object implicits {
