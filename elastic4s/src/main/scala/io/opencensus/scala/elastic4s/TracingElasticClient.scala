@@ -17,7 +17,7 @@ object TracingElasticClient {
 
   /**
     * Enriches the `ElasticClient` with tracing `.execute` calls.
-    * Uses [[io.opencensus.scala.Tracing]] as Tracing
+    * Uses io.opencensus.scala.Tracing as Tracing
     *
     * @param c the `ElasticClient` to be enriched.
     * @param parentSpan the current span which will act as parent of the new span

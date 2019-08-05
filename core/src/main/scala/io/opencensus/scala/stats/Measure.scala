@@ -56,7 +56,6 @@ sealed trait Measure {
   def javaMeasure: JavaM
 }
 
-/** @inheritdoc */
 sealed abstract case class MeasureLong(
     name: String,
     description: String,
@@ -67,7 +66,6 @@ sealed abstract case class MeasureLong(
   type JavaM = JavaMeasureLong
 }
 
-/** @inheritdoc */
 sealed abstract case class MeasureDouble(
     name: String,
     description: String,
