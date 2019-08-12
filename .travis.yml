@@ -1,10 +1,10 @@
 language: scala
 scala:
-- 2.12.8
+- 2.13.0
 jdk:
 - oraclejdk8
 script:
-  - sbt clean scalafmtCheck scalafmtSbtCheck test
+  - sbt clean scalafmtCheck scalafmtSbtCheck +test
 after_success:
   - >
       sbt 'set credentials += Credentials("Sonatype Nexus Repository Manager", "oss.sonatype.org", System.getenv("SONATYPE_USER"), System.getenv("SONATYPE_PASS"))' publish

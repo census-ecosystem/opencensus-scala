@@ -9,7 +9,7 @@ object Dependencies {
   val AkkaHttpVersion     = "10.1.9"
   val AkkaVersion         = "2.5.23"
   val Http4sVersion       = "0.21.0-M2"
-  val Elastic4sVersion    = "7.1.1"
+  val Elastic4sVersion    = "7.1.2"
   val CatsVersion         = "2.0.0-M4"
   val DoobieVersion       = "0.8.0-M3"
 
@@ -21,6 +21,10 @@ object Dependencies {
     "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
     "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
+  )
+
+  lazy val scalaCollectionCompat = Seq(
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.2"
   )
 
   lazy val scalaTest = Seq(
@@ -39,7 +43,7 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % ScalaLoggingVersion
   )
 
-  lazy val coreDependencies = opencensus ++ pureConfig ++ cats ++ logging ++ scalaTest
+  lazy val coreDependencies = opencensus ++ pureConfig ++ cats ++ logging ++ scalaTest ++ scalaCollectionCompat
   lazy val akkaHttpDependencies = Seq(
     "com.typesafe.akka" %% "akka-http"         % AkkaHttpVersion,
     "com.typesafe.akka" %% "akka-stream"       % AkkaVersion,

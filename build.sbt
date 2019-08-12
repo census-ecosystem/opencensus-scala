@@ -5,7 +5,9 @@ organization in ThisBuild := "com.github.sebruck"
 scalaVersion in ThisBuild := "2.13.0"
 scalafmtOnCompile in ThisBuild := true
 
+crossScalaVersions in ThisBuild := Seq("2.13.0", "2.12.9")
 releasePublishArtifactsAction in ThisBuild := PgpKeys.publishSigned.value
+
 publishTo in ThisBuild := Some(
   if (isSnapshot.value)
     Opts.resolver.sonatypeSnapshots

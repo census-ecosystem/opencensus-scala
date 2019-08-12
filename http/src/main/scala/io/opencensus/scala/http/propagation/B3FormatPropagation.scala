@@ -14,17 +14,16 @@ trait B3FormatPropagation[Header, Request]
 
   /** @inheritdoc */
   override def headersWithTracingContext(span: Span): immutable.Seq[Header] = {
-    val builder = newHeadersBuilder
+    val builder = new mutable.ArrayBuffer[Header]()
     b3Format.inject(span.getContext, builder, HeaderSetter)
-    builder.result()
+    builder.toList
   }
 
   /** @inheritdoc */
   override def extractContext(request: Request): Try[SpanContext] =
     Try(b3Format.extract(request, HeaderGetter))
 
-  private type HttpHeaderBuilder =
-    mutable.Builder[Header, immutable.Seq[Header]]
+  private type HttpHeaderBuilder = mutable.ArrayBuffer[Header]
 
   private object HeaderSetter extends Setter[HttpHeaderBuilder] {
     override def put(
@@ -40,17 +39,4 @@ trait B3FormatPropagation[Header, Request]
     override def get(carrier: Request, key: String): String =
       headerValue(carrier, key).orNull
   }
-
-  private def newHeadersBuilder: HttpHeaderBuilder =
-    new mutable.Builder[Header, immutable.Seq[Header]] {
-      private val b = mutable.ArrayBuffer.newBuilder[Header]
-
-      override def addOne(elem: Header): this.type = {
-        b += elem
-        this
-      }
-
-      override def clear(): Unit                   = b.clear()
-      override def result(): immutable.Seq[Header] = b.result().toList
-    }
 }
