@@ -12,6 +12,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-site" % "1.3.2")
 
 addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.4.1")
 
-addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.3.4")
+addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.5.0")
 
 addSbtPlugin("io.github.davidgregory084" % "sbt-tpolecat" % "0.1.7")
