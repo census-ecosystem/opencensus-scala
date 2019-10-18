@@ -16,7 +16,7 @@ import io.opencensus.trace.{
   Status,
   Tracing => OpencensusTracing
 }
-import pureconfig.loadConfigOrThrow
+import pureconfig.ConfigSource
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -158,7 +158,8 @@ private[scala] trait TracingImpl extends Tracing {
 
 object Tracing extends TracingImpl with LazyLogging {
   import pureconfig.generic.auto._
-  override protected val config = loadConfigOrThrow[Config]("opencensus-scala")
+  override protected val config =
+    ConfigSource.default.at("opencensus-scala").loadOrThrow[Config]
 
   if (config.trace.exporters.stackdriver.enabled)
     Stackdriver.init(config.trace.exporters.stackdriver)
