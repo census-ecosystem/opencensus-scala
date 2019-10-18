@@ -2,10 +2,10 @@ import Dependencies._
 
 name in ThisBuild := "opencensus-scala"
 organization in ThisBuild := "com.github.sebruck"
-scalaVersion in ThisBuild := "2.13.0"
+scalaVersion in ThisBuild := "2.13.1"
 scalafmtOnCompile in ThisBuild := true
 
-crossScalaVersions in ThisBuild := Seq("2.13.0", "2.12.9")
+crossScalaVersions in ThisBuild := Seq("2.13.0", "2.12.10")
 releaseCrossBuild in ThisBuild := true
 releasePublishArtifactsAction in ThisBuild := PgpKeys.publishSigned.value
 
