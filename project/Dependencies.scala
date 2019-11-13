@@ -11,7 +11,7 @@ object Dependencies {
   val Http4sVersion       = "0.21.0-M5"
   val Elastic4sVersion    = "7.3.1"
   val CatsVersion         = "2.0.0"
-  val DoobieVersion       = "0.8.4"
+  val DoobieVersion       = "0.8.6"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
