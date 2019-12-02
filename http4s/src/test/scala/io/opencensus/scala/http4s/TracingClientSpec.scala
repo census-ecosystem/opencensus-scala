@@ -16,9 +16,11 @@ import org.http4s.dsl.Http4sDsl
 import org.scalatest._
 
 import scala.util.Try
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TracingClientSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with OptionValues
     with Http4sDsl[IO] {
