@@ -10,7 +10,7 @@ object Dependencies {
   val AkkaVersion         = "2.5.26"
   val Http4sVersion       = "0.21.0-M5"
   val Elastic4sVersion    = "7.3.1"
-  val CatsVersion         = "2.0.0"
+  val CatsVersion         = "2.1.0"
   val DoobieVersion       = "0.8.4"
 
   lazy val opencensus = Seq(
