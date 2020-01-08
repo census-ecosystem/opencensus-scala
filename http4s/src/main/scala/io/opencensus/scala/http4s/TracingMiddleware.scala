@@ -163,10 +163,9 @@ object TracingService {
   def apply[F[_]](
       pf: PartialFunction[SpanRequest[F], F[Response[F]]]
   )(implicit F: Applicative[F]): TracingService[F] =
-    Kleisli(
-      req =>
-        pf.andThen(OptionT.liftF(_))
-          .applyOrElse(req, (_: SpanRequest[F]) => OptionT.none)
+    Kleisli(req =>
+      pf.andThen(OptionT.liftF(_))
+        .applyOrElse(req, (_: SpanRequest[F]) => OptionT.none)
     )
 
   /**
