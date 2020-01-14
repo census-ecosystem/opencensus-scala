@@ -1,3 +1,3 @@
 enablePlugins(GhpagesPlugin)
 
-git.remoteRepo := "git@github.com:sebruck/opencensus-scala.git"
+git.remoteRepo := "git@github.com:census-ecosystem/opencensus-scala.git"
