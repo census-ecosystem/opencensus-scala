@@ -17,8 +17,8 @@ private[scala] class StatsImpl(
 
   override def record(tags: List[Tag], measurements: Measurement*): Unit = {
     val tagContext = tags
-      .foldLeft(tagger.emptyBuilder())(
-        (builder, tag) => builder.putPropagating(tag.key, tag.value)
+      .foldLeft(tagger.emptyBuilder())((builder, tag) =>
+        builder.putPropagating(tag.key, tag.value)
       )
       .build()
 
