@@ -1,8 +1,9 @@
 package io.opencensus.scala.http
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ServiceDataTest extends FlatSpec with Matchers {
+class ServiceDataTest extends AnyFlatSpec with Matchers {
 
   behavior of "apply"
 

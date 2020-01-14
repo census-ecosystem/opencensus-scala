@@ -9,6 +9,8 @@ import org.scalatest._
 import org.scalatest.concurrent.ScalaFutures
 
 import scala.concurrent.Future
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait ClientSpec
     extends AsyncFlatSpec

@@ -1,9 +1,10 @@
 package io.opencensus.scala
 
 import io.opencensus.trace.Status
-import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
@@ -70,8 +71,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    trace("span", failureStatus = failureStatus)(
-      _ => Future.failed(new Exception("42"))
+    trace("span", failureStatus = failureStatus)(_ =>
+      Future.failed(new Exception("42"))
     ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }
@@ -93,8 +94,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    traceWithParent("span", parent, failureStatus = failureStatus)(
-      _ => Future.failed(new Exception("42"))
+    traceWithParent("span", parent, failureStatus = failureStatus)(_ =>
+      Future.failed(new Exception("42"))
     ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }

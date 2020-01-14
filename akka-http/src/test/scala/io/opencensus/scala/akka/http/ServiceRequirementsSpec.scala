@@ -9,10 +9,12 @@ import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.MockTracing
 import io.opencensus.trace.{AttributeValue, Status}
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait ServiceRequirementsSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with ScalatestRouteTest
     with OptionValues {
@@ -29,8 +31,8 @@ trait ServiceRequirementsSpec
     it should "start a span with the path of the request" in {
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete("")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete("")
       ) ~> check {
         mockTracing.startedSpans.map(_.name) should contain(path)
       }
@@ -51,8 +53,8 @@ trait ServiceRequirementsSpec
     it should "start a span with the propagated context as parent when a span context was propagated" in {
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete("")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete("")
       ) ~> check {
         val parentSpanContext =
           mockTracing.startedSpans.headOption.value.parentContext.value
@@ -66,8 +68,8 @@ trait ServiceRequirementsSpec
     it should "end a span with status OK when the route is successfull" in {
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete("")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete("")
       ) ~> check {
         responseEntity.discardBytes() // drain entity so the span gets closed
         mockTracing.endedSpans.map(_._2.get) should contain(Status.OK)
@@ -77,8 +79,8 @@ trait ServiceRequirementsSpec
     it should "end a span with status UNKNOWN when the route completes with an errornous status code" in {
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete(StatusCodes.InternalServerError)
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete(StatusCodes.InternalServerError)
       ) ~> check {
         responseEntity.discardBytes() // drain entity so the span gets closed
         mockTracing.endedSpans.map(_._2.get) should contain(Status.UNKNOWN)
@@ -88,8 +90,8 @@ trait ServiceRequirementsSpec
     it should "end a span with status INTERNAL when the route fails" in {
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => throw new Exception("test exception")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        throw new Exception("test exception")
       ) ~> check {
         mockTracing.endedSpans.map(_._2.get) should contain(Status.INTERNAL)
       }
@@ -99,8 +101,8 @@ trait ServiceRequirementsSpec
       import AttributeValue._
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete("")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete("")
       ) ~> check {
         val startedSpan = mockTracing.startedSpans.headOption.value
         val attributes  = startedSpan.attributes
@@ -122,8 +124,8 @@ trait ServiceRequirementsSpec
       import AttributeValue._
       val (directive, mockTracing) = directiveWithMock()
 
-      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(
-        () => Directives.complete("")
+      Get(path) ~> routeFromTracingDirectiveAndResult(directive)(() =>
+        Directives.complete("")
       ) ~> check {
         val startedSpan = mockTracing.startedSpans.headOption.value
         val attributes  = startedSpan.attributes

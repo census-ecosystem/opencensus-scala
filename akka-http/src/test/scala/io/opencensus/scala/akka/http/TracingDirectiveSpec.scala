@@ -14,8 +14,8 @@ class TracingDirectiveSpec extends ServiceRequirementsSpec {
   it should "pass the span to the inner route" in {
     val path           = "/my/fancy/path"
     val (directive, _) = directiveWithMock()
-    Get(path) ~> directive.traceRequest(
-      span => Directives.complete(span.getContext.toString)
+    Get(path) ~> directive.traceRequest(span =>
+      Directives.complete(span.getContext.toString)
     ) ~> check {
       entityAs[String] should include("SpanContext")
     }

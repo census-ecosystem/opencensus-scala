@@ -8,12 +8,14 @@ import io.opencensus.scala.http.testSuite.{MockPropagation, MockTracing}
 import io.opencensus.trace.Status
 import org.http4s.dsl.Http4sDsl
 import org.http4s._
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
+import org.scalatest.OptionValues
 
 import scala.util.Try
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait ServiceRequirementsSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with OptionValues
     with Http4sDsl[IO] {

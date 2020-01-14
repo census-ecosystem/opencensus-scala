@@ -21,9 +21,11 @@ import io.opencensus.trace.{BlankSpan, Span, Status}
 import org.scalatest._
 
 import scala.util.Try
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TracingElasticClientSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with OptionValues
     with EitherValues {

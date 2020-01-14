@@ -113,8 +113,8 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
             .mapAsync(1) {
               case (r, _) =>
                 doRequest(r)
-                  .map[(Try[HttpResponse], Unit)](
-                    response => (Success(response), ())
+                  .map[(Try[HttpResponse], Unit)](response =>
+                    (Success(response), ())
                   )
                   .recover {
                     case NonFatal(e) => (Failure(e), ())
