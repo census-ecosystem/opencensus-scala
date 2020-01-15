@@ -48,8 +48,8 @@ abstract class TracingClient[F[_]: Effect] {
       parentSpan: Option[Span]
   ): Span = {
     val name = req.uri.path.toString
-    val span = parentSpan.fold(tracing.startSpan(name))(
-      span => tracing.startSpanWithParent(name, span)
+    val span = parentSpan.fold(tracing.startSpan(name))(span =>
+      tracing.startSpanWithParent(name, span)
     )
     BaseHttpAttributes.setAttributesForRequest(span, req)
     span
