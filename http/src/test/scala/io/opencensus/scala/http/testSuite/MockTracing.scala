@@ -32,14 +32,13 @@ class MockTracing extends Tracing {
     // This sleep "fixes" flakyness of the tests. Since I couldn't find the
     // underlying problem. Even synchronizing everything didn't help.
     Thread.sleep(1)
-    _endedSpans.map(
-      span =>
-        (
-          span,
-          _setStatus
-            .find(_._1.getContext.getSpanId == span.getContext.getSpanId)
-            .map(_._2)
-        )
+    _endedSpans.map(span =>
+      (
+        span,
+        _setStatus
+          .find(_._1.getContext.getSpanId == span.getContext.getSpanId)
+          .map(_._2)
+      )
     )
   }
 
