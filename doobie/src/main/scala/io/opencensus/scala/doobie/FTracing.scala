@@ -15,8 +15,8 @@ abstract class FTracing[F[_]: Sync: FBracket] {
 
   private def fTrace(name: String, parentSpan: Option[Span]): F[Span] =
     Sync[F].delay(
-      parentSpan.fold(tracing.startSpan(name))(
-        span => tracing.startSpanWithParent(name, span)
+      parentSpan.fold(tracing.startSpan(name))(span =>
+        tracing.startSpanWithParent(name, span)
       )
     )
 

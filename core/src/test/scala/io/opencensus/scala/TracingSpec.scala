@@ -70,8 +70,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    trace("span", failureStatus = failureStatus)(
-      _ => Future.failed(new Exception("42"))
+    trace("span", failureStatus = failureStatus)(_ =>
+      Future.failed(new Exception("42"))
     ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }
@@ -93,8 +93,8 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
       Status.ALREADY_EXISTS
     }
 
-    traceWithParent("span", parent, failureStatus = failureStatus)(
-      _ => Future.failed(new Exception("42"))
+    traceWithParent("span", parent, failureStatus = failureStatus)(_ =>
+      Future.failed(new Exception("42"))
     ).failed
       .map(_ => calledWithMessage shouldBe "42")
   }
