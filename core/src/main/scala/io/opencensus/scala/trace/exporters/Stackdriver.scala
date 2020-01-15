@@ -26,19 +26,18 @@ private[scala] object Stackdriver extends LazyLogging {
       .builder()
       .setProjectId(projectId)
 
-    credentialsFile.foreach { path =>
-      val credentials = GoogleCredentials
-        .fromStream(this.getClass.getResourceAsStream(path))
+    val googleCredentials =
+      credentialsFile
+        .fold(GoogleCredentials.getApplicationDefault)(path =>
+          GoogleCredentials.fromStream(this.getClass.getResourceAsStream(path))
+        )
         .createScoped(
           Set(
             "https://www.googleapis.com/auth/cloud-platform",
             "https://www.googleapis.com/auth/trace.append"
           ).asJava
         )
-
-      stackdriverConfig.setCredentials(credentials)
-    }
-
+    stackdriverConfig.setCredentials(googleCredentials)
     stackdriverConfig.build()
   }
 
