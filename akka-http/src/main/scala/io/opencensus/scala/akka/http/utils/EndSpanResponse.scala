@@ -1,6 +1,6 @@
 package io.opencensus.scala.akka.http.utils
 
-import akka.http.scaladsl.model.HttpResponse
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse}
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.akka.http.trace.HttpAttributes._
 import io.opencensus.scala.http.{HttpAttributes, StatusTranslator}
@@ -32,15 +32,21 @@ private[http] object EndSpanResponse {
     HttpAttributes.setAttributesForResponse(span, response)
     span.addAnnotation(responseAnnotation)
 
+    val status = StatusTranslator.translate(response.status.intValue())
     // todo use new setStatus method here when merged
     response.copy(
-      entity = response.entity.transformDataBytes(
-        EndSpanFlow(
-          span,
-          tracing,
-          StatusTranslator.translate(response.status.intValue())
+      entity = if (response.status.allowsEntity) {
+        response.entity.transformDataBytes(
+          EndSpanFlow(
+            span,
+            tracing,
+            status
+          )
         )
-      )
+      } else {
+        tracing.endSpan(span, status)
+        HttpEntity.Empty
+      }
     )
   }
 }

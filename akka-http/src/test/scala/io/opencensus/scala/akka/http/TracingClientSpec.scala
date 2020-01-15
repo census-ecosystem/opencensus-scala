@@ -2,7 +2,6 @@ package io.opencensus.scala.akka.http
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.{HttpHeader, HttpRequest, HttpResponse}
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Flow, Sink, Source}
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
@@ -16,8 +15,7 @@ import scala.util.{Failure, Success, Try}
 
 class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
 
-  implicit val system = ActorSystem()
-  implicit val mat    = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem()
 
   "traceRequest function based with parent" should behave like testClient(
     clientWithMockFunction(withParent = true) _,
@@ -113,8 +111,8 @@ class TracingClientSpec extends ClientSpec with BeforeAndAfterAll {
             .mapAsync(1) {
               case (r, _) =>
                 doRequest(r)
-                  .map[(Try[HttpResponse], Unit)](
-                    response => (Success(response), ())
+                  .map[(Try[HttpResponse], Unit)](response =>
+                    (Success(response), ())
                   )
                   .recover {
                     case NonFatal(e) => (Failure(e), ())
