@@ -9,10 +9,12 @@ import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.testSuite.MockTracing
 import io.opencensus.trace.{AttributeValue, Status}
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 trait ServiceRequirementsSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with ScalatestRouteTest
     with OptionValues {

@@ -5,10 +5,12 @@ import io.opencensus.scala.http.ServiceData
 import io.opencensus.scala.http4s.TracingService.{TracingService, withSpan}
 import io.opencensus.trace.Span
 import org.http4s._
-import org.scalatest.{FlatSpec, Matchers, OptionValues}
+import org.scalatest.OptionValues
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TracingMiddlewareSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with OptionValues
     with ServiceRequirementsSpec {

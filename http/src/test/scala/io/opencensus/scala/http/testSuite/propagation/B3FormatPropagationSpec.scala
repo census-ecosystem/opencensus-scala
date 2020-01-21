@@ -2,12 +2,14 @@ package io.opencensus.scala.http.testSuite.propagation
 
 import io.opencensus.scala.http.propagation.B3FormatPropagation
 import io.opencensus.trace.BlankSpan
-import org.scalatest.{FlatSpec, Matchers, TryValues}
+import org.scalatest.TryValues
 
 import scala.util.Failure
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class B3FormatPropagationSpec
-    extends FlatSpec
+    extends AnyFlatSpec
     with Matchers
     with TryValues
     with B3FormatPropagation[(String, String), Map[String, String]] {

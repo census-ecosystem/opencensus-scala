@@ -2,9 +2,10 @@ package io.opencensus.scala.http
 
 import io.opencensus.scala.http.testSuite.MockSpan
 import io.opencensus.trace.AttributeValue._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-trait HttpAttributesSpec extends FlatSpec with Matchers {
+trait HttpAttributesSpec extends AnyFlatSpec with Matchers {
 
   def httpAttributes[Request: RequestExtractor, Response: ResponseExtractor](
       request: BuildRequest => Request,

@@ -1,9 +1,10 @@
 package io.opencensus.scala
 
 import io.opencensus.trace.Status
-import org.scalatest.{AsyncFlatSpec, Matchers}
 
 import scala.concurrent.Future
+import org.scalatest.flatspec.AsyncFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 

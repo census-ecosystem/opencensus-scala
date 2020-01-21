@@ -3,9 +3,10 @@ package io.opencensus.scala.http
 import io.opencensus.scala.http.ServiceAttributes._
 import io.opencensus.scala.http.testSuite.MockSpan
 import io.opencensus.trace.AttributeValue._
-import org.scalatest.{FlatSpec, Matchers}
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
-class ServiceAttributesSpec extends FlatSpec with Matchers {
+class ServiceAttributesSpec extends AnyFlatSpec with Matchers {
 
   val strValue = stringAttributeValue _
 

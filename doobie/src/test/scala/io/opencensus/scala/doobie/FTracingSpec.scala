@@ -4,12 +4,17 @@ import cats.effect.{ContextShift, IO}
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.testSuite.MockTracing
 import io.opencensus.trace.{BlankSpan, Status}
-import org.scalatest.{Matchers, OptionValues, Outcome, fixture}
+import org.scalatest.{OptionValues, Outcome}
 
 import scala.concurrent.ExecutionContext.global
 import scala.util.Try
+import org.scalatest.flatspec
+import org.scalatest.matchers.should.Matchers
 
-class FTracingSpec extends fixture.FlatSpec with Matchers with OptionValues {
+class FTracingSpec
+    extends flatspec.FixtureAnyFlatSpec
+    with Matchers
+    with OptionValues {
 
   implicit val cs: ContextShift[IO] = IO.contextShift(global)
 

@@ -6,9 +6,11 @@ import io.opencensus.stats.AggregationData
 import io.opencensus.stats.AggregationData.{SumDataDouble, SumDataLong}
 import io.opencensus.tags.{Tags => JavaTags}
 import io.opencensus.testing.common.TestClock
-import org.scalatest.{FlatSpec, Inspectors, Matchers}
+import org.scalatest.Inspectors
 
 import scala.jdk.CollectionConverters._
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 class StatsImplSpec extends StatsSpecs {
 
@@ -47,7 +49,7 @@ class StatsImplSpec extends StatsSpecs {
   )
 }
 
-trait StatsSpecs extends FlatSpec with Matchers with Inspectors {
+trait StatsSpecs extends AnyFlatSpec with Matchers with Inspectors {
 
   def recordingSpecs(
       measurements: List[(Measurement, AggregationData)]
