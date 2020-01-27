@@ -8,7 +8,7 @@ object Dependencies {
   val ScalaLoggingVersion = "3.9.2"
   val AkkaHttpVersion     = "10.1.11"
   val AkkaVersion         = "2.6.1"
-  val Http4sVersion       = "0.21.0-RC1"
+  val Http4sVersion       = "0.21.0-RC2"
   val Elastic4sVersion    = "7.3.5"
   val CatsVersion         = "2.1.0"
   val DoobieVersion       = "0.8.8"
