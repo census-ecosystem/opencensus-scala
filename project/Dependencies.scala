@@ -14,13 +14,17 @@ object Dependencies {
   val DoobieVersion       = "0.8.8"
 
   lazy val opencensus = Seq(
-    "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
-    "io.opencensus" % "opencensus-impl"                       % OpencensusVersion,
-    "io.opencensus" % "opencensus-testing"                    % OpencensusVersion % Test,
-    "io.opencensus" % "opencensus-exporter-trace-stackdriver" % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
+    "io.opencensus" % "opencensus-api"                          % OpencensusVersion,
+    "io.opencensus" % "opencensus-impl"                         % OpencensusVersion,
+    "io.opencensus" % "opencensus-testing"                      % OpencensusVersion % Test,
+    "io.opencensus" % "opencensus-exporter-trace-stackdriver"   % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-logging"       % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-instana"       % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-zipkin"        % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-jaeger"        % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-datadog"       % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-elasticsearch" % OpencensusVersion % Provided,
+    "io.opencensus" % "opencensus-exporter-trace-ocagent"       % OpencensusVersion % Provided
   )
 
   lazy val scalaCollectionCompat = Seq(

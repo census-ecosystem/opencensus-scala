@@ -5,7 +5,11 @@ import io.opencensus.scala.trace.exporters.{
   Instana,
   Logging,
   Stackdriver,
-  Zipkin
+  Zipkin,
+  OcAgent,
+  Datadog,
+  Jaeger,
+  ElasticSearch
 }
 import io.opencensus.trace.samplers.Samplers
 import io.opencensus.trace.{
@@ -172,4 +176,16 @@ object Tracing extends TracingImpl with LazyLogging {
 
   if (config.trace.exporters.instana.enabled)
     Instana.init(config.trace.exporters.instana)
+
+  if (config.trace.exporters.ocagent.enabled)
+    OcAgent.init(config.trace.exporters.ocagent)
+
+  if (config.trace.exporters.datadog.enabled)
+    Datadog.init(config.trace.exporters.datadog)
+
+  if (config.trace.exporters.jaeger.enabled)
+    Jaeger.init(config.trace.exporters.jaeger)
+
+  if (config.trace.exporters.elasticsearch.enabled)
+    ElasticSearch.init(config.trace.exporters.elasticsearch)
 }
