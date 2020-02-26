@@ -1,9 +1,12 @@
 # opencensus Akka HTTP instrumentation
-This modules contains utilities to use opencensus in Akka HTTP applications.
+This modules contains utilities to use opencensus in Akka HTTP applications. It supports:
+
+* [Tracing](#quickstart-tracing) for the server and the client
+* [Stats](#quickstart-stats) for the server
 
 The API documentation can be found [here](https://census-ecosystem.github.io/opencensus-scala/api/).
 
-## Quickstart
+## Quickstart Tracing
 Have a look at the [usage examples](../akka-http-example/src/main/scala/com/github/sebruck/opencensus/examples/akka/http).
 
 In your build.sbt add the following dependency:
@@ -39,13 +42,11 @@ opencensus-scala {
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
 
 object TracingService extends App {
   import io.opencensus.scala.akka.http.TracingDirective._
 
   implicit val system: ActorSystem             = ActorSystem()
-  implicit val materializer: ActorMaterializer = ActorMaterializer()
   import system.dispatcher
 
   val route = get {
@@ -93,6 +94,49 @@ call in a span. Additionally the `HttpRequest` gets enriched with headers in the
 [B3 Format](https://github.com/openzipkin/b3-propagation#overall-process).
 
 When the call completes or fails the span is ended with a proper status which fits to the http response code.
+
+## Quickstart Stats 
+
+In your build.sbt add the following dependency:
+
+```scala
+"com.github.sebruck" %% "opencensus-scala-akka-http" % "0.7.2"
+
+// Dependent on the stats exporters you want to use add one or more of the following
+"io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.23.0"
+"io.opencensus" % "opencensus-exporter-stats-prometheus"  % "0.23.0"
+"io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.23.0"
+```
+
+### Server
+```scala
+import akka.actor.ActorSystem
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.server.Directives._
+import io.opencensus.exporter.stats.prometheus.PrometheusStatsCollector
+
+object TracingService extends App {
+  import io.opencensus.scala.akka.http.StatsDirective.recordRequest
+
+  implicit val system: ActorSystem             = ActorSystem()
+  import system.dispatcher
+
+  /*
+   Register Prometheus stats collector
+   and start the prometheus exposition http server
+   */
+  PrometheusStatsCollector.createAndRegister()
+  val server = new io.prometheus.client.exporter.HTTPServer(8081)
+
+  val route = get {
+    recordRequest("logical-route-name") { 
+      complete("stats-recorder")
+    }
+  }
+
+  Http().bindAndHandle(route, "0.0.0.0", port = 8080)
+}
+```
 
 ## Configuration
 Have a look at the [default configuration](src/main/resources/reference.conf)

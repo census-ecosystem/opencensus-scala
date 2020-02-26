@@ -5,8 +5,8 @@ import akka.stream.scaladsl.{Flow, GraphDSL, Keep, UnzipWith, Zip}
 import akka.stream.{FlowShape, OverflowStrategy}
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.akka.http.propagation.AkkaB3FormatPropagation
+import io.opencensus.scala.akka.http.trace.EndSpanResponse
 import io.opencensus.scala.akka.http.trace.HttpAttributes._
-import io.opencensus.scala.akka.http.utils.EndSpanResponse
 import io.opencensus.scala.http.HttpAttributes
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.trace.{Span, Status}
