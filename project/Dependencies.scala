@@ -3,14 +3,14 @@ import sbt._
 object Dependencies {
 
   val OpencensusVersion   = "0.25.0"
-  val ScalaTestVersion    = "3.1.0"
+  val ScalaTestVersion    = "3.1.1"
   val PureConfigVersion   = "0.12.2"
   val ScalaLoggingVersion = "3.9.2"
   val AkkaHttpVersion     = "10.1.11"
   val AkkaVersion         = "2.6.1"
   val Http4sVersion       = "0.21.1"
   val Elastic4sVersion    = "7.3.5"
-  val CatsVersion         = "2.1.0"
+  val CatsVersion         = "2.1.1"
   val DoobieVersion       = "0.8.8"
 
   lazy val opencensus = Seq(
