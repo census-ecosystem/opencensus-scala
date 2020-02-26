@@ -2,7 +2,7 @@ package io.opencensus.scala.akka.http.trace
 
 import akka.http.scaladsl.model.HttpResponse
 import io.opencensus.scala.Tracing
-import io.opencensus.scala.akka.http.trace.HttpAttributes._
+import HttpExtractors._
 import io.opencensus.scala.akka.http.utils.ExecuteAfterResponse
 import io.opencensus.scala.http.{HttpAttributes, StatusTranslator}
 import io.opencensus.trace.Span

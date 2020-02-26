@@ -5,7 +5,7 @@ import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import io.opencensus.scala.http.HttpAttributesSpec
 
 class HttpAkkaAttributesSpec extends HttpAttributesSpec {
-  import HttpAttributes._
+  import HttpExtractors._
 
   "Akka http attributes extraction" should behave like httpAttributes(
     request,
