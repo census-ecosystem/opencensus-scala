@@ -6,8 +6,8 @@ import akka.http.scaladsl.server.{Directive0, Directive1, ExceptionHandler}
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.akka.http.propagation.AkkaB3FormatPropagation
+import io.opencensus.scala.akka.http.trace.EndSpanResponse
 import io.opencensus.scala.akka.http.trace.HttpAttributes._
-import io.opencensus.scala.akka.http.utils.EndSpanResponse
 import io.opencensus.scala.http.{HttpAttributes, ServiceAttributes, ServiceData}
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.trace.{Span, Status}
