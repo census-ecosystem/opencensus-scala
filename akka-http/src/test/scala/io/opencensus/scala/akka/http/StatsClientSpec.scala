@@ -7,7 +7,6 @@ import io.opencensus.scala.stats.{Distribution, MeasurementDouble}
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
-import Ordering.Double.TotalOrdering
 
 import scala.concurrent.Future
 
@@ -54,7 +53,7 @@ class StatsClientSpec
       measurement match {
         case MeasurementDouble(measure, value) =>
           measure.name shouldBe "opencensus.io/http/client/roundtrip_latency"
-          value shouldBe >(0.0)
+          value.toInt shouldBe >(0)
         case other => fail(s"Expected MeasurementDouble got $other")
       }
     }

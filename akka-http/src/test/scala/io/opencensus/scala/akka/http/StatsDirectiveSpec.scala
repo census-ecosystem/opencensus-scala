@@ -7,7 +7,6 @@ import io.opencensus.scala.http.testSuite.MockStats
 import io.opencensus.scala.stats.{Distribution, MeasurementDouble}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
-import Ordering.Double.TotalOrdering
 
 class StatsDirectiveSpec
     extends AnyFlatSpec
@@ -61,7 +60,7 @@ class StatsDirectiveSpec
       measurement match {
         case MeasurementDouble(measure, value) =>
           measure.name shouldBe "opencensus.io/http/server/server_latency"
-          value shouldBe >(0.0)
+          value.toInt shouldBe >(0)
         case other => fail(s"Expected MeasurementDouble got $other")
       }
     }
