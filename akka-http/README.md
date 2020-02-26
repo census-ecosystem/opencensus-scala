@@ -15,10 +15,10 @@ In your build.sbt add the following dependency:
 "com.github.sebruck" %% "opencensus-scala-akka-http" % "0.7.2"
 
 // Dependent on the trace exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.23.0"
-"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.23.0"
-"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.23.0"
-"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.23.0"
+"io.opencensus" % "opencensus-exporter-trace-stackdriver" % "0.25.0"
+"io.opencensus" % "opencensus-exporter-trace-logging"     % "0.25.0"
+"io.opencensus" % "opencensus-exporter-trace-instana"     % "0.25.0"
+"io.opencensus" % "opencensus-exporter-trace-zipkin"      % "0.25.0"
 ```
 
 To enable the Stackdriver trace exporter add the following to your typesafe config file:
@@ -103,9 +103,9 @@ In your build.sbt add the following dependency:
 "com.github.sebruck" %% "opencensus-scala-akka-http" % "0.7.2"
 
 // Dependent on the stats exporters you want to use add one or more of the following
-"io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.23.0"
-"io.opencensus" % "opencensus-exporter-stats-prometheus"  % "0.23.0"
-"io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.23.0"
+"io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.25.0"
+"io.opencensus" % "opencensus-exporter-stats-prometheus"  % "0.25.0"
+"io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.25.0"
 
 // To run this (prometheus) example
 "io.prometheus" % "simpleclient_httpserver" % "0.8.1"
