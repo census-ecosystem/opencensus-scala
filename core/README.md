@@ -87,7 +87,7 @@ In your build.sbt add the following dependency:
 "io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.23.0"
 
 // To run this (prometheus) example
-"io.prometheus" % "simpleclient_httpserver" % "0.4.0"
+"io.prometheus" % "simpleclient_httpserver" % "0.8.1"
 ```
 
 ```scala

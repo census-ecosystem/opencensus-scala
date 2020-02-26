@@ -106,36 +106,63 @@ In your build.sbt add the following dependency:
 "io.opencensus" % "opencensus-exporter-stats-stackdriver" % "0.23.0"
 "io.opencensus" % "opencensus-exporter-stats-prometheus"  % "0.23.0"
 "io.opencensus" % "opencensus-exporter-stats-signalfx"    % "0.23.0"
+
+// To run this (prometheus) example
+"io.prometheus" % "simpleclient_httpserver" % "0.8.1"
 ```
 
-### Server
+### Server & Client
 ```scala
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
+import akka.http.scaladsl.model.HttpRequest
 import akka.http.scaladsl.server.Directives._
 import io.opencensus.exporter.stats.prometheus.PrometheusStatsCollector
+import io.opencensus.scala.akka.http.StatsClient
+import io.opencensus.scala.akka.http.StatsDirective.recordRequest
 
-object TracingService extends App {
-  import io.opencensus.scala.akka.http.StatsDirective.recordRequest
-
-  implicit val system: ActorSystem             = ActorSystem()
+object Test extends App {
+  implicit val system: ActorSystem = ActorSystem()
   import system.dispatcher
 
-  /*
-   Register Prometheus stats collector
-   and start the prometheus exposition http server
-   */
+  // Initialize Prometheus
   PrometheusStatsCollector.createAndRegister()
-  val server = new io.prometheus.client.exporter.HTTPServer(8081)
+  new io.prometheus.client.exporter.HTTPServer(8081)
 
   val route = get {
-    recordRequest("logical-route-name") { 
+    // record stats on the server
+    recordRequest("logical-route-name") {
       complete("stats-recorder")
     }
   }
 
-  Http().bindAndHandle(route, "0.0.0.0", port = 8080)
+  // record stats from the client perspective
+  val singleRequestWithStats = StatsClient.recorded(Http().singleRequest(_), _)
+
+  for {
+    _ <- Http().bindAndHandle(route, "0.0.0.0", port = 8080)
+    _ <- singleRequestWithStats("logical-route-name")(HttpRequest(uri = "http://localhost:8080/"))
+      .flatMap(_.discardEntityBytes().future())
+  } yield ()
 }
+```
+
+Now run:
+```
+$ curl -XGET http://localhost:8081/
+# HELP opencensus_io_http_server_server_latency Time between first byte of request headers read to last byte of response sent, or terminal error
+# TYPE opencensus_io_http_server_server_latency histogram
+...
+opencensus_io_http_server_server_latency_bucket{http_server_method="GET",http_server_route="logical-route-name",http_server_status="200",le="13.0",} 0.0
+opencensus_io_http_server_server_latency_bucket{http_server_method="GET",http_server_route="logical-route-name",http_server_status="200",le="16.0",} 0.0
+opencensus_io_http_server_server_latency_bucket{http_server_method="GET",http_server_route="logical-route-name",http_server_status="200",le="20.0",} 0.0
+...
+# HELP opencensus_io_http_client_roundtrip_latency Time between first byte of request headers sent to last byte of response received, or terminal error
+# TYPE opencensus_io_http_client_roundtrip_latency histogram
+opencensus_io_http_client_roundtrip_latency_bucket{http_client_method="GET",http_client_route="logical-route-name",http_client_status="200",le="13.0",} 0.0
+opencensus_io_http_client_roundtrip_latency_bucket{http_client_method="GET",http_client_route="logical-route-name",http_client_status="200",le="16.0",} 0.0
+opencensus_io_http_client_roundtrip_latency_bucket{http_client_method="GET",http_client_route="logical-route-name",http_client_status="200",le="20.0",} 0.0
+...
 ```
 
 ## Configuration

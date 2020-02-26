@@ -9,7 +9,6 @@ import io.opencensus.scala.akka.http.stats.HttpStats
 import io.opencensus.scala.akka.http.utils.ExecuteAfterResponse
 
 trait StatsDirective extends HttpStats with LazyLogging {
-  override private[http] def stats: Stats
 
   /**
     * Records the handled http requests as defined in https://github.com/census-instrumentation/opencensus-specs/blob/master/stats/HTTP.md

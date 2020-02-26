@@ -61,7 +61,7 @@ class StatsDirectiveSpec
       measurement match {
         case MeasurementDouble(measure, value) =>
           measure.name shouldBe "opencensus.io/http/server/server_latency"
-          value shouldBe >=(0.0)
+          value shouldBe >(0.0)
         case other => fail(s"Expected MeasurementDouble got $other")
       }
     }
