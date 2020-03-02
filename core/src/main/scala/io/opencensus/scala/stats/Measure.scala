@@ -143,9 +143,9 @@ sealed trait Measurement {
     */
   val value: Value
 }
-private[stats] case class MeasurementLong(measure: MeasureLong, value: Long)
+private[scala] case class MeasurementLong(measure: MeasureLong, value: Long)
     extends Measurement
-private[stats] case class MeasurementDouble(
+private[scala] case class MeasurementDouble(
     measure: MeasureDouble,
     value: Double
 ) extends Measurement

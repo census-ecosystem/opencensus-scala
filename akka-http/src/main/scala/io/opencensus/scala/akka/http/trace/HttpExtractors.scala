@@ -4,7 +4,7 @@ import akka.http.scaladsl.model.headers.{Host, `User-Agent`}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import io.opencensus.scala.http.{RequestExtractor, ResponseExtractor}
 
-object HttpAttributes {
+object HttpExtractors {
 
   implicit val requestExtractor: RequestExtractor[HttpRequest] =
     new RequestExtractor[HttpRequest] {
