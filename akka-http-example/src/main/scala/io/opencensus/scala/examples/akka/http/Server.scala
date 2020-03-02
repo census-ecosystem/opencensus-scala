@@ -4,7 +4,6 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
-import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.LazyLogging
 import io.opencensus.scala.akka.http.TracingDirective._
 import io.opencensus.trace.AttributeValue
@@ -17,8 +16,7 @@ object Server extends App with LazyLogging {
   SLF4JBridgeHandler.removeHandlersForRootLogger()
   SLF4JBridgeHandler.install()
 
-  implicit val system = ActorSystem()
-  implicit val mat    = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem()
   import system.dispatcher
 
   val routes: Route = traceRequest { span =>

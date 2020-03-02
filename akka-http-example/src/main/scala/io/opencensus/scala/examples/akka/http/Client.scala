@@ -3,7 +3,6 @@ package io.opencensus.scala.examples.akka.http
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.HttpRequest
-import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Sink, Source}
 import io.opencensus.scala.akka.http.TracingClient
 import org.slf4j.bridge.SLF4JBridgeHandler
@@ -17,8 +16,7 @@ object Client extends App {
   SLF4JBridgeHandler.removeHandlersForRootLogger()
   SLF4JBridgeHandler.install()
 
-  implicit val system = ActorSystem()
-  implicit val mat    = ActorMaterializer()
+  implicit val system: ActorSystem = ActorSystem()
   import system.dispatcher
 
   def await[T](f: Future[T]) = Await.result(f, 3.seconds)
