@@ -9,7 +9,7 @@ object Dependencies {
   val AkkaHttpVersion     = "10.1.11"
   val AkkaVersion         = "2.6.1"
   val Http4sVersion       = "0.21.1"
-  val Elastic4sVersion    = "7.3.5"
+  val Elastic4sVersion    = "7.3.6"
   val CatsVersion         = "2.1.1"
   val DoobieVersion       = "0.8.8"
 
