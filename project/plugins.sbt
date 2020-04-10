@@ -1,4 +1,4 @@
-addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.0")
+addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.3")
 
 addSbtPlugin("com.github.gseitz" % "sbt-release" % "1.0.13")
 
