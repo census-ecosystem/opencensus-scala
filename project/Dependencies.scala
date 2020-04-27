@@ -8,10 +8,10 @@ object Dependencies {
   val ScalaLoggingVersion = "3.9.2"
   val AkkaHttpVersion     = "10.1.11"
   val AkkaVersion         = "2.6.1"
-  val Http4sVersion       = "0.21.1"
+  val Http4sVersion       = "0.21.3"
   val Elastic4sVersion    = "7.3.5"
   val CatsVersion         = "2.1.1"
-  val DoobieVersion       = "0.8.8"
+  val DoobieVersion       = "0.9.0"
 
   lazy val opencensus = Seq(
     "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
@@ -24,7 +24,7 @@ object Dependencies {
   )
 
   lazy val scalaCollectionCompat = Seq(
-    "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.4"
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
   )
 
   lazy val scalaTest = Seq(
