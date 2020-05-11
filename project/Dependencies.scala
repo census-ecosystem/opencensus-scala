@@ -6,7 +6,7 @@ object Dependencies {
   val ScalaTestVersion    = "3.1.1"
   val PureConfigVersion   = "0.12.2"
   val ScalaLoggingVersion = "3.9.2"
-  val AkkaHttpVersion     = "10.1.11"
+  val AkkaHttpVersion     = "10.1.12"
   val AkkaVersion         = "2.6.1"
   val Http4sVersion       = "0.21.3"
   val Elastic4sVersion    = "7.3.5"
