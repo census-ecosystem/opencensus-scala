@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
 
-  val OpencensusVersion   = "0.25.0"
+  val OpencensusVersion   = "0.4.1"
   val ScalaTestVersion    = "3.1.1"
   val PureConfigVersion   = "0.12.2"
   val ScalaLoggingVersion = "3.9.2"
@@ -14,13 +14,10 @@ object Dependencies {
   val DoobieVersion       = "0.9.0"
 
   lazy val opencensus = Seq(
-    "io.opencensus" % "opencensus-api"                        % OpencensusVersion,
-    "io.opencensus" % "opencensus-impl"                       % OpencensusVersion,
-    "io.opencensus" % "opencensus-testing"                    % OpencensusVersion % Test,
-    "io.opencensus" % "opencensus-exporter-trace-stackdriver" % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-logging"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-instana"     % OpencensusVersion % Provided,
-    "io.opencensus" % "opencensus-exporter-trace-zipkin"      % OpencensusVersion % Provided
+    "io.opentelemetry" % "opentelemetry-api"               % OpencensusVersion,
+    "io.opentelemetry" % "opentelemetry-sdk"               % OpencensusVersion,
+    "io.opentelemetry" % "opentelemetry-exporters-logging" % OpencensusVersion % Provided,
+    "io.opentelemetry" % "opentelemetry-exporters-zipkin"  % OpencensusVersion % Provided
   )
 
   lazy val scalaCollectionCompat = Seq(

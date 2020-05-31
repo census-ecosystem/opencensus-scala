@@ -1,6 +1,6 @@
 package io.opencensus.scala.trace
 
-import io.opencensus.trace.AttributeValue
+import io.opentelemetry.common.AttributeValue
 
 private[scala] object AttributeValueOps {
 

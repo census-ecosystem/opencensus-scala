@@ -1,26 +1,25 @@
 package io.opencensus.scala
 
-import io.opencensus.trace.Status
+import io.opentelemetry.trace.Status
 
 import scala.concurrent.Future
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
+class TracingSpec extends AsyncFlatSpec with Matchers {
 
-  override protected def config: Config =
+  val tracing = new TracingImpl(
     Config(
       TraceConfig(
         exporters = TraceExportersConfig(
-          stackdriver =
-            StackdriverTraceExporterConfig(enabled = false, "project-id", None),
           logging = LoggingTraceExporterConfig(enabled = false),
-          zipkin = ZipkinTraceExporterConfig(enabled = false, "", ""),
-          instana = InstanaTraceExporterConfig(enabled = false, "")
+          zipkin = ZipkinTraceExporterConfig(enabled = false, "", "")
         ),
         samplingProbability = 0.25
       )
     )
+  )
+  import tracing._
 
   "startSpan" should "start a span" in {
     startSpan("mySpan").getContext.isValid shouldBe true
@@ -30,7 +29,7 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
     val areSampled = (1 to 1000).map(i => {
       val span = startSpan(i.toString)
-      span.getContext.getTraceOptions.isSampled
+      span.getContext().getTraceFlags().isSampled
     })
 
     val sampled = areSampled.count(identity)
@@ -101,6 +100,7 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
   }
 
   "Tracing object" should "successfully initialize with the default reference.conf" in {
+    println("Uh")
     Tracing
     succeed
   }

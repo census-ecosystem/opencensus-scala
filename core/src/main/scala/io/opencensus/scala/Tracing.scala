@@ -1,25 +1,16 @@
 package io.opencensus.scala
 
 import com.typesafe.scalalogging.LazyLogging
-import io.opencensus.scala.trace.exporters.{
-  Instana,
-  Logging,
-  Stackdriver,
-  Zipkin
-}
-import io.opencensus.trace.samplers.Samplers
-import io.opencensus.trace.{
-  EndSpanOptions,
-  Span,
-  SpanBuilder,
-  SpanContext,
-  Status,
-  Tracing => OpencensusTracing
-}
+import io.opencensus.scala.trace.exporters.{Logging, Zipkin}
+
+import io.opentelemetry.sdk.trace.Samplers
+import io.opentelemetry.sdk.OpenTelemetrySdk
+import io.opentelemetry.trace.{EndSpanOptions, Span, SpanContext, Status}
 import pureconfig.ConfigSource
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
+import io.opentelemetry.trace.Tracer
 
 trait Tracing {
 
@@ -91,17 +82,26 @@ trait Tracing {
   )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
-private[scala] trait TracingImpl extends Tracing {
-  private val tracer = OpencensusTracing.getTracer
-  protected def config: Config
+private[scala] class TracingImpl(val config: Config) extends Tracing {
+  private val tracerProvider = OpenTelemetrySdk.getTracerProvider()
+  private val probability =
+    tracerProvider
+      .getActiveTraceConfig()
+      .toBuilder()
+      .setSampler(Samplers.probability(config.trace.samplingProbability))
+      .build();
+
+  tracerProvider.updateActiveTraceConfig(probability)
+
+  private val tracer: Tracer = tracerProvider.get("TODO")
 
   /** @inheritdoc */
   override def startSpan(name: String): Span =
-    buildSpan(tracer.spanBuilder(name))
+    tracer.spanBuilder(name).startSpan()
 
   /** @inheritdoc */
   override def startSpanWithParent(name: String, parent: Span): Span =
-    buildSpan(tracer.spanBuilderWithExplicitParent(name, parent))
+    tracer.spanBuilder(name).setParent(parent).startSpan()
 
   /** @inheritdoc */
   override def setStatus(span: Span, status: Status): Unit =
@@ -115,11 +115,13 @@ private[scala] trait TracingImpl extends Tracing {
       name: String,
       parentContext: SpanContext
   ): Span =
-    buildSpan(tracer.spanBuilderWithRemoteParent(name, parentContext))
+    tracer.spanBuilder(name).setParent(parentContext).startSpan()
 
   /** @inheritdoc */
-  override def endSpan(span: Span, status: Status): Unit =
-    span.end(EndSpanOptions.builder().setStatus(status).build())
+  override def endSpan(span: Span, status: Status): Unit = {
+    span.setStatus(status)
+    span.end(EndSpanOptions.builder().build)
+  }
 
   /** @inheritdoc */
   override def trace[T](
@@ -148,21 +150,15 @@ private[scala] trait TracingImpl extends Tracing {
 
     result
   }
-
-  private def buildSpan(builder: SpanBuilder): Span = {
-    builder
-      .setSampler(Samplers.probabilitySampler(config.trace.samplingProbability))
-      .startSpan()
-  }
 }
 
-object Tracing extends TracingImpl with LazyLogging {
-  import pureconfig.generic.auto._
-  override protected val config =
-    ConfigSource.default.at("opencensus-scala").loadOrThrow[Config]
+import pureconfig.generic.auto._
 
-  if (config.trace.exporters.stackdriver.enabled)
-    Stackdriver.init(config.trace.exporters.stackdriver)
+object Tracing
+    extends TracingImpl(
+      ConfigSource.default.at("opencensus-scala").loadOrThrow[Config]
+    )
+    with LazyLogging {
 
   if (config.trace.exporters.logging.enabled)
     Logging.init()
@@ -170,6 +166,4 @@ object Tracing extends TracingImpl with LazyLogging {
   if (config.trace.exporters.zipkin.enabled)
     Zipkin.init(config.trace.exporters.zipkin)
 
-  if (config.trace.exporters.instana.enabled)
-    Instana.init(config.trace.exporters.instana)
 }
