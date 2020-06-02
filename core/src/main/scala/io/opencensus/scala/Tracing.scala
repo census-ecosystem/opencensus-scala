@@ -11,6 +11,8 @@ import pureconfig.ConfigSource
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
 import io.opentelemetry.trace.Tracer
+import io.opentelemetry.sdk.trace.export.BatchSpansProcessor
+import io.opentelemetry.sdk.trace.export.SimpleSpansProcessor
 
 trait Tracing {
 
@@ -82,18 +84,8 @@ trait Tracing {
   )(f: Span => Future[T])(implicit ec: ExecutionContext): Future[T]
 }
 
-private[scala] class TracingImpl(val config: Config) extends Tracing {
-  private val tracerProvider = OpenTelemetrySdk.getTracerProvider()
-  private val probability =
-    tracerProvider
-      .getActiveTraceConfig()
-      .toBuilder()
-      .setSampler(Samplers.probability(config.trace.samplingProbability))
-      .build();
-
-  tracerProvider.updateActiveTraceConfig(probability)
-
-  private val tracer: Tracer = tracerProvider.get("TODO")
+private[scala] trait TracingImpl extends Tracing {
+  def tracer: Tracer
 
   /** @inheritdoc */
   override def startSpan(name: String): Span =
@@ -154,16 +146,29 @@ private[scala] class TracingImpl(val config: Config) extends Tracing {
 
 import pureconfig.generic.auto._
 
-object Tracing
-    extends TracingImpl(
-      ConfigSource.default.at("opencensus-scala").loadOrThrow[Config]
-    )
-    with LazyLogging {
+object Tracing extends TracingImpl with LazyLogging {
+
+  val config         = ConfigSource.default.at("opencensus-scala").loadOrThrow[Config]
+  val tracerProvider = OpenTelemetrySdk.getTracerProvider()
+  val probability =
+    tracerProvider
+      .getActiveTraceConfig()
+      .toBuilder()
+      .setSampler(Samplers.probability(config.trace.samplingProbability))
+      .build();
+
+  override def tracer: Tracer = tracerProvider.get("TODO")
+
+  tracerProvider.updateActiveTraceConfig(probability)
 
   if (config.trace.exporters.logging.enabled)
-    Logging.init()
+    tracerProvider.addSpanProcessor(
+      SimpleSpansProcessor.create(Logging.init())
+    )
 
   if (config.trace.exporters.zipkin.enabled)
-    Zipkin.init(config.trace.exporters.zipkin)
+    tracerProvider.addSpanProcessor(
+      BatchSpansProcessor.create(Zipkin.init(config.trace.exporters.zipkin))
+    )
 
 }
