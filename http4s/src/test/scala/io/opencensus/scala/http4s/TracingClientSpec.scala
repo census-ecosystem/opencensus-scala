@@ -62,8 +62,7 @@ class TracingClientSpec
           response =
             IO(Response(body = Stream("What".getBytes.toList: _*).covary[IO]))
         )
-      )
-      .fetch(req)(_ => IO(""))
+      ).run(req).use(_ => IO(""))
       .unsafeRunSync()
 
     mockTracing.spanStauts.headOption
