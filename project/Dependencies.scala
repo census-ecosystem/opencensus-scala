@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
 
   val OpencensusVersion   = "0.25.0"
-  val ScalaTestVersion    = "3.1.1"
+  val ScalaTestVersion    = "3.1.3"
   val PureConfigVersion   = "0.12.2"
   val ScalaLoggingVersion = "3.9.2"
   val AkkaHttpVersion     = "10.1.11"
