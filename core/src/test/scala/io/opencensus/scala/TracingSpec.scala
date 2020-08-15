@@ -5,9 +5,11 @@ import io.opencensus.trace.Status
 import scala.concurrent.Future
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
+import scala.concurrent.duration.FiniteDuration
 
 class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
 
+  private val deadline = FiniteDuration(1, "millis")
   override protected def config: Config =
     Config(
       TraceConfig(
@@ -16,7 +18,33 @@ class TracingSpec extends AsyncFlatSpec with TracingImpl with Matchers {
             StackdriverTraceExporterConfig(enabled = false, "project-id", None),
           logging = LoggingTraceExporterConfig(enabled = false),
           zipkin = ZipkinTraceExporterConfig(enabled = false, "", ""),
-          instana = InstanaTraceExporterConfig(enabled = false, "")
+          instana = InstanaTraceExporterConfig(enabled = false, ""),
+          ocagent = OcAgentTraceExporterConfig(
+            enabled = false,
+            "project-id",
+            "",
+            deadline,
+            deadline,
+            false
+          ),
+          jaeger = JaegerTraceExporterConfig(
+            enabled = false,
+            "",
+            "",
+            deadline
+          ),
+          datadog =
+            DatadogTraceExporterConfig(enabled = false, "", "", "", deadline),
+          elasticsearch = ElasticsearchTraceExporterConfig(
+            enabled = false,
+            "",
+            "",
+            "",
+            "",
+            None,
+            None,
+            deadline
+          )
         ),
         samplingProbability = 0.25
       )
