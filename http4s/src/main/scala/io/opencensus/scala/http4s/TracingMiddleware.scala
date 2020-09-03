@@ -3,7 +3,7 @@ package io.opencensus.scala.http4s
 import cats._
 import cats.data.{Kleisli, OptionT}
 import cats.effect.Effect
-import cats.implicits._
+import cats.syntax.all._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.{

@@ -1,7 +1,7 @@
 package io.opencensus.scala.http4s
 
 import cats.effect.{Effect, Resource}
-import cats.implicits._
+import cats.syntax.all._
 import io.opencensus.scala.Tracing
 import io.opencensus.scala.http.propagation.Propagation
 import io.opencensus.scala.http.{HttpAttributes => BaseHttpAttributes}
