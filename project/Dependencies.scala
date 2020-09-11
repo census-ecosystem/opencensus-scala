@@ -24,7 +24,7 @@ object Dependencies {
   )
 
   lazy val scalaCollectionCompat = Seq(
-    "org.scala-lang.modules" %% "scala-collection-compat" % "2.1.6"
+    "org.scala-lang.modules" %% "scala-collection-compat" % "2.2.0"
   )
 
   lazy val scalaTest = Seq(
